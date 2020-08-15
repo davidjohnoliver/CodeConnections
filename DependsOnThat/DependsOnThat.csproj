@@ -76,8 +76,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="3.7.0" />
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.0.206" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.7.3065" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.7.3069" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\DependencyGraphToolWindowControl.xaml">
