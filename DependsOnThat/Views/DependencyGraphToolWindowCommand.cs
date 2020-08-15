@@ -50,7 +50,7 @@ namespace DependsOnThat.Views
 		/// <summary>
 		/// Gets the instance of the command.
 		/// </summary>
-		public static DependencyGraphToolWindowCommand Instance
+		public static DependencyGraphToolWindowCommand? Instance
 		{
 			get;
 			private set;
@@ -77,7 +77,7 @@ namespace DependsOnThat.Views
 			// the UI thread.
 			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
-			OleMenuCommandService commandService = await package.GetServiceAsync((typeof(IMenuCommandService))) as OleMenuCommandService;
+			OleMenuCommandService commandService = await package.GetServiceAsync((typeof(IMenuCommandService))) as OleMenuCommandService ?? throw new InvalidOperationException("Command service not found");
 			Instance = new DependencyGraphToolWindowCommand(package, commandService);
 		}
 
