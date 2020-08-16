@@ -63,3 +63,6 @@ dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggest
 
 #when this rule is set to a list of modifiers, prefer the specified ordering.
 csharp_preferred_modifier_order = public,private,internal,static,readonly,sealed,async:suggestion
+
+# VSTHRD200: Use "Async" suffix for async methods
+dotnet_diagnostic.VSTHRD200.severity = suggestion
