@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,17 +17,10 @@ namespace DependsOnThat.Tests.ExtensionsTests
 	[TestFixture]
 	public class SyntaxNodeExtensionsTests
 	{
-		private Workspace GetSubjectSolution()
-		{
-			var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			const string subjectPath = @"../../SubjectSolution";
-			return WorkspaceUtils.GetWorkspace(Path.Combine(location, subjectPath));
-		}
-
 		[Test]
 		public async Task When_All_Symbols()
 		{
-			using (var workspace = GetSubjectSolution())
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
 			{
 				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
 				var compilation = await project.GetCompilationAsync();

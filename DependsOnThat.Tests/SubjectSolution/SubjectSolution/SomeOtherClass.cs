@@ -11,5 +11,10 @@ namespace SubjectSolution
 			var array = new SomeClassInArray[7];
 			array.ToString();
 		}
+
+		public void TypeConstraintDependence<T>() where T : SomeDeeperClass
+		{
+
+		}
 	}
 }

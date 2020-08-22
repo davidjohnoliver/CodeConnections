@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DependsOnThat.Tests.Utilities
 {
-	public static class WorkspaceUtils
+	public static partial class WorkspaceUtils
 	{
 		/// <summary>
 		/// Simple routine to create a Roslyn <see cref="Workspace"/> from a target solution.
