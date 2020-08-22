@@ -49,6 +49,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Disposables\CancellationDisposable.cs" />
+    <Compile Include="Disposables\CompositeDisposable.cs" />
+    <Compile Include="Disposables\ICancelable.cs" />
+    <Compile Include="Disposables\SerialDisposable.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\SymbolExtensions.cs" />
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
