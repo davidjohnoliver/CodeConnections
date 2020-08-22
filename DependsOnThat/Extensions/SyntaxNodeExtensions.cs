@@ -32,8 +32,9 @@ namespace DependsOnThat.Extensions
 		/// If true, externally-defined symbols from metadata are included. If false, only locally-defined 
 		/// symbols in the same compilation are returned.
 		/// </param>
-		public static IEnumerable<ITypeSymbol> GetAllReferencedTypeSymbols(this SyntaxNode syntaxNode, SemanticModel model, bool includeExternalMetadata = true)
-			=> GetAllReferencedSymbols(syntaxNode, model, includeExternalMetadata).OfType<ITypeSymbol>();
+		public static IEnumerable<ITypeSymbol> GetAllReferencedTypeSymbols(this SyntaxNode syntaxNode, SemanticModel model, bool includeExternalMetadata = true, bool includeTypeParameters = false)
+			=> GetAllReferencedSymbols(syntaxNode, model, includeExternalMetadata).OfType<ITypeSymbol>()
+				.Where(s => includeTypeParameters ? true : !(s is ITypeParameterSymbol));
 
 	}
 }
