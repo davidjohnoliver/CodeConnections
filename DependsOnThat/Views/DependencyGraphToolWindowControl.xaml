@@ -11,8 +11,8 @@
              Name="MyToolWindow">
     <Grid>
         <StackPanel Orientation="Vertical">
-            <TextBlock Margin="10" HorizontalAlignment="Center">DependencyGraphToolWindow</TextBlock>
-            <Button Content="Click me!" Click="button1_Click" Width="120" Height="80" Name="button1"/>
+            <Button Margin="10" Content="Extend graph from current document" Command="{Binding AddActiveDocumentAsRootCommand}"/>
+            <Button Margin="10" Content="Clear extension points" Command="{Binding ClearRootsCommand}"/>
         </StackPanel>
     </Grid>
 </UserControl>

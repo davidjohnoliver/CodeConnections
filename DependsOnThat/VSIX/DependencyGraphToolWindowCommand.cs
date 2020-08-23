@@ -5,7 +5,12 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using DependsOnThat.Presentation;
+using DependsOnThat.Services;
 using DependsOnThat.Views;
+using Microsoft;
+using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
@@ -95,6 +100,18 @@ namespace DependsOnThat.VSIX
 				if ((null == window) || (null == window.Frame))
 				{
 					throw new NotSupportedException("Cannot create tool window");
+				}
+				await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+				var dte = await ServiceProvider.GetServiceAsync(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+				Assumes.Present(dte);
+				var documentsService = new DocumentsService(dte);
+				var componentModel = await ServiceProvider.GetServiceAsync(typeof(SComponentModel)) as IComponentModel;
+				Assumes.Present(componentModel);
+				var workspace = componentModel.GetService<VisualStudioWorkspace>();
+				var roslynService = new RoslynService(workspace);
+				if (window.Content is DependencyGraphToolWindowControl content)
+				{
+					content.DataContext = new DependencyGraphToolWindowViewModel(package.JoinableTaskFactory, documentsService, roslynService);
 				}
 			});
 		}
