@@ -17,7 +17,11 @@ namespace DependsOnThat.Graph
 		private static async Task BuildGraphFromRoots(NodeGraph graph, Solution solution, CancellationToken ct)
 		{
 			var seen = new Dictionary<ITypeSymbol, TypeNode>();
-			var toVisit = new Stack<TypeNode>(graph.Roots.OfType<TypeNode>());
+			var toVisit = new Stack<TypeNode>();
+			foreach (var typeRoot in graph.Roots.OfType<TypeNode>())
+			{
+				PushToVisit(typeRoot.Symbol, typeRoot);
+			}
 
 			var lp = new LoopProtection();
 			// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
@@ -41,12 +45,17 @@ namespace DependsOnThat.Graph
 					if (!seen.TryGetValue(dependency, out var node))
 					{
 						node = new TypeNode(dependency);
-						seen[dependency] = node;
-						toVisit.Push(node);
+						PushToVisit(dependency, node);
 					}
 
 					current.AddForwardLink(node);
 				}
+			}
+
+			void PushToVisit(ITypeSymbol symbol, TypeNode newNode)
+			{
+				seen[symbol] = newNode;
+				toVisit.Push(newNode);
 			}
 		}
 	}
