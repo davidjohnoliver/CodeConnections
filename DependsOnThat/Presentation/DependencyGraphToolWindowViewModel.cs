@@ -7,13 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using DependsOnThat.Disposables;
+using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
 using DependsOnThat.Services;
 using Microsoft.VisualStudio.Threading;
+using QuickGraph;
 
 namespace DependsOnThat.Presentation
 {
-	internal class DependencyGraphToolWindowViewModel
+	internal class DependencyGraphToolWindowViewModel : ViewModelBase
 	{
 		private readonly IDocumentsService _documentsService;
 		private readonly IRoslynService _roslynService;
@@ -21,7 +23,13 @@ namespace DependsOnThat.Presentation
 		private readonly HashSet<string> _rootDocuments = new HashSet<string>();
 		private readonly SerialDisposable _graphUpdatesRegistration = new SerialDisposable();
 
-		private NodeGraph? _graph;
+
+		private IBidirectionalGraph<DisplayNode, DisplayEdge>? _graph;
+		public IBidirectionalGraph<DisplayNode, DisplayEdge>? Graph { get => _graph; set => OnValueSet(ref _graph, value); }
+
+		private static IBidirectionalGraph<DisplayNode, DisplayEdge> Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
+
+		public int ExtensionDepth { get; set; } = 1; //TODO: should be user-configured
 
 		public ICommand AddActiveDocumentAsRootCommand { get; }
 		public ICommand ClearRootsCommand { get; }
@@ -59,12 +67,19 @@ namespace DependsOnThat.Presentation
 					_graphUpdatesRegistration.Disposable = cd;
 					var ct = cd.Token;
 					var rootSymbols = await _roslynService.GetDeclaredSymbolsFromFilePaths(_rootDocuments, ct).ToListAsync(ct);
-					_graph = await NodeGraph.BuildGraphFromRoots(rootSymbols, _roslynService.GetCurrentSolution(), ct);
+					var nodeGraph = await NodeGraph.BuildGraphFromRoots(rootSymbols, _roslynService.GetCurrentSolution(), ct);
+					await _joinableTaskFactory.SwitchToMainThreadAsync(ct);
+
+					if (ct.IsCancellationRequested)
+					{
+						return;
+					}
+					Graph = nodeGraph?.GetDisplaySubgraph(ExtensionDepth) ?? Empty;
 				});
 			}
 			else
 			{
-				_graph = null;
+				Graph = Empty;
 			}
 		}
 

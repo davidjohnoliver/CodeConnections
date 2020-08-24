@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System.Windows.Controls;
+using GraphSharp.Controls.Zoom;
 
 namespace DependsOnThat.Views
 {
@@ -8,6 +9,7 @@ namespace DependsOnThat.Views
 	{
 		public DependencyGraphToolWindowControl()
 		{
+			typeof(ZoomControl).ToString(); // Force an explicit dependency on GraphSharp here, so that assembly is resolved before parsing Xaml
 			this.InitializeComponent();
 		}
 	}

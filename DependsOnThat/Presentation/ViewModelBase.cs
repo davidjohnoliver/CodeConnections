@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,9 +12,9 @@ namespace DependsOnThat.Presentation
 {
 	public abstract class ViewModelBase : INotifyPropertyChanged
 	{
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
-		protected void OnValueSet<T>(ref T currentValue, T newValue, [CallerMemberName] string name = null)
+		protected void OnValueSet<T>(ref T currentValue, T newValue, [CallerMemberName] string? name = null)
 		{
 			if (!Equals(currentValue, newValue))
 			{

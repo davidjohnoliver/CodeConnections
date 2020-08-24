@@ -1,18 +1,50 @@
 ﻿<UserControl x:Class="DependsOnThat.Views.DependencyGraphToolWindowControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
-             Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
-             Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
-             Name="MyToolWindow">
-    <Grid>
-        <StackPanel Orientation="Vertical">
-            <Button Margin="10" Content="Extend graph from current document" Command="{Binding AddActiveDocumentAsRootCommand}"/>
-            <Button Margin="10" Content="Clear extension points" Command="{Binding ClearRootsCommand}"/>
-        </StackPanel>
-    </Grid>
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+			 xmlns:local="clr-namespace:DependsOnThat.Views"
+			 xmlns:presentation="clr-namespace:DependsOnThat.Presentation"
+			 xmlns:graphZoom="clr-namespace:GraphSharp.Controls.Zoom;assembly=GraphSharp.Controls"
+			 xmlns:graphControls="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+			 Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
+			 Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
+			 mc:Ignorable="d"
+			 d:DesignHeight="300"
+			 d:DesignWidth="300"
+			 Name="MyToolWindow">
+	<UserControl.Resources>
+		<DataTemplate DataType="{x:Type presentation:DisplayNode}">
+			<TextBlock Text="{Binding DisplayString}" />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type presentation:DisplayEdge}">
+			<TextBlock Text="{Binding Label}" />
+		</DataTemplate>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Button Margin="10"
+				Grid.Row="0"
+				Grid.Column="0"
+				Content="Extend graph from current document"
+				Command="{Binding AddActiveDocumentAsRootCommand}" />
+		<Button Margin="10"
+				Grid.Row="0"
+				Grid.Column="1"
+				Content="Clear extension points"
+				Command="{Binding ClearRootsCommand}" />
+		<graphZoom:ZoomControl Grid.Row="1"
+							   Grid.ColumnSpan="3">
+			<local:DependencyGraphLayout DisplayGraph="{Binding Graph}" />
+		</graphZoom:ZoomControl>
+	</Grid>
 </UserControl>
