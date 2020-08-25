@@ -61,11 +61,16 @@ namespace DependsOnThat.Presentation
 		{
 			if (_rootDocuments.Count > 0)
 			{
+				var cd = new CancellationDisposable();
+				_graphUpdatesRegistration.Disposable = cd;
+				var ct = cd.Token;
 				_joinableTaskFactory.RunAsync(async () =>
 				{
-					var cd = new CancellationDisposable();
-					_graphUpdatesRegistration.Disposable = cd;
-					var ct = cd.Token;
+					if (ct.IsCancellationRequested)
+					{
+						return;
+					}
+
 					var rootSymbols = await _roslynService.GetDeclaredSymbolsFromFilePaths(_rootDocuments, ct).ToListAsync(ct);
 					var nodeGraph = await NodeGraph.BuildGraphFromRoots(rootSymbols, _roslynService.GetCurrentSolution(), ct);
 					await _joinableTaskFactory.SwitchToMainThreadAsync(ct);
