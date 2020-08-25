@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 // ******************************************************************
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +31,7 @@ namespace DependsOnThat.Disposables
         private readonly object _gate = new object();
 
         private bool _disposed;
-        private List<IDisposable> _disposables;
+        private List<IDisposable?> _disposables;
         private int _count;
         private const int SHRINK_THRESHOLD = 64;
 
@@ -38,7 +40,7 @@ namespace DependsOnThat.Disposables
         /// </summary>
         public CompositeDisposable()
         {
-            _disposables = new List<IDisposable>();
+            _disposables = new List<IDisposable?>();
         }
 
         /// <summary>
@@ -51,7 +53,7 @@ namespace DependsOnThat.Disposables
             if (capacity < 0)
                 throw new ArgumentOutOfRangeException("capacity");
 
-            _disposables = new List<IDisposable>(capacity);
+            _disposables = new List<IDisposable?>(capacity);
         }
 
         /// <summary>
@@ -64,7 +66,7 @@ namespace DependsOnThat.Disposables
             if (disposables == null)
                 throw new ArgumentNullException("disposables");
 
-            _disposables = new List<IDisposable>(disposables);
+            _disposables = new List<IDisposable?>(disposables);
             _count = _disposables.Count;
         }
 
@@ -78,7 +80,7 @@ namespace DependsOnThat.Disposables
             if (disposables == null)
                 throw new ArgumentNullException("disposables");
 
-            _disposables = new List<IDisposable>(disposables);
+            _disposables = new List<IDisposable?>(disposables);
             _count = _disposables.Count;
         }
 
@@ -151,7 +153,7 @@ namespace DependsOnThat.Disposables
                         if (_disposables.Capacity > SHRINK_THRESHOLD && _count < _disposables.Capacity / 2)
                         {
                             var old = _disposables;
-                            _disposables = new List<IDisposable>(_disposables.Capacity / 2);
+                            _disposables = new List<IDisposable?>(_disposables.Capacity / 2);
 
                             foreach (var d in old)
                                 if (d != null)
@@ -172,7 +174,7 @@ namespace DependsOnThat.Disposables
         /// </summary>
         public void Dispose()
         {
-            var currentDisposables = default(IDisposable[]);
+            var currentDisposables = default(IDisposable?[]);
             lock (_gate)
             {
                 if (!_disposed)
@@ -197,7 +199,7 @@ namespace DependsOnThat.Disposables
         /// </summary>
         public void Clear()
         {
-            var currentDisposables = default(IDisposable[]);
+            var currentDisposables = default(IDisposable?[]);
             lock (_gate)
             {
                 currentDisposables = _disposables.ToArray();
@@ -265,8 +267,10 @@ namespace DependsOnThat.Disposables
 
             lock (_gate)
             {
-                res = _disposables.Where(d => d != null).ToList();
-            }
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type. - The Where() clause ensures that the resulting list is non-nullable
+				res = _disposables.Where(d => d != null).ToList();
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+			}
 
             return res.GetEnumerator();
         }

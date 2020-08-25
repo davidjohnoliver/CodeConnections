@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 // ******************************************************************
+#nullable enable
+
 using System;
 
 namespace DependsOnThat.Disposables
@@ -24,7 +26,7 @@ namespace DependsOnThat.Disposables
     public sealed class SerialDisposable : ICancelable
     {
         private readonly object _gate = new object();
-        private IDisposable _current;
+        private IDisposable? _current;
         private bool _disposed;
 
         /// <summary>
@@ -52,7 +54,7 @@ namespace DependsOnThat.Disposables
         /// Gets or sets the underlying disposable.
         /// </summary>
         /// <remarks>If the SerialDisposable has already been disposed, assignment to this property causes immediate disposal of the given disposable object. Assigning this property disposes the previous disposable object.</remarks>
-        public IDisposable Disposable
+        public IDisposable? Disposable
         {
             get
             {
