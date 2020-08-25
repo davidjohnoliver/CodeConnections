@@ -25,12 +25,23 @@ namespace DependsOnThat.Presentation
 
 
 		private IBidirectionalGraph<DisplayNode, DisplayEdge>? _graph;
+		private int _extensionDepth = 1;
+
 		public IBidirectionalGraph<DisplayNode, DisplayEdge>? Graph { get => _graph; set => OnValueSet(ref _graph, value); }
 
 		private static IBidirectionalGraph<DisplayNode, DisplayEdge> Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
 
-		public int ExtensionDepth { get; set; } = 1; //TODO: should be user-configured
-
+		public int ExtensionDepth
+		{
+			get => _extensionDepth;
+			set
+			{
+				if (OnValueSet(ref _extensionDepth, value))
+				{
+					TryUpdateGraph();
+				}
+			}
+		}
 		public ICommand AddActiveDocumentAsRootCommand { get; }
 		public ICommand ClearRootsCommand { get; }
 

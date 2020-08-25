@@ -8,6 +8,7 @@
 			 xmlns:presentation="clr-namespace:DependsOnThat.Presentation"
 			 xmlns:graphZoom="clr-namespace:GraphSharp.Controls.Zoom;assembly=GraphSharp.Controls"
 			 xmlns:graphControls="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+			 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 			 Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
 			 Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
 			 mc:Ignorable="d"
@@ -26,6 +27,7 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
@@ -42,8 +44,13 @@
 				Grid.Column="1"
 				Content="Clear extension points"
 				Command="{Binding ClearRootsCommand}" />
+		<xctk:IntegerUpDown Grid.Row="0"
+							Grid.Column="2"
+							Value="{Binding ExtensionDepth, Mode=TwoWay}"
+							Minimum="0"
+							Maximum="100" />
 		<graphZoom:ZoomControl Grid.Row="1"
-							   Grid.ColumnSpan="3">
+							   Grid.ColumnSpan="4">
 			<local:DependencyGraphLayout DisplayGraph="{Binding Graph}" />
 		</graphZoom:ZoomControl>
 	</Grid>
