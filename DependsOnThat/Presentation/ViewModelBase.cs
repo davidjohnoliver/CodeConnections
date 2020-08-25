@@ -14,13 +14,22 @@ namespace DependsOnThat.Presentation
 	{
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		protected void OnValueSet<T>(ref T currentValue, T newValue, [CallerMemberName] string? name = null)
+		/// <summary>
+		/// Call from a bindable property to raise the <see cref="PropertyChanged"/> event when needed.
+		/// </summary>
+		/// <param name="currentValue">Pass the backing field here.</param>
+		/// <param name="newValue">Pass the set value here.</param>
+		/// <returns>True if the value changed, false if the new value is equal to the previous.</returns>
+		protected bool OnValueSet<T>(ref T currentValue, T newValue, [CallerMemberName] string? name = null)
 		{
 			if (!Equals(currentValue, newValue))
 			{
 				currentValue = newValue;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+				return true;
 			}
+
+			return false;
 		}
 	}
 }
