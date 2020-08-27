@@ -32,6 +32,7 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Button Margin="10"
@@ -44,14 +45,20 @@
 				Grid.Column="1"
 				Content="Clear extension points"
 				Command="{Binding ClearRootsCommand}" />
-		<xctk:IntegerUpDown Grid.Row="0"
+		<xctk:IntegerUpDown Margin="10"
+							Grid.Row="0"
 							Grid.Column="2"
 							Value="{Binding ExtensionDepth, Mode=TwoWay}"
 							Minimum="0"
 							Maximum="100" />
-		<graphZoom:ZoomControl Grid.Row="1"
+		<Button Margin="10"
+				Grid.Row="1"
+				Grid.ColumnSpan="3"
+				Content="Set Git modified files as extension points"
+				Command="{Binding UseGitModifiedFilesAsRootCommand}"/>
+		<graphZoom:ZoomControl Grid.Row="2"
 							   Grid.ColumnSpan="4">
 			<local:DependencyGraphLayout DisplayGraph="{Binding Graph}" />
-		</graphZoom:ZoomControl>
+			</graphZoom:ZoomControl>
 	</Grid>
 </UserControl>

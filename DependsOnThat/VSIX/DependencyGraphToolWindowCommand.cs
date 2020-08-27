@@ -96,7 +96,7 @@ namespace DependsOnThat.VSIX
 		{
 			this.package.JoinableTaskFactory.RunAsync(async delegate
 			{
-				ToolWindowPane window = await this.package.ShowToolWindowAsync(typeof(DependencyGraphToolWindow), 0, true, this.package.DisposalToken);
+				var window = await this.package.ShowToolWindowAsync(typeof(DependencyGraphToolWindow), 0, true, this.package.DisposalToken);
 				if ((null == window) || (null == window.Frame))
 				{
 					throw new NotSupportedException("Cannot create tool window");
@@ -109,9 +109,10 @@ namespace DependsOnThat.VSIX
 				Assumes.Present(componentModel);
 				var workspace = componentModel.GetService<VisualStudioWorkspace>();
 				var roslynService = new RoslynService(workspace);
+				var gitService = GitService.GetServiceOrDefault(dte.Solution.FullName);
 				if (window.Content is DependencyGraphToolWindowControl content)
 				{
-					content.DataContext = new DependencyGraphToolWindowViewModel(package.JoinableTaskFactory, documentsService, roslynService);
+					content.DataContext = new DependencyGraphToolWindowViewModel(package.JoinableTaskFactory, documentsService, roslynService, gitService);
 				}
 			});
 		}
