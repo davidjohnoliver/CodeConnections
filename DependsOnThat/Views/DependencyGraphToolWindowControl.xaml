@@ -53,12 +53,19 @@
 							Maximum="100" />
 		<Button Margin="10"
 				Grid.Row="1"
-				Grid.ColumnSpan="3"
+				Grid.Column="0"
+				Grid.ColumnSpan="2"
 				Content="Set Git modified files as extension points"
-				Command="{Binding UseGitModifiedFilesAsRootCommand}"/>
+				Command="{Binding UseGitModifiedFilesAsRootCommand}" />
+		<ComboBox Margin="10"
+				  Grid.Row="1"
+				  Grid.Column="2"
+				  ItemsSource="{Binding ElementName=GraphLayout, Path=LayoutAlgorithmFactory.AlgorithmTypes}"
+				  SelectedItem="{Binding ElementName=GraphLayout, Path=LayoutAlgorithmType, Mode=TwoWay}" />
 		<graphZoom:ZoomControl Grid.Row="2"
 							   Grid.ColumnSpan="4">
-			<local:DependencyGraphLayout DisplayGraph="{Binding Graph}" />
-			</graphZoom:ZoomControl>
+			<local:DependencyGraphLayout x:Name="GraphLayout"
+										 DisplayGraph="{Binding Graph}" />
+		</graphZoom:ZoomControl>
 	</Grid>
 </UserControl>
