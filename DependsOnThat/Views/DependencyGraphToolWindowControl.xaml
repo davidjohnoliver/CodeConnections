@@ -6,6 +6,7 @@
 			 xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
 			 xmlns:local="clr-namespace:DependsOnThat.Views"
 			 xmlns:presentation="clr-namespace:DependsOnThat.Presentation"
+			 xmlns:converters="clr-namespace:DependsOnThat.Presentation.Converters"
 			 xmlns:graphZoom="clr-namespace:GraphSharp.Controls.Zoom;assembly=GraphSharp.Controls"
 			 xmlns:graphControls="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
 			 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
@@ -16,8 +17,17 @@
 			 d:DesignWidth="300"
 			 Name="MyToolWindow">
 	<UserControl.Resources>
+		<!--TODO: should use editor colour scheme https://stackoverflow.com/questions/18913208/colors-in-visual-studio-extension-->
+		<converters:DisplayNodeBackgroundConverter x:Key="DisplayNodeBackgroundConverter"
+												   DefaultBrush="LightGray"
+												   RootNodeBrush="LimeGreen" />
 		<DataTemplate DataType="{x:Type presentation:DisplayNode}">
-			<TextBlock Text="{Binding DisplayString}" />
+			<Border CornerRadius="5"
+					Background="{Binding Converter={StaticResource DisplayNodeBackgroundConverter}}"
+					BorderBrush="Black"
+					BorderThickness="1">
+				<TextBlock Text="{Binding DisplayString}" />
+			</Border>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type presentation:DisplayEdge}">
 			<TextBlock Text="{Binding Label}" />

@@ -14,6 +14,7 @@ namespace DependsOnThat.Extensions
 		{
 			TypeNode typeNode => typeNode.Symbol.Name,
 			_ => ""
-		});
+		},
+			node.IsRoot);
 	}
 }

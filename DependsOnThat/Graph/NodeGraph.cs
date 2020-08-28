@@ -22,6 +22,10 @@ namespace DependsOnThat.Graph
 		private NodeGraph(IEnumerable<Node> roots)
 		{
 			Roots = new List<Node>(roots);
+			foreach (var node in Roots)
+			{
+				node.IsRoot = true;
+			}
 		}
 
 		public static Task<NodeGraph?> BuildGraphFromRoots(IEnumerable<ITypeSymbol> roots, Solution solution, CancellationToken ct)

@@ -13,9 +13,12 @@ namespace DependsOnThat.Presentation
 	{
 		public string DisplayString { get; }
 
-		public DisplayNode(string displayString)
+		public bool IsRoot { get; }
+
+		public DisplayNode(string displayString, bool isRoot)
 		{
 			DisplayString = displayString;
+			IsRoot = isRoot;
 		}
 
 		public override bool Equals(object obj) => obj is DisplayNode otherNode && otherNode.DisplayString == DisplayString;

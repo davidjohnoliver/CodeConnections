@@ -27,6 +27,11 @@ namespace DependsOnThat.Graph
 		public IReadOnlyCollection<Node> BackLinks => _backLinks;
 
 		/// <summary>
+		/// Is this one of the roots of the graph?
+		/// </summary>
+		public bool IsRoot { get; set; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="forwardLink"></param>
