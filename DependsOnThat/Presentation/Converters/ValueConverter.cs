@@ -11,7 +11,7 @@ using System.Windows.Data;
 namespace DependsOnThat.Presentation.Converters
 {
 	/// <summary>
-	/// A type-checked <see cref="IValueConverter"/>
+	/// An <see cref="IValueConverter"/> with type-hinting
 	/// </summary>
 	/// <typeparam name="TValue">The type of the value expected from the binding.</typeparam>
 	/// <typeparam name="TTarget">The type being converted to.</typeparam>
