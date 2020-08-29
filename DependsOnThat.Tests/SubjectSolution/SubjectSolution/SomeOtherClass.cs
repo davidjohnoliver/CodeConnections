@@ -12,6 +12,12 @@ namespace SubjectSolution
 			array.ToString();
 		}
 
+		private bool DoMoreStuff()
+		{
+			var array = new int[12];
+			return array.AnyOrNone();
+		}
+
 		public void TypeConstraintDependence<T>() where T : SomeDeeperClass
 		{
 

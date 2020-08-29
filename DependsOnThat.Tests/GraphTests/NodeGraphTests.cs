@@ -71,5 +71,29 @@ namespace DependsOnThat.Tests.GraphTests
 				Assert.GreaterOrEqual(root.BackLinks.Count, 1);
 			}
 		}
+
+		[Test]
+		public async Task When_Extension_Method()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeOtherClass.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+
+				var model = compilation.GetSemanticModel(someClassTree);
+
+				var classSymbol = rootNode.GetAllDeclaredTypes(model).First();
+				Assert.AreEqual("SomeOtherClass", classSymbol.Name);
+
+				var graph = await NodeGraph.BuildGraphFromRoots(new[] { classSymbol }, workspace.CurrentSolution, ct: default);
+
+				var root = graph.Roots.Single();
+				Assert.AreEqual(classSymbol, (root as TypeNode).Symbol);
+
+				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "EnumerableExtensions");
+			}
+		}
 	}
 }

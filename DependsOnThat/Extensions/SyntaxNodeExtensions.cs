@@ -34,7 +34,12 @@ namespace DependsOnThat.Extensions
 		/// symbols in the same solution are returned.
 		/// </param>
 		public static IEnumerable<ITypeSymbol> GetAllReferencedTypeSymbols(this SyntaxNode syntaxNode, SemanticModel model, bool includeExternalMetadata = true, bool includeTypeParameters = false)
-			=> GetAllReferencedSymbols(syntaxNode, model, includeExternalMetadata).OfType<ITypeSymbol>()
+			=> GetAllReferencedSymbols(syntaxNode, model, includeExternalMetadata)
+				.Select(s => s as ITypeSymbol
+					// Extension method invocations typically otherwise yield no explicit reference to the type
+					?? (s as IMethodSymbol)?.ContainingType)
+				.Trim()
+				.Distinct()
 				.Where(s => includeTypeParameters ? true : !(s is ITypeParameterSymbol));
 
 		/// <summary>

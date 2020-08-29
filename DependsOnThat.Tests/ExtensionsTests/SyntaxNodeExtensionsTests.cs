@@ -33,5 +33,20 @@ namespace DependsOnThat.Tests.ExtensionsTests
 				Assert.IsTrue(symbols.Any(s => s.Name == "SomeClassCore"));
 			}
 		}
+		[Test]
+		public async Task When_Extension_Method()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeOtherClass.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+				var model = compilation.GetSemanticModel(someClassTree);
+				var symbols = rootNode.GetAllReferencedTypeSymbols(model, includeExternalMetadata: false).ToArray();
+
+				AssertEx.Contains(symbols, s => s.Name == "EnumerableExtensions");
+			}
+		}
 	}
 }
