@@ -24,7 +24,7 @@ namespace DependsOnThat.Views
 			OverlapRemovalAlgorithmType = "FSA";
 			AsyncCompute = true;
 
-			LayoutAlgorithmType = "LinLog"; // TODO: should be user-configurable
+			LayoutAlgorithmType = "LinLog";
 		}
 
 		public TimeSpan? RenderTime
