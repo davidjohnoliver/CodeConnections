@@ -66,6 +66,7 @@
     <Compile Include="Graph\NodeGraph.cs" />
     <Compile Include="Graph\TypeNode.cs" />
     <Compile Include="Presentation\Converters\DisplayNodeBackgroundConverter.cs" />
+    <Compile Include="Presentation\Converters\OperationTimeTextConverter.cs" />
     <Compile Include="Presentation\Converters\ValueConverter.cs" />
     <Compile Include="Presentation\DependencyGraphToolWindowViewModel.cs" />
     <Compile Include="Presentation\DisplayEdge.cs" />

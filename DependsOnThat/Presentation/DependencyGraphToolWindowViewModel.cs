@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,11 +26,11 @@ namespace DependsOnThat.Presentation
 		private readonly SerialDisposable _graphUpdatesRegistration = new SerialDisposable();
 
 
-		private IBidirectionalGraph<DisplayNode, DisplayEdge>? _graph;
+		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
 		private int _extensionDepth = 1;
 		private bool _shouldUseGitForRoots;
 
-		public IBidirectionalGraph<DisplayNode, DisplayEdge>? Graph { get => _graph; set => OnValueSet(ref _graph, value); }
+		public IBidirectionalGraph<DisplayNode, DisplayEdge> Graph { get => _graph; set => OnValueSet(ref _graph, value); }
 
 		private static IBidirectionalGraph<DisplayNode, DisplayEdge> Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
 
@@ -44,6 +45,10 @@ namespace DependsOnThat.Presentation
 				}
 			}
 		}
+
+		private TimeSpan? _graphingtime;
+		public TimeSpan? GraphingTime { get => _graphingtime; set => OnValueSet(ref _graphingtime, value); }
+
 		public ICommand AddActiveDocumentAsRootCommand { get; }
 		public ICommand ClearRootsCommand { get; }
 		public ICommand UseGitModifiedFilesAsRootCommand { get; }
@@ -85,8 +90,11 @@ namespace DependsOnThat.Presentation
 			var cd = new CancellationDisposable();
 			_graphUpdatesRegistration.Disposable = cd;
 			var ct = cd.Token;
+			var stopwatch = Stopwatch.StartNew();
+			GraphingTime = null;
 			_joinableTaskFactory.RunAsync(async () =>
 			{
+
 				if (ct.IsCancellationRequested)
 				{
 					return;
@@ -102,13 +110,19 @@ namespace DependsOnThat.Presentation
 					Graph = Empty;
 				}
 				var nodeGraph = await NodeGraph.BuildGraphFromRoots(rootSymbols, _roslynService.GetCurrentSolution(), ct);
+				var graph = nodeGraph?.GetDisplaySubgraph(ExtensionDepth) ?? Empty;
 				await _joinableTaskFactory.SwitchToMainThreadAsync(ct);
 
 				if (ct.IsCancellationRequested)
 				{
 					return;
 				}
-				Graph = nodeGraph?.GetDisplaySubgraph(ExtensionDepth) ?? Empty;
+				stopwatch.Stop();
+				if (graph.VertexCount > 0)
+				{
+					GraphingTime = stopwatch.Elapsed;
+				}
+				Graph = graph;
 			});
 		}
 

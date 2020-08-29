@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace DependsOnThat.Views
 {
 	public class DependencyGraphLayout : GraphLayout<DisplayNode, DisplayEdge, IBidirectionalGraph<DisplayNode, DisplayEdge>?>
 	{
+		private readonly Stopwatch _stopwatch = new Stopwatch();
+
 		public DependencyGraphLayout()
 		{
 			OverlapRemovalParameters = new OverlapRemovalParameters() { HorizontalGap = 10, VerticalGap = 10 };
@@ -24,7 +27,14 @@ namespace DependsOnThat.Views
 			LayoutAlgorithmType = "LinLog"; // TODO: should be user-configurable
 		}
 
+		public TimeSpan? RenderTime
+		{
+			get { return (TimeSpan?)GetValue(RenderTimeProperty); }
+			set { SetValue(RenderTimeProperty, value); }
+		}
 
+		public static readonly DependencyProperty RenderTimeProperty =
+			DependencyProperty.Register("RenderTime", typeof(TimeSpan?), typeof(DependencyGraphLayout), new PropertyMetadata(null));
 
 		public object DisplayGraph
 		{
@@ -40,8 +50,28 @@ namespace DependsOnThat.Views
 
 		private void OnDisplayGraphChanged(object oldValue, object newValue)
 		{
+			StartTimer();
 			// Workaround for XamlParseException when binding directly to Graph property https://stackoverflow.com/questions/13007129/method-or-operation-not-implemented-error-on-binding
 			Graph = newValue as IBidirectionalGraph<DisplayNode, DisplayEdge>;
+#pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs - measuring low-level timing information
+			Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)CompleteTimer);
+#pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
+		}
+
+		private void StartTimer()
+		{
+			RenderTime = null;
+			_stopwatch.Reset();
+			_stopwatch.Start();
+		}
+
+		private void CompleteTimer()
+		{
+			_stopwatch.Stop();
+			if (VertexControls.Count > 0)
+			{
+				RenderTime = _stopwatch.Elapsed;
+			}
 		}
 	}
 }
