@@ -23,6 +23,8 @@ namespace DependsOnThat.Presentation.Converters
 			return $"{OperationType} took about {GetFormattedTime(value, culture)}";
 		}
 
+		protected override string ConvertNull(object parameter, CultureInfo culture) => ConvertInner(null, parameter, culture);
+
 		private string GetFormattedTime(TimeSpan value, CultureInfo culture)
 		{
 			if (value.TotalSeconds > 10)

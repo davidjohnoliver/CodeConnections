@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,11 +11,13 @@ using System.Windows.Media;
 
 namespace DependsOnThat.Presentation.Converters
 {
-	public class DisplayNodeBackgroundConverter : ValueConverter<DisplayNode, Brush>
+	public class DisplayNodeBackgroundConverter : ValueConverter<DisplayNode, Brush?>
 	{
-		public Brush DefaultBrush { get; set; }
-		public Brush RootNodeBrush { get; set; }
+		public Brush? DefaultBrush { get; set; }
+		public Brush? RootNodeBrush { get; set; }
 
-		protected override Brush ConvertInner(DisplayNode value, object parameter, CultureInfo culture) => value.IsRoot ? RootNodeBrush : DefaultBrush;
+		protected override Brush? ConvertInner(DisplayNode value, object parameter, CultureInfo culture) => value.IsRoot ? RootNodeBrush : DefaultBrush;
+
+		protected override Brush? ConvertNull(object parameter, CultureInfo culture) => null;
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -15,7 +17,7 @@ namespace DependsOnThat.Presentation.Converters
 	/// <typeparam name="TTarget">The type being converted to.</typeparam>
 	public abstract class ValueConverter<TValue, TTarget> : IValueConverter
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value switch
+		public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture) => value switch
 		{
 			TValue tValue => ConvertInner(tValue, parameter, culture),
 			null => ConvertNull(parameter, culture),
@@ -23,10 +25,10 @@ namespace DependsOnThat.Presentation.Converters
 		};
 
 		protected abstract TTarget ConvertInner(TValue value, object parameter, CultureInfo culture);
-		protected virtual TTarget ConvertNull(object parameter, CultureInfo culture) => ConvertInner(default(TValue), parameter, culture);
-		protected virtual object ConvertIncorrectType(object parameter, CultureInfo culture) => null;
+		protected abstract TTarget ConvertNull(object parameter, CultureInfo culture);
+		protected virtual object? ConvertIncorrectType(object parameter, CultureInfo culture) => null;
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value switch
+		public object? ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) => value switch
 		{
 			TTarget tValue => ConvertBackInner(tValue, parameter, culture),
 			null => ConvertBackNull(parameter, culture),
@@ -34,7 +36,7 @@ namespace DependsOnThat.Presentation.Converters
 		};
 
 		protected virtual TValue ConvertBackInner(TTarget value, object parameter, CultureInfo culture) => throw new NotSupportedException();
-		protected virtual TValue ConvertBackNull(object parameter, CultureInfo culture) => ConvertBackInner(default(TTarget), parameter, culture);
+		protected virtual TValue ConvertBackNull(object parameter, CultureInfo culture) => throw new NotSupportedException();
 		protected virtual object ConvertBackIncorrectType(object parameter, CultureInfo culture) => throw new NotSupportedException();
 	}
 }
