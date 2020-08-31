@@ -50,6 +50,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Additions\NullableAttributes.cs" />
     <Compile Include="Disposables\CancellationDisposable.cs" />
     <Compile Include="Disposables\CompositeDisposable.cs" />
     <Compile Include="Disposables\ICancelable.cs" />
