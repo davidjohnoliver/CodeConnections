@@ -55,6 +55,7 @@
     <Compile Include="Disposables\CompositeDisposable.cs" />
     <Compile Include="Disposables\ICancelable.cs" />
     <Compile Include="Disposables\SerialDisposable.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\FileStatusExtensions.cs" />
     <Compile Include="Extensions\NodeExtensions.cs" />
