@@ -28,8 +28,12 @@ namespace DependsOnThat.Graph
 			}
 		}
 
+		// Used by tests
 		public static Task<NodeGraph?> BuildGraphFromRoots(IEnumerable<ITypeSymbol> roots, Solution solution, CancellationToken ct)
-			=> BuildGraphFromRoots(roots.Select(s => new TypeNode(s)), solution, ct);
+			=> BuildGraphFromRoots(roots.Select(r => (default(string), r)), solution, ct);
+
+		public static Task<NodeGraph?> BuildGraphFromRoots(IEnumerable<(string? FilePath, ITypeSymbol Symbol)> roots, Solution solution, CancellationToken ct)
+			=> BuildGraphFromRoots(roots.Select(s => new TypeNode(s.Symbol, s.FilePath)), solution, ct);
 
 		public static async Task<NodeGraph?> BuildGraphFromRoots(IEnumerable<Node> roots, Solution solution, CancellationToken ct)
 		{

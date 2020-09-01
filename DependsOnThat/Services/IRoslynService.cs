@@ -18,6 +18,6 @@ namespace DependsOnThat.Services
 		/// <summary>
 		/// Get symbols of all types declared within the files at the supplied paths.
 		/// </summary>
-		IAsyncEnumerable<ITypeSymbol> GetDeclaredSymbolsFromFilePaths(IEnumerable<string> filePaths, CancellationToken ct);
+		IAsyncEnumerable<(string FilePath, ITypeSymbol Symbol)> GetDeclaredSymbolsFromFilePaths(IEnumerable<string> filePaths, CancellationToken ct);
 	}
 }

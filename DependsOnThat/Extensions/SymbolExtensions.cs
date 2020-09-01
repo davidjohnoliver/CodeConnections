@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -54,5 +55,28 @@ namespace DependsOnThat.Extensions
 
 			return await project.GetCompilationAsync(ct);
 		}
+
+		/// <summary>
+		/// Get the 'preferred' declaration from potentially multiple declarations for this symbol
+		/// </summary>
+		/// <remarks>
+		/// The 'preference' is for the filename with fewest suffixes (eg Foo.cs over Foo.suffix.cs), with ties broken by the 
+		/// shortest total filepath (dir/Foo.cs over dir/subdir/Foo.cs).
+		/// </remarks>
+		public static string? GetPreferredDeclaration(this ISymbol symbol)
+		{
+			if (symbol.DeclaringSyntaxReferences.Length == 1)
+			{
+				return symbol.DeclaringSyntaxReferences[0].SyntaxTree.FilePath;
+			}
+
+			return GetPreferredSymbolDeclaration(symbol.DeclaringSyntaxReferences.Select(sr => sr.SyntaxTree.FilePath));
+		}
+
+		public static string? GetPreferredSymbolDeclaration(IEnumerable<string> declarations) => declarations
+			.Where(s => !string.IsNullOrWhiteSpace(s))
+			.OrderBy(s => Path.GetFileName(s).Split('.').Length)
+			.ThenBy(s => s.Length)
+			.FirstOrDefault();
 	}
 }

@@ -44,7 +44,7 @@ namespace DependsOnThat.Graph
 				{
 					if (!seen.TryGetValue(dependency, out var node))
 					{
-						node = new TypeNode(dependency);
+						node = new TypeNode(dependency, dependency.GetPreferredDeclaration());
 						PushToVisit(dependency, node);
 					}
 

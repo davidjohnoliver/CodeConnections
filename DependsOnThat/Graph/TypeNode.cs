@@ -16,9 +16,12 @@ namespace DependsOnThat.Graph
 	{
 		public ITypeSymbol Symbol { get; }
 
-		public TypeNode(ITypeSymbol typeSymbol)
+		public string? FilePath { get; }
+
+		public TypeNode(ITypeSymbol typeSymbol, string? filePath)
 		{
 			Symbol = typeSymbol;
+			FilePath = filePath;
 		}
 
 		public override string ToString()
