@@ -46,6 +46,22 @@ namespace DependsOnThat.Presentation
 			}
 		}
 
+		private DisplayNode? _selectedNode;
+		public DisplayNode? SelectedNode
+		{
+			get => _selectedNode; 
+			set
+			{
+				if (OnValueSet(ref _selectedNode, value))
+				{
+					if (value?.FilePath != null)
+					{
+						_documentsService.OpenFileAsPreview(value.FilePath);
+					}
+				}
+			}
+		}
+
 		private TimeSpan? _graphingtime;
 		public TimeSpan? GraphingTime { get => _graphingtime; set => OnValueSet(ref _graphingtime, value); }
 

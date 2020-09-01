@@ -81,7 +81,8 @@
 		<graphZoom:ZoomControl Grid.Row="2"
 							   Grid.ColumnSpan="4">
 			<local:DependencyGraphLayout x:Name="GraphLayout"
-										 DisplayGraph="{Binding Graph}" />
+										 DisplayGraph="{Binding Graph}"
+										 SelectedVertex="{Binding SelectedNode, Mode=TwoWay}" />
 		</graphZoom:ZoomControl>
 		<TextBlock Grid.Row="3"
 				   Text="{Binding GraphingTime, Converter={StaticResource GraphingTimeTextConverter}}" />

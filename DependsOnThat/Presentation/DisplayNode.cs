@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,10 +17,13 @@ namespace DependsOnThat.Presentation
 
 		public bool IsRoot { get; }
 
-		public DisplayNode(string displayString, bool isRoot)
+		public string? FilePath { get; }
+
+		public DisplayNode(string displayString, bool isRoot, string? filePath)
 		{
 			DisplayString = displayString;
 			IsRoot = isRoot;
+			FilePath = filePath;
 		}
 
 		public override bool Equals(object obj) => obj is DisplayNode otherNode && otherNode.DisplayString == DisplayString;
