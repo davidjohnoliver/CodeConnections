@@ -2,7 +2,14 @@
 
 using System;
 using System.Runtime.InteropServices;
+using DependsOnThat.Disposables;
+using DependsOnThat.Extensions;
+using DependsOnThat.Presentation;
+using DependsOnThat.Services;
 using DependsOnThat.Views;
+using Microsoft;
+using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 
 namespace DependsOnThat.VSIX
@@ -21,6 +28,7 @@ namespace DependsOnThat.VSIX
 	[Guid("a0c8e2a7-bd07-4d13-9e3c-855ecc9a027c")]
 	public class DependencyGraphToolWindow : ToolWindowPane
 	{
+		private readonly CompositeDisposable _disposables = new CompositeDisposable();
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DependencyGraphToolWindow"/> class.
 		/// </summary>
@@ -32,6 +40,46 @@ namespace DependsOnThat.VSIX
 			// we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
 			// the object returned by the Content property.
 			this.Content = new DependencyGraphToolWindowControl();
+		}
+
+		protected override void Initialize()
+		{
+			base.Initialize();
+
+			InitializeViewModel();
+		}
+
+		private void InitializeViewModel()
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+
+			var dte = GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+			Assumes.Present(dte);
+			var documentsService = new DocumentsService(dte);
+
+			var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;
+			Assumes.Present(componentModel);
+			var workspace = componentModel.GetService<VisualStudioWorkspace>();
+			var roslynService = new RoslynService(workspace);
+
+			var gitService = GitService.GetServiceOrDefault(dte.Solution.FullName);
+
+			if (Content is DependencyGraphToolWindowControl content)
+			{
+				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService)
+					.DisposeWith(_disposables);
+			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			if (Content is DependencyGraphToolWindowControl content)
+			{
+				content.DataContext = null;
+			}
+
+			_disposables.Dispose();
 		}
 	}
 }

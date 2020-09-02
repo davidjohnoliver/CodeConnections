@@ -16,7 +16,7 @@ using QuickGraph;
 
 namespace DependsOnThat.Presentation
 {
-	internal class DependencyGraphToolWindowViewModel : ViewModelBase
+	internal class DependencyGraphToolWindowViewModel : ViewModelBase, IDisposable
 	{
 		private readonly IDocumentsService _documentsService;
 		private readonly IRoslynService _roslynService;
@@ -147,6 +147,11 @@ namespace DependsOnThat.Presentation
 			_rootDocuments.Clear();
 			_shouldUseGitForRoots = false;
 			TryUpdateGraph();
+		}
+
+		public void Dispose()
+		{
+			_graphUpdatesRegistration.Dispose();
 		}
 	}
 }
