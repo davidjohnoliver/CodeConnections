@@ -28,7 +28,7 @@ namespace DependsOnThat.VSIX
 	[PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 	[Guid(DependsOnThatPackage.PackageGuidString)]
 	[ProvideMenuResource("Menus.ctmenu", 1)]
-	[ProvideToolWindow(typeof(DependsOnThat.Views.DependencyGraphToolWindow))]
+	[ProvideToolWindow(typeof(DependsOnThat.VSIX.DependencyGraphToolWindow))]
 	public sealed class DependsOnThatPackage : AsyncPackage
 	{
 		/// <summary>

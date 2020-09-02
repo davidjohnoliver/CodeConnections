@@ -2,9 +2,10 @@
 
 using System;
 using System.Runtime.InteropServices;
+using DependsOnThat.Views;
 using Microsoft.VisualStudio.Shell;
 
-namespace DependsOnThat.Views
+namespace DependsOnThat.VSIX
 {
 	/// <summary>
 	/// This class implements the tool window exposed by this package and hosts a user control.

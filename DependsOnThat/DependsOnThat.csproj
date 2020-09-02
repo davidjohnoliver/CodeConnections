@@ -85,7 +85,7 @@
     <Compile Include="Views\DependencyGraphLayout.cs" />
     <Compile Include="VSIX\DependsOnThatPackage.cs" />
     <Compile Include="Utilities\LoopProtection.cs" />
-    <Compile Include="Views\DependencyGraphToolWindow.cs" />
+    <Compile Include="VSIX\DependencyGraphToolWindow.cs" />
     <Compile Include="VSIX\DependencyGraphToolWindowCommand.cs" />
     <Compile Include="Views\DependencyGraphToolWindowControl.xaml.cs">
       <DependentUpon>DependencyGraphToolWindowControl.xaml</DependentUpon>
