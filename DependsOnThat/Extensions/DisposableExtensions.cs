@@ -22,9 +22,7 @@ namespace DependsOnThat.Extensions
 				composite.Add(disposable);
 			}
 
-#pragma warning disable CS8603 // Possible null reference return. - The nullability of T (which we don't know) will be respected by the return since we're just returning the input value. NotNullIfNotNull doesn't seem to work.
-			return disposable;
-#pragma warning restore CS8603 // Possible null reference return.
+			return disposable!;
 		}
 	}
 }

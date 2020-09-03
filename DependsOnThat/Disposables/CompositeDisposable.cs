@@ -267,9 +267,7 @@ namespace DependsOnThat.Disposables
 
             lock (_gate)
             {
-#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type. - The Where() clause ensures that the resulting list is non-nullable
-				res = _disposables.Where(d => d != null).ToList();
-#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+				res = _disposables.Where(d => d != null).ToList()!;
 			}
 
             return res.GetEnumerator();
