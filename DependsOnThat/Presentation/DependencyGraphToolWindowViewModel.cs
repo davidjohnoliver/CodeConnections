@@ -73,6 +73,7 @@ namespace DependsOnThat.Presentation
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));
+			_documentsService.ActiveDocumentChanged += OnActiveDocumentChanged;
 			_roslynService = roslynService ?? throw new ArgumentNullException(nameof(roslynService));
 			_gitService = gitService;
 			AddActiveDocumentAsRootCommand = SimpleCommand.Create(AddActiveDocumentAsRoot);
@@ -149,9 +150,19 @@ namespace DependsOnThat.Presentation
 			TryUpdateGraph();
 		}
 
+		private void OnActiveDocumentChanged()
+		{
+			var activeDocument = _documentsService.GetActiveDocument();
+			if (Graph.Vertices.FirstOrDefault(dn => dn.FilePath == activeDocument) is DisplayNode activeDocumentNode)
+			{
+				SelectedNode = activeDocumentNode;
+			}
+		}
+
 		public void Dispose()
 		{
 			_graphUpdatesRegistration.Dispose();
+			_documentsService.ActiveDocumentChanged -= OnActiveDocumentChanged;
 		}
 	}
 }

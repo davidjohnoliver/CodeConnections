@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using System;
+
 namespace DependsOnThat.Services
 {
 	/// <summary>
@@ -16,5 +18,10 @@ namespace DependsOnThat.Services
 		/// Open a document view for a file, using the preview tab if it's not already opened.
 		/// </summary>
 		void OpenFileAsPreview(string fileName);
+
+		/// <summary>
+		/// Raised when the active open document changes
+		/// </summary>
+		event Action? ActiveDocumentChanged;
 	}
 }

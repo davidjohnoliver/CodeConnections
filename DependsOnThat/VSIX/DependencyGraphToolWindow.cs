@@ -11,6 +11,7 @@ using Microsoft;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace DependsOnThat.VSIX
 {
@@ -56,6 +57,7 @@ namespace DependsOnThat.VSIX
 			var dte = GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
 			Assumes.Present(dte);
 			var documentsService = new DocumentsService(dte);
+			SubscribeListeners(documentsService);
 
 			var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;
 			Assumes.Present(componentModel);
@@ -68,6 +70,24 @@ namespace DependsOnThat.VSIX
 			{
 				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService)
 					.DisposeWith(_disposables);
+			}
+		}
+
+		private void SubscribeListeners(object service)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			if (service is IVsRunningDocTableEvents runningDocTableEvents)
+			{
+				var rdt = (IVsRunningDocumentTable)GetService(typeof(SVsRunningDocumentTable));
+				Assumes.Present(rdt);
+				rdt.AdviseRunningDocTableEvents(runningDocTableEvents, out var cookie);
+				_disposables.Add(Disposable.Create(() =>
+				{
+					if (ThreadHelper.CheckAccess())
+					{
+						rdt.UnadviseRunningDocTableEvents(cookie);
+					}
+				}));
 			}
 		}
 

@@ -12,18 +12,24 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace DependsOnThat.Services
 {
-	internal class DocumentsService : IDocumentsService
+	internal partial class DocumentsService : IDocumentsService
 	{
 		private readonly DTE _dte;
 
+		private string? _oldActiveDocument;
+
+		public event Action? ActiveDocumentChanged;
+
 		public DocumentsService(DTE dte)
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			_dte = dte ?? throw new ArgumentNullException(nameof(dte));
+			_oldActiveDocument = dte.ActiveDocument?.FullName;
 		}
 		public string? GetActiveDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			return _dte.ActiveDocument.FullName;
+			return _dte.ActiveDocument?.FullName;
 		}
 
 		public void OpenFileAsPreview(string fileName)

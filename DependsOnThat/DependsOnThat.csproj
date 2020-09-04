@@ -79,6 +79,7 @@
     <Compile Include="Presentation\ViewModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DocumentsService.cs" />
+    <Compile Include="Services\DocumentsService.DocTableEvents.cs" />
     <Compile Include="Services\GitService.cs" />
     <Compile Include="Services\IDocumentsService.cs" />
     <Compile Include="Services\IGitService.cs" />
