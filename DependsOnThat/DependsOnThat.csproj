@@ -53,6 +53,7 @@
     <Compile Include="Additions\NullableAttributes.cs" />
     <Compile Include="Disposables\CancellationDisposable.cs" />
     <Compile Include="Disposables\CompositeDisposable.cs" />
+    <Compile Include="Disposables\Disposable.cs" />
     <Compile Include="Disposables\ICancelable.cs" />
     <Compile Include="Disposables\SerialDisposable.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
