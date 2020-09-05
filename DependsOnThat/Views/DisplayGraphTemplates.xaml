@@ -4,6 +4,7 @@
 					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 					xmlns:graphControls="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
 					xmlns:graphBehaviours="clr-namespace:GraphSharp.AttachedBehaviours;assembly=GraphSharp.Controls"
+					xmlns:graphConverters="clr-namespace:GraphSharp.Converters;assembly=GraphSharp.Controls"
 					xmlns:local="clr-namespace:DependsOnThat.Views"
 					xmlns:converters="clr-namespace:DependsOnThat.Presentation.Converters"
 					xmlns:presentation="clr-namespace:DependsOnThat.Presentation"
@@ -25,6 +26,7 @@
 		<TextBlock Text="{Binding Label}" />
 	</DataTemplate>
 
+	<graphConverters:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
 
 	<Style TargetType="{x:Type graphControls:VertexControl}">
 		<Setter Property="Template">
@@ -89,6 +91,96 @@
 						Value="Blue" />
 				<Setter Property="BorderThickness"
 						Value="2" />
+			</MultiTrigger>
+		</Style.Triggers>
+	</Style>
+	
+	<Style TargetType="{x:Type graphControls:EdgeControl}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type graphControls:EdgeControl}">
+					<Canvas>
+						<Path Stroke="{TemplateBinding Foreground}"
+							  StrokeThickness="{TemplateBinding StrokeThickness}"
+							  Fill="{TemplateBinding Fill}"
+							  MinWidth="1"
+							  MinHeight="1"
+							  ToolTip="{TemplateBinding ToolTip}"
+							  x:Name="edgePath">
+							<Path.Data>
+								<PathGeometry>
+									<PathGeometry.Figures>
+										<MultiBinding Converter="{StaticResource RouteToPathConverter}">
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="Source.(graphControls:GraphCanvas.X)" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="Source.(graphControls:GraphCanvas.Y)" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="Source.ActualWidth" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="Source.ActualHeight" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="Target.(graphControls:GraphCanvas.X)" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="Target.(graphControls:GraphCanvas.Y)" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="Target.ActualWidth" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="Target.ActualHeight" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}"
+													 Path="RoutePoints" />
+										</MultiBinding>
+									</PathGeometry.Figures>
+								</PathGeometry>
+							</Path.Data>
+						</Path>
+						<graphControls:EdgeContentPresenter Content="{TemplateBinding Edge}" />
+					</Canvas>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="graphControls:GraphElementBehaviour.HighlightTrigger"
+				Value="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" />
+		<Setter Property="MinWidth"
+				Value="1" />
+		<Setter Property="MinHeight"
+				Value="1" />
+		<Setter Property="Background"
+				Value="Red" />
+		<Setter Property="Foreground"
+				Value="Silver" />
+		<Setter Property="Opacity"
+				Value="0.5" />
+		<Style.Triggers>
+			<Trigger Property="graphControls:GraphElementBehaviour.IsHighlighted"
+					 Value="True">
+				<Setter Property="Foreground"
+						Value="Black" />
+			</Trigger>
+			<Trigger Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
+					 Value="True">
+				<Setter Property="Foreground"
+						Value="Yellow" />
+			</Trigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
+							   Value="True" />
+					<Condition Property="graphControls:GraphElementBehaviour.SemiHighlightInfo"
+							   Value="InEdge" />
+				</MultiTrigger.Conditions>
+				<Setter Property="Foreground"
+						Value="Red" />
+			</MultiTrigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
+							   Value="True" />
+					<Condition Property="graphControls:GraphElementBehaviour.SemiHighlightInfo"
+							   Value="OutEdge" />
+				</MultiTrigger.Conditions>
+				<Setter Property="Foreground"
+						Value="Blue" />
 			</MultiTrigger>
 		</Style.Triggers>
 	</Style>
