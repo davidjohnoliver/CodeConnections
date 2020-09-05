@@ -1,0 +1,25 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+					xmlns:local="clr-namespace:DependsOnThat.Views"
+					xmlns:converters="clr-namespace:DependsOnThat.Presentation.Converters"
+					xmlns:presentation="clr-namespace:DependsOnThat.Presentation"
+					mc:Ignorable="d">
+
+	<!--TODO: should use editor colour scheme https://stackoverflow.com/questions/18913208/colors-in-visual-studio-extension-->
+	<converters:DisplayNodeBackgroundConverter x:Key="DisplayNodeBackgroundConverter"
+											   DefaultBrush="LightGray"
+											   RootNodeBrush="LimeGreen" />
+	<DataTemplate DataType="{x:Type presentation:DisplayNode}">
+		<Border CornerRadius="5"
+				Background="{Binding Converter={StaticResource DisplayNodeBackgroundConverter}}"
+				BorderBrush="Black"
+				BorderThickness="1">
+			<TextBlock Text="{Binding DisplayString}" />
+		</Border>
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type presentation:DisplayEdge}">
+		<TextBlock Text="{Binding Label}" />
+	</DataTemplate>
+</ResourceDictionary>
