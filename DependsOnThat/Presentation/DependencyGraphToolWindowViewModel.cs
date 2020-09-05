@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Threading;
 using DependsOnThat.Disposables;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
@@ -49,14 +51,21 @@ namespace DependsOnThat.Presentation
 		private DisplayNode? _selectedNode;
 		public DisplayNode? SelectedNode
 		{
-			get => _selectedNode; 
+			get => _selectedNode;
 			set
 			{
 				if (OnValueSet(ref _selectedNode, value))
 				{
 					if (value?.FilePath != null)
 					{
-						_documentsService.OpenFileAsPreview(value.FilePath);
+						_joinableTaskFactory.RunAsync(async () =>
+						{
+							await Dispatcher.Yield(); // Opening a file takes a noticeable delay, so give the visuals a chance to update first
+							if (SelectedNode == value)
+							{
+								_documentsService.OpenFileAsPreview(value.FilePath);
+							}
+						});
 					}
 				}
 			}
