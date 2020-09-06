@@ -7,26 +7,60 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DependsOnThat.Disposables;
 using DependsOnThat.Extensions;
 using LibGit2Sharp;
-using Microsoft.VisualStudio.Threading;
 
 namespace DependsOnThat.Services
 {
-	internal class GitService : IGitService
+	internal class GitService : IGitService, IDisposable
 	{
-		private readonly string _repositoryPath;
+		private readonly ISolutionService _solutionService;
+		private string? _repositoryPath;
+		private Task _checkReady;
+		private readonly SerialCancellationDisposable _solutionChangedRegistration = new SerialCancellationDisposable();
 
-		public GitService(string repositoryPath)
+		public GitService(ISolutionService solutionService)
 		{
-			_repositoryPath = repositoryPath;
+			_solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
+			_checkReady = UpdateRepositoryPath();
+			_solutionService.SolutionChanged += OnSolutionChanged;
 		}
 
-		public Task<ICollection<string>> GetAllModifiedAndNewFiles(CancellationToken ct) => Task.Run(GetAllModifiedAndNewFilesSync, ct);
-
-		private ICollection<string> GetAllModifiedAndNewFilesSync()
+		private void OnSolutionChanged()
 		{
-			using (var repo = new Repository(_repositoryPath))
+			_checkReady = UpdateRepositoryPath();
+		}
+
+		private async Task UpdateRepositoryPath()
+		{
+			_repositoryPath = null;
+			var candidatePath = _solutionService.GetSolutionPath();
+
+			var ct = _solutionChangedRegistration.GetNewToken();
+			var discoveredPath = candidatePath.IsNullOrEmpty() ? "" : await Task.Run(() => Repository.Discover(candidatePath), ct);
+			if (!ct.IsCancellationRequested)
+			{
+				_repositoryPath = discoveredPath;
+			}
+		}
+
+		public async Task<ICollection<string>> GetAllModifiedAndNewFiles(CancellationToken ct)
+		{
+			await _checkReady;
+
+			var path = _repositoryPath;
+			if (path.IsNullOrWhiteSpace())
+			{
+				return new string[0];
+			}
+
+			return await Task.Run(() => GetAllModifiedAndNewFilesSync(path), ct);
+		}
+
+		private ICollection<string> GetAllModifiedAndNewFilesSync(string path)
+		{
+			using (var repo = new Repository(path))
 			{
 				var wdPath = repo.Info.WorkingDirectory;
 				var status = repo.RetrieveStatus(new StatusOptions { IncludeIgnored = false });
@@ -34,11 +68,9 @@ namespace DependsOnThat.Services
 			}
 		}
 
-		public static GitService? GetServiceOrDefault(string candidatePath)
+		public void Dispose()
 		{
-			var repoPath = Repository.Discover(candidatePath);
-			return repoPath != null ? new GitService(repoPath) : null;
-
+			_solutionService.SolutionChanged -= OnSolutionChanged;
 		}
 	}
 }

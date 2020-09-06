@@ -86,7 +86,9 @@
     <Compile Include="Services\IDocumentsService.cs" />
     <Compile Include="Services\IGitService.cs" />
     <Compile Include="Services\IRoslynService.cs" />
+    <Compile Include="Services\ISolutionService.cs" />
     <Compile Include="Services\RoslynService.cs" />
+    <Compile Include="Services\SolutionService.cs" />
     <Compile Include="Views\DependencyGraphLayout.cs" />
     <Compile Include="VSIX\DependsOnThatPackage.cs" />
     <Compile Include="Utilities\LoopProtection.cs" />

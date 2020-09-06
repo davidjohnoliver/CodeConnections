@@ -64,7 +64,10 @@ namespace DependsOnThat.VSIX
 			var workspace = componentModel.GetService<VisualStudioWorkspace>();
 			var roslynService = new RoslynService(workspace);
 
-			var gitService = GitService.GetServiceOrDefault(dte.Solution.FullName);
+			var solutionService = new SolutionService(dte);
+			SubscribeListeners(solutionService);
+
+			var gitService = new GitService(solutionService).DisposeWith(_disposables);
 
 			if (Content is DependencyGraphToolWindowControl content)
 			{
@@ -86,6 +89,20 @@ namespace DependsOnThat.VSIX
 					if (ThreadHelper.CheckAccess())
 					{
 						rdt.UnadviseRunningDocTableEvents(cookie);
+					}
+				}));
+			}
+
+			if (service is IVsSolutionEvents solutionEvents)
+			{
+				var solution = GetService(typeof(SVsSolution)) as IVsSolution;
+				Assumes.Present(solution);
+				solution.AdviseSolutionEvents(solutionEvents, out var cookie);
+				_disposables.Add(Disposable.Create(() =>
+				{
+					if (ThreadHelper.CheckAccess())
+					{
+						solution.UnadviseSolutionEvents(cookie);
 					}
 				}));
 			}
