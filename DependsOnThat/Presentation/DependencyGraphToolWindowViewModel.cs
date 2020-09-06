@@ -25,7 +25,7 @@ namespace DependsOnThat.Presentation
 		private readonly IGitService? _gitService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly HashSet<string> _rootDocuments = new HashSet<string>();
-		private readonly SerialDisposable _graphUpdatesRegistration = new SerialDisposable();
+		private readonly SerialCancellationDisposable _graphUpdatesRegistration = new SerialCancellationDisposable();
 
 
 		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
@@ -113,14 +113,11 @@ namespace DependsOnThat.Presentation
 
 		private void TryUpdateGraph()
 		{
-			var cd = new CancellationDisposable();
-			_graphUpdatesRegistration.Disposable = cd;
-			var ct = cd.Token;
 			GraphingTime = null;
 			_joinableTaskFactory.RunAsync(async () =>
 			{
 				var stopwatch = Stopwatch.StartNew();
-				var graph = await GetGraphAsync(ct);
+				var graph = await GetGraphAsync(_graphUpdatesRegistration.GetNewToken());
 				stopwatch.Stop();
 				if (graph == null)
 				{
