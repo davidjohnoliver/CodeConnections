@@ -71,7 +71,7 @@ namespace DependsOnThat.VSIX
 
 			if (Content is DependencyGraphToolWindowControl content)
 			{
-				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService)
+				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService)
 					.DisposeWith(_disposables);
 			}
 		}

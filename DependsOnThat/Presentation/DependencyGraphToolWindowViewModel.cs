@@ -23,6 +23,7 @@ namespace DependsOnThat.Presentation
 		private readonly IDocumentsService _documentsService;
 		private readonly IRoslynService _roslynService;
 		private readonly IGitService _gitService;
+		private readonly ISolutionService _solutionService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly HashSet<string> _rootDocuments = new HashSet<string>();
 		private readonly SerialCancellationDisposable _graphUpdatesRegistration = new SerialCancellationDisposable();
@@ -78,16 +79,26 @@ namespace DependsOnThat.Presentation
 		public ICommand ClearRootsCommand { get; }
 		public ICommand UseGitModifiedFilesAsRootCommand { get; }
 
-		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService)
+		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService)
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));
 			_documentsService.ActiveDocumentChanged += OnActiveDocumentChanged;
 			_roslynService = roslynService ?? throw new ArgumentNullException(nameof(roslynService));
 			_gitService = gitService ?? throw new ArgumentNullException(nameof(gitService));
+			_solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
+			_solutionService.SolutionChanged += OnSolutionChanged;
 			AddActiveDocumentAsRootCommand = SimpleCommand.Create(AddActiveDocumentAsRoot);
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
 			UseGitModifiedFilesAsRootCommand = SimpleCommand.Create(UseGitModifiedFilesAsRoot);
+		}
+
+		private void OnSolutionChanged() => ResetGraph();
+
+		private void ResetGraph()
+		{
+			_graphUpdatesRegistration.Cancel();
+			Graph = Empty;
 		}
 
 		private void AddActiveDocumentAsRoot()
@@ -181,6 +192,7 @@ namespace DependsOnThat.Presentation
 		{
 			_graphUpdatesRegistration.Dispose();
 			_documentsService.ActiveDocumentChanged -= OnActiveDocumentChanged;
+			_solutionService.SolutionChanged -= OnSolutionChanged;
 		}
 	}
 }
