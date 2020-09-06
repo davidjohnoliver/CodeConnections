@@ -116,14 +116,31 @@ namespace DependsOnThat.Presentation
 			var cd = new CancellationDisposable();
 			_graphUpdatesRegistration.Disposable = cd;
 			var ct = cd.Token;
-			var stopwatch = Stopwatch.StartNew();
 			GraphingTime = null;
 			_joinableTaskFactory.RunAsync(async () =>
 			{
-
-				if (ct.IsCancellationRequested)
+				var stopwatch = Stopwatch.StartNew();
+				var graph = await GetGraphAsync(ct);
+				stopwatch.Stop();
+				if (graph == null)
 				{
 					return;
+				}
+				if (graph.VertexCount > 0)
+				{
+					GraphingTime = stopwatch.Elapsed;
+				}
+				Graph = graph;
+			});
+		}
+
+		private Task<IBidirectionalGraph<DisplayNode, DisplayEdge>?> GetGraphAsync(CancellationToken ct)
+		{
+			return Task.Run(async () =>
+			{
+				if (ct.IsCancellationRequested)
+				{
+					return null;
 				}
 
 				var rootDocuments = _shouldUseGitForRoots ?
@@ -133,23 +150,18 @@ namespace DependsOnThat.Presentation
 				var rootSymbols = await _roslynService.GetDeclaredSymbolsFromFilePaths(rootDocuments, ct).ToListAsync(ct);
 				if (rootSymbols.Count == 0)
 				{
-					Graph = Empty;
+					return Empty;
 				}
 				var nodeGraph = await NodeGraph.BuildGraphFromRoots(rootSymbols, _roslynService.GetCurrentSolution(), ct);
-				var graph = nodeGraph?.GetDisplaySubgraph(ExtensionDepth) ?? Empty;
-				await _joinableTaskFactory.SwitchToMainThreadAsync(ct);
+				var graph = nodeGraph.GetDisplaySubgraph(ExtensionDepth);
 
 				if (ct.IsCancellationRequested)
 				{
-					return;
+					return null;
 				}
-				stopwatch.Stop();
-				if (graph.VertexCount > 0)
-				{
-					GraphingTime = stopwatch.Elapsed;
-				}
-				Graph = graph;
-			});
+
+				return graph;
+			}, ct);
 		}
 
 		private void ClearRoots()
