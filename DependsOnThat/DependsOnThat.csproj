@@ -64,6 +64,7 @@
     <Compile Include="Extensions\NodeExtensions.cs" />
     <Compile Include="Extensions\NodeGraphExtensions.cs" />
     <Compile Include="Extensions\SolutionExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\SymbolExtensions.cs" />
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
     <Compile Include="Graph\NodeGraph.Builder.cs" />
