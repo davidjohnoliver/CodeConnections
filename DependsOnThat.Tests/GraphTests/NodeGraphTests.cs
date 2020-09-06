@@ -35,7 +35,7 @@ namespace DependsOnThat.Tests.GraphTests
 
 				var root = graph.Roots.Single();
 				Assert.AreEqual(classSymbol, (root as TypeNode).Symbol);
-				Assert.GreaterOrEqual(root.ForwardLinks.Count, 3);
+				Assert.AreEqual(4, root.ForwardLinks.Count);
 				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "SomeEnumeratedClass");
 				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "SomeClassCore");
 				var someOtherClassNode = AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "SomeOtherClass") as TypeNode;
@@ -67,8 +67,8 @@ namespace DependsOnThat.Tests.GraphTests
 				var root = graph.Roots.Single();
 				Assert.AreEqual(classSymbol, (root as TypeNode).Symbol);
 
-				Assert.GreaterOrEqual(root.ForwardLinks.Count, 2);
-				Assert.GreaterOrEqual(root.BackLinks.Count, 1);
+				Assert.AreEqual(3, root.ForwardLinks.Count);
+				Assert.AreEqual(1, root.BackLinks.Count);
 			}
 		}
 
