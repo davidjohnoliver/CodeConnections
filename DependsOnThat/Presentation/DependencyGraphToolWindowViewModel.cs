@@ -22,7 +22,7 @@ namespace DependsOnThat.Presentation
 	{
 		private readonly IDocumentsService _documentsService;
 		private readonly IRoslynService _roslynService;
-		private readonly IGitService? _gitService;
+		private readonly IGitService _gitService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly HashSet<string> _rootDocuments = new HashSet<string>();
 		private readonly SerialCancellationDisposable _graphUpdatesRegistration = new SerialCancellationDisposable();
@@ -78,13 +78,13 @@ namespace DependsOnThat.Presentation
 		public ICommand ClearRootsCommand { get; }
 		public ICommand UseGitModifiedFilesAsRootCommand { get; }
 
-		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService? gitService)
+		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService)
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));
 			_documentsService.ActiveDocumentChanged += OnActiveDocumentChanged;
 			_roslynService = roslynService ?? throw new ArgumentNullException(nameof(roslynService));
-			_gitService = gitService;
+			_gitService = gitService ?? throw new ArgumentNullException(nameof(gitService));
 			AddActiveDocumentAsRootCommand = SimpleCommand.Create(AddActiveDocumentAsRoot);
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
 			UseGitModifiedFilesAsRootCommand = SimpleCommand.Create(UseGitModifiedFilesAsRoot);
@@ -141,7 +141,7 @@ namespace DependsOnThat.Presentation
 				}
 
 				var rootDocuments = _shouldUseGitForRoots ?
-					await (_gitService?.GetAllModifiedAndNewFiles(ct) ?? throw new InvalidOperationException("Git repository is not available"))
+					await (_gitService.GetAllModifiedAndNewFiles(ct))
 					: _rootDocuments;
 
 				var rootSymbols = await _roslynService.GetDeclaredSymbolsFromFilePaths(rootDocuments, ct).ToListAsync(ct);
