@@ -15,12 +15,7 @@
 											   DefaultBrush="LightGray"
 											   RootNodeBrush="LimeGreen" />
 	<DataTemplate DataType="{x:Type presentation:DisplayNode}">
-		<Border CornerRadius="5"
-				Background="{Binding Converter={StaticResource DisplayNodeBackgroundConverter}}"
-				BorderBrush="Black"
-				BorderThickness="1">
-			<TextBlock Text="{Binding DisplayString}" />
-		</Border>
+		<TextBlock Text="{Binding DisplayString}" />
 	</DataTemplate>
 	<DataTemplate DataType="{x:Type presentation:DisplayEdge}">
 		<TextBlock Text="{Binding Label}" />
@@ -34,8 +29,10 @@
 				<ControlTemplate TargetType="{x:Type graphControls:VertexControl}">
 					<Border BorderBrush="{TemplateBinding BorderBrush}"
 							BorderThickness="{TemplateBinding BorderThickness}"
-							Background="{TemplateBinding Background}"
-							ToolTip="{TemplateBinding ToolTip}">
+							Background="{TemplateBinding Vertex, Converter={StaticResource DisplayNodeBackgroundConverter}}"
+							ToolTip="{TemplateBinding ToolTip}"
+							CornerRadius="5"
+							Padding="2,0,2,0">
 						<ContentPresenter Content="{TemplateBinding Vertex}" />
 					</Border>
 				</ControlTemplate>
@@ -50,48 +47,24 @@
 		<Setter Property="graphBehaviours:DragBehaviour.Y"
 				Value="{Binding RelativeSource={RelativeSource Self},Path=(graphControls:GraphCanvas.Y),Mode=TwoWay}" />
 		<Setter Property="BorderThickness"
-				Value="2" />
+				Value="1" />
 		<Setter Property="BorderBrush"
-				Value="Black" />
+				Value="Silver" />
 		<Style.Triggers>
 			<Trigger Property="graphControls:GraphElementBehaviour.IsHighlighted"
 					 Value="True">
 				<Setter Property="BorderBrush"
-						Value="Orange" />
+						Value="Black" />
 				<Setter Property="BorderThickness"
 						Value="2" />
 			</Trigger>
 			<Trigger Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
 					 Value="True">
 				<Setter Property="BorderBrush"
-						Value="Yellow" />
+						Value="Black" />
 				<Setter Property="BorderThickness"
-						Value="2" />
+						Value="1" />
 			</Trigger>
-			<MultiTrigger>
-				<MultiTrigger.Conditions>
-					<Condition Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
-							   Value="True" />
-					<Condition Property="graphControls:GraphElementBehaviour.SemiHighlightInfo"
-							   Value="Source" />
-				</MultiTrigger.Conditions>
-				<Setter Property="BorderBrush"
-						Value="Red" />
-				<Setter Property="BorderThickness"
-						Value="2" />
-			</MultiTrigger>
-			<MultiTrigger>
-				<MultiTrigger.Conditions>
-					<Condition Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
-							   Value="True" />
-					<Condition Property="graphControls:GraphElementBehaviour.SemiHighlightInfo"
-							   Value="Target" />
-				</MultiTrigger.Conditions>
-				<Setter Property="BorderBrush"
-						Value="Blue" />
-				<Setter Property="BorderThickness"
-						Value="2" />
-			</MultiTrigger>
 		</Style.Triggers>
 	</Style>
 	
@@ -160,28 +133,8 @@
 			<Trigger Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
 					 Value="True">
 				<Setter Property="Foreground"
-						Value="Yellow" />
+						Value="Black" />
 			</Trigger>
-			<MultiTrigger>
-				<MultiTrigger.Conditions>
-					<Condition Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
-							   Value="True" />
-					<Condition Property="graphControls:GraphElementBehaviour.SemiHighlightInfo"
-							   Value="InEdge" />
-				</MultiTrigger.Conditions>
-				<Setter Property="Foreground"
-						Value="Red" />
-			</MultiTrigger>
-			<MultiTrigger>
-				<MultiTrigger.Conditions>
-					<Condition Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
-							   Value="True" />
-					<Condition Property="graphControls:GraphElementBehaviour.SemiHighlightInfo"
-							   Value="OutEdge" />
-				</MultiTrigger.Conditions>
-				<Setter Property="Foreground"
-						Value="Blue" />
-			</MultiTrigger>
 		</Style.Triggers>
 	</Style>
 </ResourceDictionary>
