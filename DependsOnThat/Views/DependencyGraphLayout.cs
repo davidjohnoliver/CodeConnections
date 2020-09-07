@@ -127,7 +127,19 @@ namespace DependsOnThat.Views
 			DragBehaviour.SetIsDragEnabled(newControl, isDrag);
 		}
 
-		private void OnVertexControlMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e) => SelectedVertexControl = sender as VertexControl;
+		private void OnVertexControlMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var vertexControl = sender as VertexControl;
+			if (SelectedVertexControl == vertexControl)
+			{
+				// Deselection
+				SelectedVertexControl = null;
+			}
+			else
+			{
+				SelectedVertexControl = vertexControl;
+			}
+		}
 
 		protected override void RemoveVertexControl(DisplayNode vertex)
 		{

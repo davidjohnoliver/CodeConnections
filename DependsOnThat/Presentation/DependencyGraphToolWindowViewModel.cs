@@ -182,10 +182,7 @@ namespace DependsOnThat.Presentation
 		private void OnActiveDocumentChanged()
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
-			if (Graph.Vertices.FirstOrDefault(dn => dn.FilePath == activeDocument) is DisplayNode activeDocumentNode)
-			{
-				SelectedNode = activeDocumentNode;
-			}
+			SelectedNode = Graph.Vertices.FirstOrDefault(dn => dn.FilePath == activeDocument);
 		}
 
 		public void Dispose()
