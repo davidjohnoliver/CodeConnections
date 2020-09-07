@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
 using DependsOnThat.Tests.Utilities;
+using DependsOnThat.Utilities;
 using NUnit.Framework;
 
 namespace DependsOnThat.Tests.GraphTests
@@ -44,6 +45,8 @@ namespace DependsOnThat.Tests.GraphTests
 				AssertEx.Contains(someOtherClassNode.BackLinks, n => (n as TypeNode)?.Symbol.Name == "SomeCircularClass");
 				AssertEx.Contains(someOtherClassNode.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "SomeClassInArray");
 				AssertEx.Contains(someOtherClassNode.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "SomeDeeperClass");
+
+				AssertNoDuplicates(graph);
 			}
 		}
 
@@ -68,7 +71,9 @@ namespace DependsOnThat.Tests.GraphTests
 				Assert.AreEqual(classSymbol, (root as TypeNode).Symbol);
 
 				Assert.AreEqual(3, root.ForwardLinks.Count);
-				Assert.AreEqual(1, root.BackLinks.Count);
+				Assert.AreEqual(2, root.BackLinks.Count);
+
+				AssertNoDuplicates(graph);
 			}
 		}
 
@@ -94,6 +99,41 @@ namespace DependsOnThat.Tests.GraphTests
 
 				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "EnumerableExtensions");
 			}
+		}
+
+		private static void AssertNoDuplicates(NodeGraph graph)
+		{
+			var nodes = GetAllNodes(graph).OfType<TypeNode>().ToList();
+
+			var nodeNames = nodes.Select(n => n.Symbol.ToDisplayString()).ToList();
+
+			Assert.AreEqual(nodes.Count, nodeNames.Count);
+
+			Assert.AreEqual(nodes.Count, nodeNames.Distinct().Count());
+		}
+
+		private static HashSet<Node> GetAllNodes(NodeGraph graph)
+		{
+			var results = new HashSet<Node>(graph.Roots);
+
+			var exploreQueue = new Queue<Node>(graph.Roots);
+
+			var lp = new LoopProtection();
+			while (exploreQueue.Count > 0)
+			{
+				lp.Iterate();
+				var current = exploreQueue.Dequeue();
+				foreach (var link in current.AllLinks())
+				{
+					if (!results.Contains(link))
+					{
+						results.Add(link);
+						exploreQueue.Enqueue(link);
+					}
+				}
+			}
+
+			return results;
 		}
 	}
 }

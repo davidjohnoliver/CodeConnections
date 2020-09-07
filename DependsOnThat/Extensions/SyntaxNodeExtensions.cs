@@ -47,6 +47,7 @@ namespace DependsOnThat.Extensions
 		/// </summary>
 		/// <returns>Symbols of declared types.</returns>
 		public static IEnumerable<ITypeSymbol> GetAllDeclaredTypes(this SyntaxNode syntaxNode, SemanticModel model) => syntaxNode.DescendantNodesAndSelf()
+			// This might well be significantly optimized by not entering into nodes that can be known not to contain declarations
 			.OfType<BaseTypeDeclarationSyntax>()
 			.Select(n => model.GetDeclaredSymbol(n) as ITypeSymbol)
 			.Trim();

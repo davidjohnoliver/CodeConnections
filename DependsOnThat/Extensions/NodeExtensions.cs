@@ -18,5 +18,7 @@ namespace DependsOnThat.Extensions
 			node.IsRoot,
 			(node as TypeNode)?.FilePath
 		);
+
+		public static IEnumerable<Node> AllLinks(this Node node) => node.ForwardLinks.Concat(node.BackLinks);
 	}
 }

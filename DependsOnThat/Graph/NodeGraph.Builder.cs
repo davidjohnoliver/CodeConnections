@@ -14,48 +14,67 @@ namespace DependsOnThat.Graph
 {
 	public partial class NodeGraph
 	{
+		/// <summary>
+		/// Build out the contents of a graph whose roots have been defined.
+		/// </summary>
+		/// <remarks>
+		/// Although all symbols in the solution are considered, no 'master list' of discovered nodes is retained; those nodes that are reachable 
+		/// from <see cref="Roots"/> as either dependencies or dependents will be held via forward- and backlink hard references.
+		/// </remarks>
 		private static async Task BuildGraphFromRoots(NodeGraph graph, Solution solution, CancellationToken ct)
 		{
-			var seen = new Dictionary<ITypeSymbol, TypeNode>();
-			var toVisit = new Stack<TypeNode>();
-			foreach (var typeRoot in graph.Roots.OfType<TypeNode>())
+			var knownNodes = graph.Roots.OfType<TypeNode>().ToDictionary(n => n.Symbol);
+			//// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
+			//// anyway https://softwareengineering.stackexchange.com/a/330028/336780, and (b) the UX we want is a stable ordering of node links, which wouldn't 
+			//// be the case if we processed task results out of order.
+			foreach (var project in solution.Projects) // A valid potential optimization here would be to first build the inter-project dependency graph, and only include those projects in the connected subgraph(s) that roots.
 			{
-				PushToVisit(typeRoot.Symbol, typeRoot);
-			}
-
-			var lp = new LoopProtection();
-			// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
-			// anyway https://softwareengineering.stackexchange.com/a/330028/336780, and (b) the UX we want is a stable ordering of node links, which wouldn't 
-			// be the case if we processed task results out of order.
-			while (toVisit.Count > 0)
-			{
-				lp.Iterate();
-				var current = toVisit.Pop();
-				var compilation = await current.Symbol.GetCompilation(solution, ct);
-				if (ct.IsCancellationRequested)
-				{
-					return;
-				}
+				var compilation = await project.GetCompilationAsync(ct);
 				if (compilation == null)
 				{
 					continue;
 				}
-				await foreach (var dependency in current.Symbol.GetTypeDependencies(compilation, includeExternalMetadata: false).WithCancellation(ct))
+
+				// We use a hashset here because different SyntaxTrees may declare the same symbol (eg partial definitions)
+				var declaredSymbols = new HashSet<ITypeSymbol>();
+				foreach (var syntaxTree in compilation.SyntaxTrees)
 				{
-					if (!seen.TryGetValue(dependency, out var node))
+					if (ct.IsCancellationRequested)
 					{
-						node = new TypeNode(dependency, dependency.GetPreferredDeclaration());
-						PushToVisit(dependency, node);
+						return;
+					}
+					var root = await syntaxTree.GetRootAsync(ct);
+					var semanticModel = compilation.GetSemanticModel(syntaxTree);
+					declaredSymbols.UnionWith(root.GetAllDeclaredTypes(semanticModel));
+				}
+
+				foreach (var symbol in declaredSymbols)
+				{
+					if (ct.IsCancellationRequested)
+					{
+						return;
 					}
 
-					current.AddForwardLink(node);
-				}
-			}
+					var node = GetFromKnownNodes(symbol);
+					// TODO: GetTypeDependencies calls GetSemanticModel() a second time, now that we're always considering all SyntaxTrees it'd be more efficient to refactor to only create it once (eg GetTypeDependenciesForDefinition)
+					await foreach (var dependency in symbol.GetTypeDependencies(compilation, includeExternalMetadata: false, ct))
+					{
+						var dependencyNode = GetFromKnownNodes(dependency);
 
-			void PushToVisit(ITypeSymbol symbol, TypeNode newNode)
-			{
-				seen[symbol] = newNode;
-				toVisit.Push(newNode);
+						node.AddForwardLink(dependencyNode);
+					}
+				}
+
+				TypeNode GetFromKnownNodes(ITypeSymbol symbol)
+				{
+					if (!knownNodes.TryGetValue(symbol, out var node))
+					{
+						node = new TypeNode(symbol, symbol.GetPreferredDeclaration());
+						knownNodes[symbol] = node;
+					}
+
+					return node;
+				}
 			}
 		}
 	}
