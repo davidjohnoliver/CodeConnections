@@ -39,7 +39,7 @@
 			</Setter.Value>
 		</Setter>
 		<Setter Property="graphControls:GraphElementBehaviour.HighlightTrigger"
-				Value="{Binding RelativeSource={RelativeSource Self},Path=IsMouseOver}" />
+				Value="False" />
 		<Setter Property="graphBehaviours:DragBehaviour.IsDragEnabled"
 				Value="True" />
 		<Setter Property="graphBehaviours:DragBehaviour.X"
@@ -113,7 +113,7 @@
 			</Setter.Value>
 		</Setter>
 		<Setter Property="graphControls:GraphElementBehaviour.HighlightTrigger"
-				Value="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" />
+				Value="False" />
 		<Setter Property="MinWidth"
 				Value="1" />
 		<Setter Property="MinHeight"

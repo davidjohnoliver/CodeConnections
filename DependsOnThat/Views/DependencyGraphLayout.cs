@@ -121,7 +121,6 @@ namespace DependsOnThat.Views
 			base.CreateVertexControl(vertex);
 			var newControl = VertexControls[vertex];
 
-			GraphElementBehaviour.SetHighlightTrigger(newControl, false); // TODO: this is lazy, should disable it through the style
 			var isDrag = DragBehaviour.GetIsDragEnabled(newControl);
 			DragBehaviour.SetIsDragEnabled(newControl, false); //
 			newControl.MouseLeftButtonUp += OnVertexControlMouseLeftButtonUp;
