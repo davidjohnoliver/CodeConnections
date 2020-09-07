@@ -54,6 +54,7 @@
     <Compile Include="ExtensionsTests\SymbolExtensionsTests.cs" />
     <Compile Include="ExtensionsTests\SyntaxNodeExtensionsTests.cs" />
     <Compile Include="GraphTests\NodeGraphTests.cs" />
+    <Compile Include="PresentationTests\DisplayGraphTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\AssertEx.cs" />
     <Compile Include="Utilities\ProjectUtils.cs" />
