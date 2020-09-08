@@ -70,7 +70,9 @@
     <Compile Include="Graph\NodeGraph.Builder.cs" />
     <Compile Include="Graph\Node.cs" />
     <Compile Include="Graph\NodeGraph.cs" />
+    <Compile Include="Graph\NodeKey.cs" />
     <Compile Include="Graph\TypeNode.cs" />
+    <Compile Include="Graph\TypeNodeKey.cs" />
     <Compile Include="Presentation\Converters\DisplayNodeBackgroundConverter.cs" />
     <Compile Include="Presentation\Converters\OperationTimeTextConverter.cs" />
     <Compile Include="Presentation\Converters\ValueConverter.cs" />

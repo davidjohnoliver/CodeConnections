@@ -27,9 +27,9 @@ namespace DependsOnThat.Graph
 		public IReadOnlyCollection<Node> BackLinks => _backLinks;
 
 		/// <summary>
-		/// Is this one of the roots of the graph?
+		/// Key with which the node can be retrieved from a collection.
 		/// </summary>
-		public bool IsRoot { get; set; }
+		public abstract NodeKey Key { get; }
 
 		/// <summary>
 		/// 

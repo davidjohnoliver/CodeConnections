@@ -15,19 +15,15 @@ namespace DependsOnThat.Graph
 	public partial class NodeGraph
 	{
 		/// <summary>
-		/// Build out the contents of a graph whose roots have been defined.
+		/// Build out the contents of a graph for a given solution.
 		/// </summary>
-		/// <remarks>
-		/// Although all symbols in the solution are considered, no 'master list' of discovered nodes is retained; those nodes that are reachable 
-		/// from <see cref="Roots"/> as either dependencies or dependents will be held via forward- and backlink hard references.
-		/// </remarks>
-		private static async Task BuildGraphFromRoots(NodeGraph graph, Solution solution, CancellationToken ct)
+		private static async Task BuildGraph(NodeGraph graph, Solution solution, CancellationToken ct)
 		{
-			var knownNodes = graph.Roots.OfType<TypeNode>().ToDictionary(n => n.Symbol);
+			var knownNodes = new Dictionary<ITypeSymbol, TypeNode>();
 			//// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
 			//// anyway https://softwareengineering.stackexchange.com/a/330028/336780, and (b) the UX we want is a stable ordering of node links, which wouldn't 
 			//// be the case if we processed task results out of order.
-			foreach (var project in solution.Projects) // A valid potential optimization here would be to first build the inter-project dependency graph, and only include those projects in the connected subgraph(s) that roots.
+			foreach (var project in solution.Projects)
 			{
 				var compilation = await project.GetCompilationAsync(ct);
 				if (compilation == null)
@@ -71,6 +67,7 @@ namespace DependsOnThat.Graph
 					{
 						node = new TypeNode(symbol, symbol.GetPreferredDeclaration());
 						knownNodes[symbol] = node;
+						graph.AddNode(node);
 					}
 
 					return node;

@@ -160,8 +160,8 @@ namespace DependsOnThat.Presentation
 				{
 					return Empty;
 				}
-				var nodeGraph = await NodeGraph.BuildGraphFromRoots(rootSymbols, _roslynService.GetCurrentSolution(), ct);
-				var graph = nodeGraph.GetDisplaySubgraph(ExtensionDepth);
+				var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), ct);
+				var graph = nodeGraph.GetDisplaySubgraph(rootSymbols, ExtensionDepth);
 
 				if (ct.IsCancellationRequested)
 				{

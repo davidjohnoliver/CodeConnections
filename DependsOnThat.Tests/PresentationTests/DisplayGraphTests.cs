@@ -25,15 +25,17 @@ namespace DependsOnThat.Tests.PresentationTests
 				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClass.cs");
 				var someCircularClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeCircularClass.cs");
 
-				var fullGraph = await NodeGraph.BuildGraphFromRoots(
+				var roots =
 					new[] {
 						(await someClassTree.GetRootAsync()).GetAllDeclaredTypes(compilation.GetSemanticModel(someClassTree)).First(),
 						(await someCircularClassTree.GetRootAsync()).GetAllDeclaredTypes(compilation.GetSemanticModel(someCircularClassTree)).First()
-					},
-					workspace.CurrentSolution,
+					};
+
+
+				var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution,
 					ct: default);
 
-				var displayGraph = fullGraph.GetDisplaySubgraph(extensionDepth: 0);
+				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 0);
 				Assert.AreEqual(2, displayGraph.VertexCount);
 				Assert.AreEqual(0, displayGraph.EdgeCount);
 			}
@@ -50,15 +52,15 @@ namespace DependsOnThat.Tests.PresentationTests
 				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClass.cs");
 				var someCircularClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeCircularClass.cs");
 
-				var fullGraph = await NodeGraph.BuildGraphFromRoots(
-					new[] {
+				var roots = new[] {
 						(await someClassTree.GetRootAsync()).GetAllDeclaredTypes(compilation.GetSemanticModel(someClassTree)).First(),
 						(await someCircularClassTree.GetRootAsync()).GetAllDeclaredTypes(compilation.GetSemanticModel(someCircularClassTree)).First()
-					},
+					};
+				var fullGraph = await NodeGraph.BuildGraph(
 					workspace.CurrentSolution,
 					ct: default);
 
-				var displayGraph = fullGraph.GetDisplaySubgraph(extensionDepth: 1);
+				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 1);
 				Assert.AreEqual(7, displayGraph.VertexCount);
 				Assert.AreEqual(7, displayGraph.EdgeCount);
 			}
@@ -74,14 +76,15 @@ namespace DependsOnThat.Tests.PresentationTests
 				var compilation = await project.GetCompilationAsync();
 				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClass.cs");
 
-				var fullGraph = await NodeGraph.BuildGraphFromRoots(
-					new[] {
+				var roots = new[] {
 						(await someClassTree.GetRootAsync()).GetAllDeclaredTypes(compilation.GetSemanticModel(someClassTree)).First(),
-					},
+					};
+
+				var fullGraph = await NodeGraph.BuildGraph(
 					workspace.CurrentSolution,
 					ct: default);
 
-				var displayGraph = fullGraph.GetDisplaySubgraph(extensionDepth: 1);
+				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 1);
 				Assert.AreEqual(5, displayGraph.VertexCount);
 				Assert.AreEqual(4, displayGraph.EdgeCount);
 			}
@@ -97,17 +100,23 @@ namespace DependsOnThat.Tests.PresentationTests
 				var compilation = await project.GetCompilationAsync();
 				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClass.cs");
 
-				var fullGraph = await NodeGraph.BuildGraphFromRoots(
-					new[] {
+				var roots = new[] {
 						(await someClassTree.GetRootAsync()).GetAllDeclaredTypes(compilation.GetSemanticModel(someClassTree)).First(),
-					},
+					};
+
+				var fullGraph = await NodeGraph.BuildGraph(
 					workspace.CurrentSolution,
 					ct: default);
 
-				var displayGraph = fullGraph.GetDisplaySubgraph(extensionDepth: 2);
+				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 2);
 				Assert.AreEqual(9, displayGraph.VertexCount);
 				Assert.AreEqual(9, displayGraph.EdgeCount);
 			}
+		}
+
+		private static IList<(string FilePath, Microsoft.CodeAnalysis.ITypeSymbol Symbol)> GetRootsWithPath(Microsoft.CodeAnalysis.ITypeSymbol[] rootSymbols)
+		{
+			return rootSymbols.Select(s => (s.GetPreferredDeclaration(), s)).ToArray();
 		}
 	}
 }

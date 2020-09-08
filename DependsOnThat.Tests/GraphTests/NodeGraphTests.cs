@@ -32,10 +32,10 @@ namespace DependsOnThat.Tests.GraphTests
 				var classSymbol = rootNode.GetAllDeclaredTypes(model).First();
 				Assert.AreEqual("SomeClass", classSymbol.Name);
 
-				var graph = await NodeGraph.BuildGraphFromRoots(new[] { classSymbol }, workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
 
-				var root = graph.Roots.Single();
-				Assert.AreEqual(classSymbol, (root as TypeNode).Symbol);
+				var root = graph.GetNodeForType(classSymbol);
+				Assert.AreEqual(classSymbol, root.Symbol);
 				Assert.AreEqual(4, root.ForwardLinks.Count);
 				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "SomeEnumeratedClass");
 				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "SomeClassCore");
@@ -65,10 +65,10 @@ namespace DependsOnThat.Tests.GraphTests
 				var classSymbol = rootNode.GetAllDeclaredTypes(model).First();
 				Assert.AreEqual("SomeOtherClass", classSymbol.Name);
 
-				var graph = await NodeGraph.BuildGraphFromRoots(new[] { classSymbol }, workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
 
-				var root = graph.Roots.Single();
-				Assert.AreEqual(classSymbol, (root as TypeNode).Symbol);
+				var root = graph.GetNodeForType(classSymbol);
+				Assert.AreEqual(classSymbol, root.Symbol);
 
 				Assert.AreEqual(3, root.ForwardLinks.Count);
 				Assert.AreEqual(2, root.BackLinks.Count);
@@ -92,10 +92,10 @@ namespace DependsOnThat.Tests.GraphTests
 				var classSymbol = rootNode.GetAllDeclaredTypes(model).First();
 				Assert.AreEqual("SomeOtherClass", classSymbol.Name);
 
-				var graph = await NodeGraph.BuildGraphFromRoots(new[] { classSymbol }, workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
 
-				var root = graph.Roots.Single();
-				Assert.AreEqual(classSymbol, (root as TypeNode).Symbol);
+				var root = graph.GetNodeForType(classSymbol);
+				Assert.AreEqual(classSymbol, root.Symbol);
 
 				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Symbol.Name == "EnumerableExtensions");
 			}
@@ -109,31 +109,10 @@ namespace DependsOnThat.Tests.GraphTests
 
 			Assert.AreEqual(nodes.Count, nodeNames.Count);
 
-			Assert.AreEqual(nodes.Count, nodeNames.Distinct().Count());
+			var distinctCount = nodeNames.Distinct().Count();
+			Assert.AreEqual(nodes.Count, distinctCount);
 		}
 
-		private static HashSet<Node> GetAllNodes(NodeGraph graph)
-		{
-			var results = new HashSet<Node>(graph.Roots);
-
-			var exploreQueue = new Queue<Node>(graph.Roots);
-
-			var lp = new LoopProtection();
-			while (exploreQueue.Count > 0)
-			{
-				lp.Iterate();
-				var current = exploreQueue.Dequeue();
-				foreach (var link in current.AllLinks())
-				{
-					if (!results.Contains(link))
-					{
-						results.Add(link);
-						exploreQueue.Enqueue(link);
-					}
-				}
-			}
-
-			return results;
-		}
+		private static IEnumerable<Node> GetAllNodes(NodeGraph graph) => graph.Nodes.Values;
 	}
 }

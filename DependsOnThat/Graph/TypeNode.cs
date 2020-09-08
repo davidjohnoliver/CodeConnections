@@ -14,6 +14,8 @@ namespace DependsOnThat.Graph
 	/// </summary>
 	public class TypeNode : Node
 	{
+		public override NodeKey Key { get; }
+
 		public ITypeSymbol Symbol { get; }
 
 		public string? FilePath { get; }
@@ -22,11 +24,10 @@ namespace DependsOnThat.Graph
 		{
 			Symbol = typeSymbol;
 			FilePath = filePath;
+
+			Key = new TypeNodeKey(typeSymbol);
 		}
 
-		public override string ToString()
-		{
-			return $"{base.ToString()}-{Symbol?.ToString()}";
-		}
+		public override string ToString() => $"{base.ToString()}-{Symbol?.ToString()}";
 	}
 }
