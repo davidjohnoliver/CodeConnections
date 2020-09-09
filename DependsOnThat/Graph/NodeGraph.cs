@@ -25,7 +25,7 @@ namespace DependsOnThat.Graph
 
 		private void AddNode(Node node) => _nodes[node.Key] = node;
 
-		public TypeNode? GetNodeForType(ITypeSymbol type) => _nodes.GetOrDefault(new TypeNodeKey(type)) as TypeNode;
+		public TypeNode? GetNodeForType(ITypeSymbol type) => _nodes.GetOrDefault(new TypeNodeKey(type.ToIdentifier())) as TypeNode;
 
 		public static async Task<NodeGraph?> BuildGraph(Solution solution, CancellationToken ct)
 		{

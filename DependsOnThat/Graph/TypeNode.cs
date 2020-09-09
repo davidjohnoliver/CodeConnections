@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependsOnThat.Roslyn;
 using Microsoft.CodeAnalysis;
 
 namespace DependsOnThat.Graph
@@ -16,18 +17,18 @@ namespace DependsOnThat.Graph
 	{
 		public override NodeKey Key { get; }
 
-		public ITypeSymbol Symbol { get; }
+		public TypeIdentifier Identifier { get; }
 
 		public string? FilePath { get; }
 
-		public TypeNode(ITypeSymbol typeSymbol, string? filePath)
+		public TypeNode(TypeIdentifier identifier, string? filePath)
 		{
-			Symbol = typeSymbol;
+			Identifier = identifier;
 			FilePath = filePath;
 
-			Key = new TypeNodeKey(typeSymbol);
+			Key = new TypeNodeKey(identifier);
 		}
 
-		public override string ToString() => $"{base.ToString()}-{Symbol?.ToString()}";
+		public override string ToString() => $"{base.ToString()}-{Identifier.ToString()}";
 	}
 }

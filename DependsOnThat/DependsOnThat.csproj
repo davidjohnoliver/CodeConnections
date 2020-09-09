@@ -82,6 +82,7 @@
     <Compile Include="Presentation\SimpleCommand.cs" />
     <Compile Include="Presentation\ViewModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Roslyn\TypeIdentifier.cs" />
     <Compile Include="Services\DocumentsService.cs" />
     <Compile Include="Services\DocumentsService.DocTableEvents.cs" />
     <Compile Include="Services\GitService.cs" />

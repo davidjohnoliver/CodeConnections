@@ -12,7 +12,7 @@ namespace DependsOnThat.Extensions
 	{
 		public static DisplayNode ToDisplayNode(this Node node, bool isRoot) => new DisplayNode(node switch
 		{
-			TypeNode typeNode => typeNode.Symbol.Name,
+			TypeNode typeNode => typeNode.Identifier.Name,
 			_ => ""
 		},
 			isRoot,

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
+using DependsOnThat.Roslyn;
 using DependsOnThat.Utilities;
 using Microsoft.CodeAnalysis;
 
@@ -19,7 +20,7 @@ namespace DependsOnThat.Graph
 		/// </summary>
 		private static async Task BuildGraph(NodeGraph graph, Solution solution, CancellationToken ct)
 		{
-			var knownNodes = new Dictionary<ITypeSymbol, TypeNode>();
+			var knownNodes = new Dictionary<TypeIdentifier, TypeNode>();
 			//// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
 			//// anyway https://softwareengineering.stackexchange.com/a/330028/336780, and (b) the UX we want is a stable ordering of node links, which wouldn't 
 			//// be the case if we processed task results out of order.
@@ -32,6 +33,7 @@ namespace DependsOnThat.Graph
 				}
 
 				// We use a hashset here because different SyntaxTrees may declare the same symbol (eg partial definitions)
+				// Note: it's safe to hash by ITypeSymbol because they're all coming from the same Compilation
 				var declaredSymbols = new HashSet<ITypeSymbol>();
 				foreach (var syntaxTree in compilation.SyntaxTrees)
 				{
@@ -63,10 +65,11 @@ namespace DependsOnThat.Graph
 
 				TypeNode GetFromKnownNodes(ITypeSymbol symbol)
 				{
-					if (!knownNodes.TryGetValue(symbol, out var node))
+					var identifier = symbol.ToIdentifier();
+					if (!knownNodes.TryGetValue(identifier, out var node))
 					{
-						node = new TypeNode(symbol, symbol.GetPreferredDeclaration());
-						knownNodes[symbol] = node;
+						node = new TypeNode(identifier, symbol.GetPreferredDeclaration());
+						knownNodes[identifier] = node;
 						graph.AddNode(node);
 					}
 

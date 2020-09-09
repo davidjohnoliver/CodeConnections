@@ -5,23 +5,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependsOnThat.Roslyn;
 using Microsoft.CodeAnalysis;
 
 namespace DependsOnThat.Graph
 {
 	public class TypeNodeKey : NodeKey
 	{
-		private readonly ITypeSymbol _typeSymbol;
+		private readonly TypeIdentifier _identifier;
 
-		public TypeNodeKey(ITypeSymbol typeSymbol)
+		public TypeNodeKey(TypeIdentifier identifier)
 		{
-			_typeSymbol = typeSymbol ?? throw new ArgumentNullException(nameof(typeSymbol));
+			_identifier = identifier;
 		}
 
-		public override bool Equals(object obj) =>
-			// Use default comparer because we don't want to take nullability into account
-			obj is TypeNodeKey other && SymbolEqualityComparer.Default.Equals(_typeSymbol, other._typeSymbol);
+		public override bool Equals(object obj) => obj is TypeNodeKey other && Equals(_identifier, other._identifier);
 
-		public override int GetHashCode() => _typeSymbol.GetHashCode();
+		public override int GetHashCode() => _identifier.GetHashCode();
+
+		public static TypeNodeKey GetFromFullName(string fullName)
+		{
+			var shortName = fullName.Split('.').Last();
+			return new TypeNodeKey(new TypeIdentifier(fullName, shortName));
+		}
 	}
 }
