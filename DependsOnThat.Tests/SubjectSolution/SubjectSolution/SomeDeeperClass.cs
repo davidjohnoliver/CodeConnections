@@ -9,5 +9,10 @@ namespace SubjectSolution
 		public SomeCircularClass CircleRound { get; set; }
 
 		public SomeClassDepth3 SomeClassDepth3;
+
+		void DoStuff()
+		{
+			var implicitVar = SomeStaticClass.SomeClassAsImplicitVar;
+		}
 	}
 }
