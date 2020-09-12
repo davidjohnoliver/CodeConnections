@@ -14,14 +14,15 @@
 	<converters:DisplayNodeBackgroundConverter x:Key="DisplayNodeBackgroundConverter"
 											   DefaultBrush="LightGray"
 											   RootNodeBrush="LimeGreen" />
+	<converters:DisplayEdgeStrokeDashArrayConverter x:Key="DisplayEdgeStrokeDashArrayConverter"
+													MultiStrokeDashArray="4 2" />
+	<converters:DisplayEdgeTooltipConverter x:Key="DisplayEdgeTooltipConverter" />
 	<DataTemplate DataType="{x:Type presentation:DisplayNode}">
 		<TextBlock Text="{Binding DisplayString}" />
 	</DataTemplate>
-	<DataTemplate DataType="{x:Type presentation:DisplayEdge}">
-		<TextBlock Text="{Binding Label}" />
-	</DataTemplate>
 
 	<graphConverters:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
+	<converters:DebugConverter x:Key="DebugConverter" />
 
 	<Style TargetType="{x:Type graphControls:VertexControl}">
 		<Setter Property="Template">
@@ -67,7 +68,7 @@
 			</Trigger>
 		</Style.Triggers>
 	</Style>
-	
+
 	<Style TargetType="{x:Type graphControls:EdgeControl}">
 		<Setter Property="Template">
 			<Setter.Value>
@@ -75,10 +76,11 @@
 					<Canvas>
 						<Path Stroke="{TemplateBinding Foreground}"
 							  StrokeThickness="{TemplateBinding StrokeThickness}"
+							  StrokeDashArray="{Binding Converter={StaticResource DisplayEdgeStrokeDashArrayConverter}}"
 							  Fill="{TemplateBinding Fill}"
 							  MinWidth="1"
 							  MinHeight="1"
-							  ToolTip="{TemplateBinding ToolTip}"
+							  ToolTip="{Binding Converter={StaticResource DisplayEdgeTooltipConverter}}"
 							  x:Name="edgePath">
 							<Path.Data>
 								<PathGeometry>
@@ -107,7 +109,6 @@
 								</PathGeometry>
 							</Path.Data>
 						</Path>
-						<graphControls:EdgeContentPresenter Content="{TemplateBinding Edge}" />
 					</Canvas>
 				</ControlTemplate>
 			</Setter.Value>

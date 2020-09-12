@@ -12,7 +12,7 @@ namespace DependsOnThat.Presentation
 	/// <summary>
 	/// An edge in the displayable subgraph.
 	/// </summary>
-	public class DisplayEdge : IEdge<DisplayNode>
+	public abstract class DisplayEdge : IEdge<DisplayNode>
 	{
 		public DisplayEdge(DisplayNode source, DisplayNode target)
 		{
@@ -24,10 +24,8 @@ namespace DependsOnThat.Presentation
 
 		public DisplayNode Target { get; }
 
-		public string? Label { get; set; }
-
 		public override bool Equals(object obj)
-			=> obj is DisplayEdge otherEdge && Equals(Source, otherEdge.Source) && Equals(Target, otherEdge.Target) && Label == otherEdge.Label;
+			=> obj is DisplayEdge otherEdge && Equals(Source, otherEdge.Source) && Equals(Target, otherEdge.Target);
 
 		public override int GetHashCode()
 		{
@@ -36,7 +34,6 @@ namespace DependsOnThat.Presentation
 				var hash = 13;
 				hash = hash * 31 + (Source?.GetHashCode() ?? 0);
 				hash = hash * 31 + (Target?.GetHashCode() ?? 0);
-				hash = hash * 31 + (Label?.GetHashCode() ?? 0);
 				return hash;
 			}
 		}
