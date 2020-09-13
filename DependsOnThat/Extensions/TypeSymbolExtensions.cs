@@ -17,7 +17,13 @@ namespace DependsOnThat.Extensions
 		/// Creates a <see cref="TypeIdentifier"/> from an <see cref="ITypeSymbol"/> that depends only on the full name, suitable for comparisons 
 		/// from different compilations, etc.
 		/// </summary>
-		public static TypeIdentifier ToIdentifier(this ITypeSymbol symbol) => new TypeIdentifier(symbol.ToString(), symbol.Name);
+		public static TypeIdentifier ToIdentifier(this ITypeSymbol symbol)
+		{
+			var fullName = symbol.ToDisplayString();
+			// We do it this way instead of using symbol.Name because it includes the type parameters of generic types (and symbol.MetadataName isn't very human-readable)
+			var shortName = fullName.Split('.').Last();
+			return new TypeIdentifier(fullName, shortName);
+		}
 
 		/// <summary>
 		/// Returns all the types implied as dependencies by the presence of <paramref name="typeSymbol"/>, ie the various types that went into <paramref name="typeSymbol"/>'s construction.
