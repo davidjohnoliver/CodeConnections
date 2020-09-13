@@ -37,12 +37,9 @@ namespace DependsOnThat.Tests.Utilities
 		}
 
 		/// <summary>
-		/// 
+		/// Asserts that <paramref name="enumerable"/> contains exactly one element that satisfies <paramref name="expectedPredicate"/>.
 		/// </summary>
-		/// <typeparam name="TSource"></typeparam>
-		/// <param name="enumerable"></param>
-		/// <param name="expectedPredicate"></param>
-		/// <returns></returns>
+		/// <returns>The element that satisfies the condition.</returns>
 		public static TSource ContainsSingle<TSource>(IEnumerable<TSource> enumerable, Func<TSource, bool> expectedPredicate)
 		{
 			if (expectedPredicate is null)
@@ -76,6 +73,26 @@ namespace DependsOnThat.Tests.Utilities
 			}
 
 			throw new AssertionException($"{enumerable} contains no items satisfying the supplied condition");
+		}
+
+		/// <summary>
+		/// Asserts that none of the elements in <paramref name="enumerable"/> match <paramref name="excludedPredicate"/>.
+		/// </summary>
+		public static void None<TSource>(IEnumerable<TSource> enumerable, Func<TSource, bool> excludedPredicate)
+		{
+			if (excludedPredicate is null)
+			{
+				throw new ArgumentNullException(nameof(excludedPredicate));
+			}
+
+			var lp = new LoopProtection();
+			foreach (var item in enumerable)
+			{
+				if (excludedPredicate(item))
+				{
+					throw new AssertionException($"{enumerable} contains {item} matching excluded condition");
+				}
+			}
 		}
 	}
 }

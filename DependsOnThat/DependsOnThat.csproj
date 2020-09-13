@@ -62,6 +62,8 @@
     <Compile Include="Extensions\DisposableExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\FileStatusExtensions.cs" />
+    <Compile Include="Extensions\ImmutableArrayExtensions.cs" />
+    <Compile Include="Extensions\NamedTypeSymbolExtensions.cs" />
     <Compile Include="Extensions\NodeExtensions.cs" />
     <Compile Include="Extensions\NodeGraphExtensions.cs" />
     <Compile Include="Extensions\NodePathExtensions.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\SymbolExtensions.cs" />
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
+    <Compile Include="Extensions\TypeSymbolExtensions.cs" />
     <Compile Include="Graph\NodeGraph.Builder.cs" />
     <Compile Include="Graph\Node.cs" />
     <Compile Include="Graph\NodeGraph.cs" />

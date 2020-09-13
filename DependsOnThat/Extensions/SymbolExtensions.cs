@@ -79,11 +79,5 @@ namespace DependsOnThat.Extensions
 			.OrderBy(s => Path.GetFileName(s).Split('.').Length)
 			.ThenBy(s => s.Length)
 			.FirstOrDefault();
-
-		/// <summary>
-		/// Creates a <see cref="TypeIdentifier"/> from an <see cref="ITypeSymbol"/> that depends only on the full name, suitable for comparisons 
-		/// from different compilations, etc.
-		/// </summary>
-		public static TypeIdentifier ToIdentifier(this ITypeSymbol symbol) => new TypeIdentifier(symbol.ToString(), symbol.Name);
 	}
 }

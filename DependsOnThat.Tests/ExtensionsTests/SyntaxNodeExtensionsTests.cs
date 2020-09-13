@@ -65,5 +65,119 @@ namespace DependsOnThat.Tests.ExtensionsTests
 				AssertEx.Contains(symbols, s => s.Name == "SomeClassAsImplicitVar");
 			}
 		}
+
+		[Test]
+		public async Task When_Generic_Type_Argument()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClassUsingConstructedTypes.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+				var model = compilation.GetSemanticModel(someClassTree);
+				var symbols = rootNode.GetAllReferencedTypeSymbols(model, includeExternalMetadata: false).ToArray();
+
+				AssertEx.Contains(symbols, s => s.Name == "SomeClassInGenericType");
+			}
+		}
+
+		[Test]
+		public async Task When_Array_Element_Type()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClassUsingConstructedTypes.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+				var model = compilation.GetSemanticModel(someClassTree);
+				var symbols = rootNode.GetAllReferencedTypeSymbols(model, includeExternalMetadata: false).ToArray();
+
+				AssertEx.Contains(symbols, s => s.Name == "SomeClassInArray");
+			}
+		}
+
+		[Test]
+		public async Task When_Unnamed_Tuple_Element()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClassUsingConstructedTypes.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+				var model = compilation.GetSemanticModel(someClassTree);
+				var symbols = rootNode.GetAllReferencedTypeSymbols(model, includeExternalMetadata: false).ToArray();
+
+				AssertEx.Contains(symbols, s => s.Name == "SomeClassInTuple1");
+				AssertEx.None(symbols, s => (s as INamedTypeSymbol)?.TupleElements.GetLengthSafe() > 0);
+			}
+		}
+
+		[Test]
+		public async Task When_Named_Tuple_Element()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClassUsingConstructedTypes.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+				var model = compilation.GetSemanticModel(someClassTree);
+				var symbols = rootNode.GetAllReferencedTypeSymbols(model, includeExternalMetadata: false).ToArray();
+
+				AssertEx.Contains(symbols, s => s.Name == "SomeClassInTuple2");
+				AssertEx.None(symbols, s => (s as INamedTypeSymbol)?.TupleElements.GetLengthSafe() > 0);
+			}
+		}
+
+		[Test]
+		public async Task When_Type_Argument_Nested_Deeply()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClassUsingConstructedTypes.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+				var model = compilation.GetSemanticModel(someClassTree);
+				var symbols = rootNode.GetAllReferencedTypeSymbols(model, includeExternalMetadata: false).ToArray();
+
+				AssertEx.Contains(symbols, s => s.Name == "SomeClassInTuple3");
+			}
+		}
+
+		[Test]
+		public async Task When_Generic_Class_Open()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClassUsingConstructedTypes.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+				var model = compilation.GetSemanticModel(someClassTree);
+				var symbols = rootNode.GetAllReferencedTypeSymbols(model, includeExternalMetadata: false).ToArray();
+
+				AssertEx.Contains(symbols, s => s.Name == "SomeGenericClass1");
+			}
+		}
+
+		[Test]
+		public async Task When_Generic_Class_Closed()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+				var compilation = await project.GetCompilationAsync();
+				var someClassTree = compilation.SyntaxTrees.Single(t => Path.GetFileName(t.FilePath) == "SomeClassUsingConstructedTypes.cs");
+				var rootNode = await someClassTree.GetRootAsync();
+				var model = compilation.GetSemanticModel(someClassTree);
+				var symbols = rootNode.GetAllReferencedTypeSymbols(model, includeExternalMetadata: false).ToArray();
+
+				AssertEx.Contains(symbols, s => s.Name == "SomeGenericClass2");
+			}
+		}
 	}
 }
