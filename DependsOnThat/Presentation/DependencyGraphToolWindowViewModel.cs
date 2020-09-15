@@ -75,6 +75,9 @@ namespace DependsOnThat.Presentation
 		private TimeSpan? _graphingtime;
 		public TimeSpan? GraphingTime { get => _graphingtime; set => OnValueSet(ref _graphingtime, value); }
 
+		private string? _graphingError;
+		public string? GraphingError { get => _graphingError; set => OnValueSet(ref _graphingError, value); }
+
 		public ICommand AddActiveDocumentAsRootCommand { get; }
 		public ICommand ClearRootsCommand { get; }
 		public ICommand UseGitModifiedFilesAsRootCommand { get; }
@@ -125,20 +128,29 @@ namespace DependsOnThat.Presentation
 		private void TryUpdateGraph()
 		{
 			GraphingTime = null;
+			GraphingError = null;
 			_joinableTaskFactory.RunAsync(async () =>
 			{
 				var stopwatch = Stopwatch.StartNew();
-				var graph = await GetGraphAsync(_graphUpdatesRegistration.GetNewToken());
-				stopwatch.Stop();
-				if (graph == null)
+				try
 				{
-					return;
+					var graph = await GetGraphAsync(_graphUpdatesRegistration.GetNewToken());
+					stopwatch.Stop();
+					if (graph == null)
+					{
+						return;
+					}
+					if (graph.VertexCount > 0)
+					{
+						GraphingTime = stopwatch.Elapsed;
+					}
+					Graph = graph;
 				}
-				if (graph.VertexCount > 0)
+				catch (Exception e)
 				{
-					GraphingTime = stopwatch.Elapsed;
+					stopwatch.Stop();
+					GraphingError = $"Error: {e}";
 				}
-				Graph = graph;
 			});
 		}
 

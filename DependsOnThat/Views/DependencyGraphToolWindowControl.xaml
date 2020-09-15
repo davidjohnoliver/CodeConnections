@@ -75,6 +75,8 @@
 		</graphZoom:ZoomControl>
 		<TextBlock Grid.Row="3"
 				   Text="{Binding GraphingTime, Converter={StaticResource GraphingTimeTextConverter}}" />
+		<TextBlock Grid.Row="3"
+				   Text="{Binding GraphingError}" MaxHeight="110" />
 		<TextBlock Grid.Row="4"
 				   Text="{Binding ElementName=GraphLayout, Path=RenderTime, Converter={StaticResource RenderTimeTextConverter}}" />
 	</Grid>
