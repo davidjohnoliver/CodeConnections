@@ -15,6 +15,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # Build the VSIX and upload as an artifact, and run tests
   build:
     # The type of runner that the job will run on
     runs-on: windows-latest
@@ -30,6 +31,9 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.2
 
+    - name: Add VSTest to PATH
+      uses: darenm/Setup-VSTest@v1
+
     - name: Restore NuGet packages
       run: nuget restore ${{ env.dependsOnThatSolution }}
     
@@ -44,3 +48,6 @@ jobs:
         name: 'DependsOnThat VSIX'
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{ env.vsixContainer }}
+    
+    - name: Unit tests
+      run: vstest.console.exe .\DependsOnThat.Tests\bin\${{ env.config }}\DependsOnThat.Tests.dll
