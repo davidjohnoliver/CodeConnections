@@ -88,6 +88,7 @@ namespace DependsOnThat.Tests.Utilities
 			var lp = new LoopProtection();
 			foreach (var item in enumerable)
 			{
+				lp.Iterate();
 				if (excludedPredicate(item))
 				{
 					throw new AssertionException($"{enumerable} contains {item} matching excluded condition");
