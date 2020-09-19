@@ -57,7 +57,9 @@ namespace DependsOnThat.Presentation
 			{
 				if (OnValueSet(ref _selectedNode, value))
 				{
-					if (value?.FilePath != null)
+					if (value?.FilePath != null
+						// Don't try to open the currently-open file. (This can, eg, disrupt the 'diff' view being opened from the source control changes window.)
+						&& value.FilePath != _documentsService.GetActiveDocument())
 					{
 						_joinableTaskFactory.RunAsync(async () =>
 						{
