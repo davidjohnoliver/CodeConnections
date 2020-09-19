@@ -52,6 +52,9 @@
   <ItemGroup>
     <Compile Include="Additions\NullableAttributes.cs" />
     <Compile Include="Additions\Range.cs" />
+    <Compile Include="Collections\ISelectionCollection.cs" />
+    <Compile Include="Collections\SelectionCollection.cs" />
+    <Compile Include="Collections\SelectionList.cs" />
     <Compile Include="Disposables\CancellationDisposable.cs" />
     <Compile Include="Disposables\CompositeDisposable.cs" />
     <Compile Include="Disposables\Disposable.cs" />
@@ -104,6 +107,7 @@
     <Compile Include="Services\ISolutionService.cs" />
     <Compile Include="Services\RoslynService.cs" />
     <Compile Include="Services\SolutionService.cs" />
+    <Compile Include="Views\Behaviours\MultiSelection.cs" />
     <Compile Include="Views\DependencyGraphLayout.cs" />
     <Compile Include="VSIX\DependsOnThatPackage.cs" />
     <Compile Include="Utilities\LoopProtection.cs" />
