@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
+using DependsOnThat.Roslyn;
 using Microsoft.CodeAnalysis;
 
 namespace DependsOnThat.Graph
@@ -27,10 +28,10 @@ namespace DependsOnThat.Graph
 
 		public TypeNode? GetNodeForType(ITypeSymbol type) => _nodes.GetOrDefault(new TypeNodeKey(type.ToIdentifier())) as TypeNode;
 
-		public static async Task<NodeGraph?> BuildGraph(Solution solution, CancellationToken ct)
+		public static async Task<NodeGraph?> BuildGraph(Solution solution, IEnumerable<ProjectIdentifier>? includedProjects = null, CancellationToken ct = default)
 		{
 			var graph = new NodeGraph();
-			await BuildGraph(graph, solution, ct);
+			await BuildGraph(graph, solution, includedProjects, ct);
 			if (ct.IsCancellationRequested)
 			{
 				return null;

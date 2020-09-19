@@ -110,8 +110,8 @@ namespace DependsOnThat.Tests.PresentationTests
 					ct: default);
 
 				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 2);
-				Assert.AreEqual(9, displayGraph.VertexCount);
-				Assert.AreEqual(9, displayGraph.EdgeCount);
+				Assert.AreEqual(10, displayGraph.VertexCount);
+				Assert.AreEqual(10, displayGraph.EdgeCount);
 			}
 		}
 

@@ -9,9 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
+using DependsOnThat.Collections;
 using DependsOnThat.Disposables;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
+using DependsOnThat.Roslyn;
 using DependsOnThat.Services;
 using Microsoft.VisualStudio.Threading;
 using QuickGraph;
@@ -27,6 +29,7 @@ namespace DependsOnThat.Presentation
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly HashSet<string> _rootDocuments = new HashSet<string>();
 		private readonly SerialCancellationDisposable _graphUpdatesRegistration = new SerialCancellationDisposable();
+		private readonly SerialCancellationDisposable _projectUpdatesRegistration = new SerialCancellationDisposable();
 
 
 		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
@@ -80,6 +83,29 @@ namespace DependsOnThat.Presentation
 		private string? _graphingError;
 		public string? GraphingError { get => _graphingError; set => OnValueSet(ref _graphingError, value); }
 
+		private SelectionList<ProjectIdentifier>? _projects;
+		public SelectionList<ProjectIdentifier>? Projects
+		{
+			get => _projects;
+			set
+			{
+				var oldValue = _projects;
+				if (OnValueSet(ref _projects, value))
+				{
+					if (oldValue != null)
+					{
+						oldValue.SelectionChanged -= OnProjectsSelectionChanged;
+					}
+					if (value != null)
+					{
+						value.SelectionChanged += OnProjectsSelectionChanged;
+					}
+				}
+			}
+		}
+
+		private void OnProjectsSelectionChanged() => TryUpdateGraph();
+
 		public ICommand AddActiveDocumentAsRootCommand { get; }
 		public ICommand ClearRootsCommand { get; }
 		public ICommand UseGitModifiedFilesAsRootCommand { get; }
@@ -93,12 +119,19 @@ namespace DependsOnThat.Presentation
 			_gitService = gitService ?? throw new ArgumentNullException(nameof(gitService));
 			_solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
 			_solutionService.SolutionChanged += OnSolutionChanged;
+
 			AddActiveDocumentAsRootCommand = SimpleCommand.Create(AddActiveDocumentAsRoot);
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
 			UseGitModifiedFilesAsRootCommand = SimpleCommand.Create(UseGitModifiedFilesAsRoot);
+
+			UpdateProjects();
 		}
 
-		private void OnSolutionChanged() => ResetGraph();
+		private void OnSolutionChanged()
+		{
+			ResetGraph();
+			UpdateProjects();
+		}
 
 		private void ResetGraph()
 		{
@@ -158,6 +191,7 @@ namespace DependsOnThat.Presentation
 
 		private Task<IBidirectionalGraph<DisplayNode, DisplayEdge>?> GetGraphAsync(CancellationToken ct)
 		{
+			var includedProjects = Projects?.SelectedItems.ToArray();
 			return Task.Run(async () =>
 			{
 				if (ct.IsCancellationRequested)
@@ -174,7 +208,7 @@ namespace DependsOnThat.Presentation
 				{
 					return Empty;
 				}
-				var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), ct);
+				var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), includedProjects, ct);
 				var graph = nodeGraph.GetDisplaySubgraph(rootSymbols, ExtensionDepth);
 
 				if (ct.IsCancellationRequested)
@@ -193,6 +227,20 @@ namespace DependsOnThat.Presentation
 			TryUpdateGraph();
 		}
 
+		private void UpdateProjects()
+		{
+			var ct = _projectUpdatesRegistration.GetNewToken();
+			_joinableTaskFactory.RunAsync(async () =>
+			{
+				var projects = await Task.Run(() => _roslynService.GetSortedProjects(), ct);
+				if (ct.IsCancellationRequested)
+				{
+					return;
+				}
+				Projects = new SelectionList<ProjectIdentifier>(projects);
+			});
+		}
+
 		private void OnActiveDocumentChanged()
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
@@ -202,8 +250,13 @@ namespace DependsOnThat.Presentation
 		public void Dispose()
 		{
 			_graphUpdatesRegistration.Dispose();
+			_projectUpdatesRegistration.Dispose();
 			_documentsService.ActiveDocumentChanged -= OnActiveDocumentChanged;
 			_solutionService.SolutionChanged -= OnSolutionChanged;
+			if (Projects != null)
+			{
+				Projects.SelectionChanged -= OnProjectsSelectionChanged;
+			}
 		}
 	}
 }

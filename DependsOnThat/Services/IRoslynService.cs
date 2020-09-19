@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using DependsOnThat.Roslyn;
 using Microsoft.CodeAnalysis;
 
 namespace DependsOnThat.Services
@@ -19,5 +20,10 @@ namespace DependsOnThat.Services
 		/// Get symbols of all types declared within the files at the supplied paths.
 		/// </summary>
 		IAsyncEnumerable<(string FilePath, ITypeSymbol Symbol)> GetDeclaredSymbolsFromFilePaths(IEnumerable<string> filePaths, CancellationToken ct);
+
+		/// <summary>
+		/// Get projects in the solution topologically sorted in dependency order, root dependencies first.
+		/// </summary>
+		public IEnumerable<ProjectIdentifier> GetSortedProjects();
 	}
 }

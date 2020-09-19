@@ -18,13 +18,21 @@ namespace DependsOnThat.Graph
 		/// <summary>
 		/// Build out the contents of a graph for a given solution.
 		/// </summary>
-		private static async Task BuildGraph(NodeGraph graph, Solution solution, CancellationToken ct)
+		/// <param name="includedProjects">Solution projects to include in the graph. If null, all projects will be included.</param>
+		private static async Task BuildGraph(NodeGraph graph, Solution solution, IEnumerable<ProjectIdentifier>? includedProjects, CancellationToken ct)
 		{
 			var knownNodes = new Dictionary<TypeIdentifier, TypeNode>();
+
+			var projects = includedProjects?.Select(pi => solution.GetProject(pi.Id)).Trim() ?? solution.Projects;
+
+			var includedAssemblies = projects.Select(p => p.AssemblyName).ToHashSet();
+
+			bool IsSymbolIncluded(ITypeSymbol foundSymbol) => includedAssemblies.Contains(foundSymbol.ContainingAssembly.Name);
+
 			//// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
 			//// anyway https://softwareengineering.stackexchange.com/a/330028/336780, and (b) the UX we want is a stable ordering of node links, which wouldn't 
 			//// be the case if we processed task results out of order.
-			foreach (var project in solution.Projects)
+			foreach (var project in projects)
 			{
 				var compilation = await project.GetCompilationAsync(ct);
 				if (compilation == null)
@@ -57,9 +65,12 @@ namespace DependsOnThat.Graph
 					// TODO: GetTypeDependencies calls GetSemanticModel() a second time, now that we're always considering all SyntaxTrees it'd be more efficient to refactor to only create it once (eg GetTypeDependenciesForDefinition)
 					await foreach (var dependency in symbol.GetTypeDependencies(compilation, includeExternalMetadata: false, ct))
 					{
-						var dependencyNode = GetFromKnownNodes(dependency);
+						if (IsSymbolIncluded(dependency))
+						{
+							var dependencyNode = GetFromKnownNodes(dependency);
 
-						node.AddForwardLink(dependencyNode);
+							node.AddForwardLink(dependencyNode); 
+						}
 					}
 				}
 

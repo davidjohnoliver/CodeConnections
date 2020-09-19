@@ -4,8 +4,7 @@ using System.Text;
 
 namespace SubjectSolution.Core
 {
-	public class SomeClassCore
+	class SomeClassCoreDeeper
 	{
-		internal SomeClassCoreDeeper SomeClassCoreDeeper { get; set; }
 	}
 }

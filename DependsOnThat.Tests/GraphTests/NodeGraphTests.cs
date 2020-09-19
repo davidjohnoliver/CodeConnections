@@ -108,8 +108,6 @@ namespace DependsOnThat.Tests.GraphTests
 		{
 			using (var workspace = WorkspaceUtils.GetSubjectSolution())
 			{
-				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
-
 				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
 
 				var someClassKey = TypeNodeKey.GetFromFullName("SubjectSolution.SomeClass");
@@ -122,6 +120,22 @@ namespace DependsOnThat.Tests.GraphTests
 
 				var backLink = AssertEx.Contains(someClassCoreNode.BackLinks, n => n.Key.Equals(someClassKey));
 				Assert.AreEqual(someClassNode, backLink);
+			}
+		}
+
+		[Test]
+		public async Task When_Project_Excluded()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				AssertEx.Contains(fullGraph.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomeClassCore");
+
+				var mainProject = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+
+				var graphWithCoreExcluded = await NodeGraph.BuildGraph(workspace.CurrentSolution, new[] { mainProject.ToIdentifier() });
+
+				AssertEx.None(graphWithCoreExcluded.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomeClassCore");
 			}
 		}
 

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
+using DependsOnThat.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.LanguageServices;
 
@@ -49,5 +50,14 @@ namespace DependsOnThat.Services
 		}
 
 		public Solution GetCurrentSolution() => _workspace.CurrentSolution;
+
+		public IEnumerable<ProjectIdentifier> GetSortedProjects()
+		{
+			var solution = GetCurrentSolution();
+			return solution
+				.GetProjectDependencyGraph()
+				.GetTopologicallySortedProjects()
+				.Select(id => solution.GetProject(id)?.ToIdentifier() ?? throw new InvalidOperationException());
+		}
 	}
 }

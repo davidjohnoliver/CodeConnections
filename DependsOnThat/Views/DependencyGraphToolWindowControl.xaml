@@ -6,6 +6,7 @@
 			 xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
 			 xmlns:local="clr-namespace:DependsOnThat.Views"
 			 xmlns:converters="clr-namespace:DependsOnThat.Presentation.Converters"
+			 xmlns:ext="clr-namespace:DependsOnThat.Views.Behaviours"
 			 xmlns:graphZoom="clr-namespace:GraphSharp.Controls.Zoom;assembly=GraphSharp.Controls"
 			 xmlns:graphControls="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
 			 xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
@@ -28,6 +29,7 @@
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="Auto" />
@@ -68,15 +70,24 @@
 				  ItemsSource="{Binding ElementName=GraphLayout, Path=LayoutAlgorithmFactory.AlgorithmTypes}"
 				  SelectedItem="{Binding ElementName=GraphLayout, Path=LayoutAlgorithmType, Mode=TwoWay}" />
 		<graphZoom:ZoomControl Grid.Row="2"
-							   Grid.ColumnSpan="4">
+							   Grid.ColumnSpan="5">
 			<local:DependencyGraphLayout x:Name="GraphLayout"
 										 DisplayGraph="{Binding Graph}"
 										 SelectedVertex="{Binding SelectedNode, Mode=TwoWay}" />
 		</graphZoom:ZoomControl>
+		<Expander Grid.Row="1"
+				  Grid.RowSpan="2"
+				  Grid.Column="3"
+				  Header="Included projects">
+			<ListView ext:MultiSelection.ItemsSource="{Binding Projects}"
+					  DisplayMemberPath="ProjectName"
+					  ext:MultiSelection.InitialSelectionState="Selected" VerticalAlignment="Top" />
+		</Expander>
 		<TextBlock Grid.Row="3"
 				   Text="{Binding GraphingTime, Converter={StaticResource GraphingTimeTextConverter}}" />
 		<TextBlock Grid.Row="3"
-				   Text="{Binding GraphingError}" MaxHeight="110" />
+				   Text="{Binding GraphingError}"
+				   MaxHeight="110" />
 		<TextBlock Grid.Row="4"
 				   Text="{Binding ElementName=GraphLayout, Path=RenderTime, Converter={StaticResource RenderTimeTextConverter}}" />
 	</Grid>
