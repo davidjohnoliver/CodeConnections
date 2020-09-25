@@ -79,5 +79,14 @@ namespace DependsOnThat.Extensions
 			.OrderBy(s => Path.GetFileName(s).Split('.').Length)
 			.ThenBy(s => s.Length)
 			.FirstOrDefault();
+
+		/// <summary>
+		/// Returns true if all of <paramref name="symbol"/>'s declarations occur in generated code. Eg, if it is a type, this will return 
+		/// true if all partial declarations of the type are in generated code files.
+		/// 
+		/// If there are no declarations in syntax, returns false.
+		/// </summary>
+		public static bool IsPurelyGeneratedSymbol(this ISymbol symbol) 
+			=> symbol.DeclaringSyntaxReferences.Length > 0 || symbol.DeclaringSyntaxReferences.All(tr => tr.SyntaxTree.IsGeneratedCode());
 	}
 }

@@ -78,10 +78,25 @@
 		<Expander Grid.Row="1"
 				  Grid.RowSpan="2"
 				  Grid.Column="3"
-				  Header="Included projects">
-			<ListView ext:MultiSelection.ItemsSource="{Binding Projects}"
-					  DisplayMemberPath="ProjectName"
-					  ext:MultiSelection.InitialSelectionState="Selected" VerticalAlignment="Top" />
+				  Header="Options">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<CheckBox Margin="0,10,0,0"
+						  Content="Exclude generated types"
+						  IsChecked="{Binding ExcludePureGenerated, Mode=TwoWay}" />
+				<TextBlock Grid.Row="1"
+						   Text="Included projects:"
+						   Margin="0,12,0,3" />
+				<ListView Grid.Row="2"
+						  ext:MultiSelection.ItemsSource="{Binding Projects}"
+						  DisplayMemberPath="ProjectName"
+						  ext:MultiSelection.InitialSelectionState="Selected"
+						  VerticalAlignment="Top" />
+			</Grid>
 		</Expander>
 		<TextBlock Grid.Row="3"
 				   Text="{Binding GraphingTime, Converter={StaticResource GraphingTimeTextConverter}}" />

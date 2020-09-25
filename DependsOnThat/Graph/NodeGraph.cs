@@ -28,10 +28,10 @@ namespace DependsOnThat.Graph
 
 		public TypeNode? GetNodeForType(ITypeSymbol type) => _nodes.GetOrDefault(new TypeNodeKey(type.ToIdentifier())) as TypeNode;
 
-		public static async Task<NodeGraph?> BuildGraph(Solution solution, IEnumerable<ProjectIdentifier>? includedProjects = null, CancellationToken ct = default)
+		public static async Task<NodeGraph?> BuildGraph(Solution solution, IEnumerable<ProjectIdentifier>? includedProjects = null, bool excludePureGenerated = false, CancellationToken ct = default)
 		{
 			var graph = new NodeGraph();
-			await BuildGraph(graph, solution, includedProjects, ct);
+			await BuildGraph(graph, solution, includedProjects, excludePureGenerated, ct);
 			if (ct.IsCancellationRequested)
 			{
 				return null;

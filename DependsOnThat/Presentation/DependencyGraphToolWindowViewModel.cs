@@ -33,19 +33,32 @@ namespace DependsOnThat.Presentation
 
 
 		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
-		private int _extensionDepth = 1;
 		private bool _shouldUseGitForRoots;
 
 		public IBidirectionalGraph<DisplayNode, DisplayEdge> Graph { get => _graph; set => OnValueSet(ref _graph, value); }
 
 		private static IBidirectionalGraph<DisplayNode, DisplayEdge> Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
 
+		private int _extensionDepth = 1;
 		public int ExtensionDepth
 		{
 			get => _extensionDepth;
 			set
 			{
 				if (OnValueSet(ref _extensionDepth, value))
+				{
+					TryUpdateGraph();
+				}
+			}
+		}
+
+		private bool _excludePureGenerated;
+		public bool ExcludePureGenerated
+		{
+			get => _excludePureGenerated;
+			set
+			{
+				if (OnValueSet(ref _excludePureGenerated, value))
 				{
 					TryUpdateGraph();
 				}
@@ -208,7 +221,7 @@ namespace DependsOnThat.Presentation
 				{
 					return Empty;
 				}
-				var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), includedProjects, ct);
+				var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), includedProjects, ExcludePureGenerated, ct);
 				var graph = nodeGraph.GetDisplaySubgraph(rootSymbols, ExtensionDepth);
 
 				if (ct.IsCancellationRequested)

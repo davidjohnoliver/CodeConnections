@@ -75,6 +75,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\SymbolExtensions.cs" />
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
+    <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
     <Compile Include="Extensions\TypeSymbolExtensions.cs" />
     <Compile Include="Graph\NodeGraph.Builder.cs" />
     <Compile Include="Graph\Node.cs" />

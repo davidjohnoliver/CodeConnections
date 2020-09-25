@@ -19,7 +19,11 @@ namespace DependsOnThat.Graph
 		/// Build out the contents of a graph for a given solution.
 		/// </summary>
 		/// <param name="includedProjects">Solution projects to include in the graph. If null, all projects will be included.</param>
-		private static async Task BuildGraph(NodeGraph graph, Solution solution, IEnumerable<ProjectIdentifier>? includedProjects, CancellationToken ct)
+		/// <param name="excludePureGenerated">
+		/// If true, types that are only declared in generated code will be ignored (types with both authored and generated declarations 
+		/// will be treated normally).
+		/// </param>
+		private static async Task BuildGraph(NodeGraph graph, Solution solution, IEnumerable<ProjectIdentifier>? includedProjects, bool excludePureGenerated, CancellationToken ct)
 		{
 			var knownNodes = new Dictionary<TypeIdentifier, TypeNode>();
 
@@ -27,7 +31,20 @@ namespace DependsOnThat.Graph
 
 			var includedAssemblies = projects.Select(p => p.AssemblyName).ToHashSet();
 
-			bool IsSymbolIncluded(ITypeSymbol foundSymbol) => includedAssemblies.Contains(foundSymbol.ContainingAssembly.Name);
+			bool IsSymbolIncluded(ITypeSymbol foundSymbol)
+			{
+				if (!includedAssemblies.Contains(foundSymbol.ContainingAssembly.Name))
+				{
+					return false;
+				}
+
+				if (excludePureGenerated && foundSymbol.IsPurelyGeneratedSymbol())
+				{
+					return false;
+				}
+
+				return true;
+			}
 
 			//// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
 			//// anyway https://softwareengineering.stackexchange.com/a/330028/336780, and (b) the UX we want is a stable ordering of node links, which wouldn't 
@@ -51,7 +68,7 @@ namespace DependsOnThat.Graph
 					}
 					var root = await syntaxTree.GetRootAsync(ct);
 					var semanticModel = compilation.GetSemanticModel(syntaxTree);
-					declaredSymbols.UnionWith(root.GetAllDeclaredTypes(semanticModel));
+					declaredSymbols.UnionWith(root.GetAllDeclaredTypes(semanticModel).Where(IsSymbolIncluded));
 				}
 
 				foreach (var symbol in declaredSymbols)
@@ -69,7 +86,7 @@ namespace DependsOnThat.Graph
 						{
 							var dependencyNode = GetFromKnownNodes(dependency);
 
-							node.AddForwardLink(dependencyNode); 
+							node.AddForwardLink(dependencyNode);
 						}
 					}
 				}
