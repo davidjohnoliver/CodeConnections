@@ -98,6 +98,13 @@
     <Compile Include="Presentation\SimpleDisplayEdge.cs" />
     <Compile Include="Presentation\ViewModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoslynInternal\FileNameUtilities.cs" />
+    <Compile Include="RoslynInternal\GeneratedCodeUtilities.cs" />
+    <Compile Include="RoslynInternal\Hash.cs" />
+    <Compile Include="RoslynInternal\PathKind.cs" />
+    <Compile Include="RoslynInternal\PathUtilities.cs" />
+    <Compile Include="RoslynInternal\PlatformInformation.cs" />
+    <Compile Include="RoslynInternal\SyntaxTriviaExtensions.cs" />
     <Compile Include="Roslyn\ProjectIdentifier.cs" />
     <Compile Include="Roslyn\TypeIdentifier.cs" />
     <Compile Include="Services\DocumentsService.cs" />
