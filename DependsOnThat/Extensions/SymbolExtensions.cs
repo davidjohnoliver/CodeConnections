@@ -86,7 +86,7 @@ namespace DependsOnThat.Extensions
 		/// 
 		/// If there are no declarations in syntax, returns false.
 		/// </summary>
-		public static bool IsPurelyGeneratedSymbol(this ISymbol symbol) 
-			=> symbol.DeclaringSyntaxReferences.Length > 0 || symbol.DeclaringSyntaxReferences.All(tr => tr.SyntaxTree.IsGeneratedCode());
+		public static bool IsPurelyGeneratedSymbol(this ISymbol symbol)
+			=> symbol.DeclaringSyntaxReferences.Length > 0 && symbol.DeclaringSyntaxReferences.All(tr => tr.SyntaxTree.IsGeneratedCode());
 	}
 }
