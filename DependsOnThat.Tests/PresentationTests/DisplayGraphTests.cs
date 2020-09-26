@@ -144,6 +144,29 @@ namespace DependsOnThat.Tests.PresentationTests
 			}
 		}
 
+		[Test]
+		public async Task When_Two_Adjacent_Roots()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
+
+				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+
+				var root1 = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClassDepth3")];
+				var root2 = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClassDepth4")];
+
+				var roots = new HashSet<TypeNode>();
+				roots.Add(root1 as TypeNode);
+				roots.Add(root2 as TypeNode);
+
+				var displayGraph = graph.GetDisplaySubgraph(roots, 1);
+
+				AssertEx.Contains(displayGraph.Vertices, n => n.DisplayString.EndsWith("SomeDeeperClass"));
+				AssertEx.Contains(displayGraph.Vertices, n => n.DisplayString.EndsWith("SomeClassDepth5"));
+			}
+		}
+
 		private static IList<(string FilePath, Microsoft.CodeAnalysis.ITypeSymbol Symbol)> GetRootsWithPath(Microsoft.CodeAnalysis.ITypeSymbol[] rootSymbols)
 		{
 			return rootSymbols.Select(s => (s.GetPreferredDeclaration(), s)).ToArray();

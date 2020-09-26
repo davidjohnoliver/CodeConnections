@@ -48,35 +48,40 @@ namespace DependsOnThat.Graph
 		/// </param>
 		public HashSet<Node> ExtendSubgraphFromRoots(IEnumerable<Node> roots, int depth)
 		{
-			var nodes = new HashSet<Node>();
-			foreach (var root in roots)
+			var nodes = new HashSet<Node>(roots);
+			if (depth > 0)
 			{
-				ExploreNode(root, depth);
+				var queue = new Queue<ExtensionSearchEntry>(roots.Select(n => new ExtensionSearchEntry(n, 0)));
 
-				void ExploreNode(Node node, int currentDepth)
+				while (queue.Count > 0)
 				{
-					if (currentDepth < 0)
+					var next = queue.Dequeue();
+					foreach (var link in next.Node.AllLinks())
 					{
-						return;
-					}
-
-					if (!nodes.Contains(node))
-					{
-						nodes.Add(node);
-
-						foreach (var link in node.ForwardLinks)
+						// Add connections of all nodes being explored. If the connection's depth would be less than the desired extension 
+						// depth, queue it up to be explored (and have its own connections added)
+						if (nodes.Add(link) && next.Depth < (depth - 1))
 						{
-							ExploreNode(link, currentDepth - 1);
-						}
-
-						foreach (var link in node.BackLinks)
-						{
-							ExploreNode(link, currentDepth - 1);
+							queue.Enqueue(next.Child(link));
 						}
 					}
 				}
 			}
 			return nodes;
+		}
+
+		private class ExtensionSearchEntry
+		{
+			public ExtensionSearchEntry(Node node, int depth)
+			{
+				Node = node;
+				Depth = depth;
+			}
+
+			public Node Node { get; }
+			public int Depth { get; }
+
+			public ExtensionSearchEntry Child(Node childNode) => new ExtensionSearchEntry(childNode, Depth + 1);
 		}
 	}
 }

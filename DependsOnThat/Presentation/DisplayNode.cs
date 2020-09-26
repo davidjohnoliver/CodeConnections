@@ -29,5 +29,7 @@ namespace DependsOnThat.Presentation
 		public override bool Equals(object obj) => obj is DisplayNode otherNode && otherNode.DisplayString == DisplayString;
 
 		public override int GetHashCode() => DisplayString?.GetHashCode() ?? 0;
+
+		public override string ToString() => $"{nameof(DisplayNode)}-{DisplayString}";
 	}
 }
