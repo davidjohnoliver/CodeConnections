@@ -37,5 +37,7 @@ namespace DependsOnThat.Presentation
 				return hash;
 			}
 		}
+
+		public override string ToString() => $"{base.ToString()}-{Source} -> {Target}";
 	}
 }
