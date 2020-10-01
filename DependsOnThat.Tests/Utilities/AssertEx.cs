@@ -91,7 +91,7 @@ namespace DependsOnThat.Tests.Utilities
 				lp.Iterate();
 				if (excludedPredicate(item))
 				{
-					throw new AssertionException($"{enumerable} contains {item} matching excluded condition");
+					throw new AssertionException($"{item} matching excluded condition found in {enumerable}");
 				}
 			}
 		}
