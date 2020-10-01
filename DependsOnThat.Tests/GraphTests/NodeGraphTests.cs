@@ -46,8 +46,7 @@ namespace DependsOnThat.Tests.GraphTests
 				AssertEx.Contains(someOtherClassNode.ForwardLinks, n => (n as TypeNode)?.Identifier.Name == "SomeClassInArray");
 				AssertEx.Contains(someOtherClassNode.ForwardLinks, n => (n as TypeNode)?.Identifier.Name == "SomeDeeperClass");
 
-				AssertNoDuplicates(graph);
-				AssertNoLooseLinks(graph);
+				AssertConsistentState(graph);
 			}
 		}
 
@@ -74,8 +73,7 @@ namespace DependsOnThat.Tests.GraphTests
 				Assert.AreEqual(3, root.ForwardLinks.Count);
 				Assert.AreEqual(2, root.BackLinks.Count);
 
-				AssertNoDuplicates(graph);
-				AssertNoLooseLinks(graph);
+				AssertConsistentState(graph);
 			}
 		}
 
@@ -167,6 +165,13 @@ namespace DependsOnThat.Tests.GraphTests
 			Assert.AreEqual(nodes.Count, distinctCount);
 		}
 
+		private static void AssertConsistentState(NodeGraph nodeGraph)
+		{
+			AssertNoDuplicates(nodeGraph);
+			AssertNoLooseLinks(nodeGraph);
+			AssertNoSelfLinks(nodeGraph);
+		}
+
 		private static void AssertNoLooseLinks(NodeGraph nodeGraph)
 		{
 			var nodes = nodeGraph.Nodes.Values.ToHashSet();
@@ -175,6 +180,11 @@ namespace DependsOnThat.Tests.GraphTests
 			{
 				Assert.IsTrue(nodes.Contains(link), $"Link {link} not found in nodes");
 			}
+		}
+
+		private static void AssertNoSelfLinks(NodeGraph nodeGraph)
+		{
+			AssertEx.None(GetAllNodes(nodeGraph), n => n is TypeNode tn && tn.AllLinks().Contains(n));
 		}
 
 		private static IEnumerable<Node> GetAllNodes(NodeGraph graph) => graph.Nodes.Values;

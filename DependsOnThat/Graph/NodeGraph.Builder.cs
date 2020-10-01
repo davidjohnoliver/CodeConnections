@@ -86,7 +86,10 @@ namespace DependsOnThat.Graph
 						{
 							var dependencyNode = GetFromKnownNodes(dependency);
 
-							node.AddForwardLink(dependencyNode);
+							if (node != dependencyNode)
+							{
+								node.AddForwardLink(dependencyNode); 
+							}
 						}
 					}
 				}

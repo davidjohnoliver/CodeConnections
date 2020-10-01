@@ -11,6 +11,8 @@ namespace SubjectSolution
 
 		public SomeClassDepth3 SomeClassDepth3;
 
+		public SomeClassSelfReference SomeClassSelfReference;
+
 		void DoStuff()
 		{
 			var implicitVar = SomeStaticClass.SomeClassAsImplicitVar;
