@@ -57,6 +57,7 @@
     <Compile Include="GraphTests\NodePathTests.cs" />
     <Compile Include="PresentationTests\DisplayGraphTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatisticsTests\DiscreteStatisticsResultTests.cs" />
     <Compile Include="Utilities\AssertEx.cs" />
     <Compile Include="Utilities\ProjectUtils.cs" />
     <Compile Include="Utilities\WorkspaceUtils.cs" />

@@ -117,6 +117,7 @@
     <Compile Include="Services\ISolutionService.cs" />
     <Compile Include="Services\RoslynService.cs" />
     <Compile Include="Services\SolutionService.cs" />
+    <Compile Include="Statistics\DiscreteStatisticsResult.cs" />
     <Compile Include="Views\Behaviours\MultiSelection.cs" />
     <Compile Include="Views\DependencyGraphLayout.cs" />
     <Compile Include="VSIX\DependsOnThatPackage.cs" />
