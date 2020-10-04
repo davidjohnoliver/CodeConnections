@@ -22,5 +22,20 @@ namespace DependsOnThat.Extensions
 
 			return default;
 		}
+
+		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> initializer)
+		{
+			if (initializer is null)
+			{
+				throw new ArgumentNullException(nameof(initializer));
+			}
+
+			if (!dictionary.ContainsKey(key))
+			{
+				dictionary[key] = initializer(key);
+			}
+
+			return dictionary[key];
+		}
 	}
 }
