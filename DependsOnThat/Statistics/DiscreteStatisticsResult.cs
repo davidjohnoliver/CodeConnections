@@ -27,6 +27,11 @@ namespace DependsOnThat.Statistics
 		public IReadOnlyDictionary<int, int> Histogram { get; }
 
 		/// <summary>
+		/// A histogram of bucket counts keyed by bucket value. Ordered. Sparse.
+		/// </summary>
+		public IEnumerable<KeyValuePair<int, int>> SparseHistogram => Histogram.Where(kvp => kvp.Value > 0);
+
+		/// <summary>
 		/// All bucket values, ie all distribution values which are represented by at least one item. Ordered. Sparse.
 		/// </summary>
 		public IReadOnlyList<int> BucketValues { get; }
@@ -65,6 +70,11 @@ namespace DependsOnThat.Statistics
 		/// The number of items in the bucket with most items.
 		/// </summary>
 		public int MaxBucketCount { get; }
+
+		/// <summary>
+		/// The sample value corresponding to the bucket with most items.
+		/// </summary>
+		public int MaxBucketCountBucket => SparseHistogram.First(kvp => kvp.Value == MaxBucketCount).Key; // TODO: this is horribly inefficient
 
 		/// <summary>
 		/// The mean number of items per bucket. This is calculated over the dense bucket set between min and max values.

@@ -62,6 +62,7 @@
     <Compile Include="Disposables\SerialCancellationDisposable.cs" />
     <Compile Include="Disposables\SerialDisposable.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\DiscreteStatisticsResultExtensions.cs" />
     <Compile Include="Extensions\DisposableExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\FileStatusExtensions.cs" />
