@@ -119,6 +119,13 @@
     <Compile Include="Services\RoslynService.cs" />
     <Compile Include="Services\SolutionService.cs" />
     <Compile Include="Statistics\DiscreteStatisticsResult.cs" />
+    <Compile Include="Text\CompactListFormatter.cs" />
+    <Compile Include="Text\ConsoleHeaderFormatter.cs" />
+    <Compile Include="Text\IDictionaryFormatter.cs" />
+    <Compile Include="Text\IHeaderFormatter.cs" />
+    <Compile Include="Text\ICompactListFormatter.cs" />
+    <Compile Include="Text\MarkdownStyleTableFormatter.cs" />
+    <Compile Include="Utilities\ArrayUtils.cs" />
     <Compile Include="Views\Behaviours\MultiSelection.cs" />
     <Compile Include="Views\DependencyGraphLayout.cs" />
     <Compile Include="VSIX\DependsOnThatPackage.cs" />
