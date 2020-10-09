@@ -23,5 +23,7 @@ namespace DependsOnThat.Extensions
 				}
 			}
 		}
+
+		public static bool None<T>(this IEnumerable<T> enumerable) => !enumerable.Any();
 	}
 }

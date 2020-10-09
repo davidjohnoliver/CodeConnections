@@ -63,6 +63,7 @@
     <Compile Include="Disposables\SerialDisposable.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\DiscreteStatisticsResultExtensions.cs" />
+    <Compile Include="Extensions\DisplayGraphExtensions.cs" />
     <Compile Include="Extensions\DisposableExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\FileStatusExtensions.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Extensions\NodeExtensions.cs" />
     <Compile Include="Extensions\NodeGraphExtensions.cs" />
     <Compile Include="Extensions\NodePathExtensions.cs" />
+    <Compile Include="Extensions\OutputServiceExtensions.cs" />
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Extensions\SolutionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
     <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
     <Compile Include="Extensions\TypeSymbolExtensions.cs" />
+    <Compile Include="Graph\Display\CyclicCluster.cs" />
     <Compile Include="Graph\NodeGraph.Builder.cs" />
     <Compile Include="Graph\Node.cs" />
     <Compile Include="Graph\NodeGraph.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="Presentation\MultiDependencyDisplayEdge.cs" />
     <Compile Include="Presentation\SimpleCommand.cs" />
     <Compile Include="Presentation\SimpleDisplayEdge.cs" />
+    <Compile Include="Presentation\StatisticsReporter.cs" />
     <Compile Include="Presentation\ViewModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynInternal\FileNameUtilities.cs" />
@@ -114,11 +118,15 @@
     <Compile Include="Services\GitService.cs" />
     <Compile Include="Services\IDocumentsService.cs" />
     <Compile Include="Services\IGitService.cs" />
+    <Compile Include="Services\IOutputService.cs" />
     <Compile Include="Services\IRoslynService.cs" />
     <Compile Include="Services\ISolutionService.cs" />
+    <Compile Include="Services\OutputWindowOutputService.cs" />
     <Compile Include="Services\RoslynService.cs" />
     <Compile Include="Services\SolutionService.cs" />
     <Compile Include="Statistics\DiscreteStatisticsResult.cs" />
+    <Compile Include="Statistics\DisplayNodeAndEdges.cs" />
+    <Compile Include="Statistics\GraphStatistics.cs" />
     <Compile Include="Text\CompactListFormatter.cs" />
     <Compile Include="Text\ConsoleHeaderFormatter.cs" />
     <Compile Include="Text\IDictionaryFormatter.cs" />

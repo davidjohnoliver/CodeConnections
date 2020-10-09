@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,6 +16,8 @@ using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
 using DependsOnThat.Roslyn;
 using DependsOnThat.Services;
+using DependsOnThat.Statistics;
+using DependsOnThat.Text;
 using Microsoft.VisualStudio.Threading;
 using QuickGraph;
 
@@ -26,6 +29,7 @@ namespace DependsOnThat.Presentation
 		private readonly IRoslynService _roslynService;
 		private readonly IGitService _gitService;
 		private readonly ISolutionService _solutionService;
+		private readonly IOutputService _outputService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly HashSet<string> _rootDocuments = new HashSet<string>();
 		private readonly SerialCancellationDisposable _graphUpdatesRegistration = new SerialCancellationDisposable();
@@ -123,7 +127,9 @@ namespace DependsOnThat.Presentation
 		public ICommand ClearRootsCommand { get; }
 		public ICommand UseGitModifiedFilesAsRootCommand { get; }
 
-		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService)
+		public ICommand LogStatsCommand { get; }
+
+		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService)
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));
@@ -131,11 +137,13 @@ namespace DependsOnThat.Presentation
 			_roslynService = roslynService ?? throw new ArgumentNullException(nameof(roslynService));
 			_gitService = gitService ?? throw new ArgumentNullException(nameof(gitService));
 			_solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
+			_outputService = outputService ?? throw new ArgumentNullException(nameof(outputService));
 			_solutionService.SolutionChanged += OnSolutionChanged;
 
 			AddActiveDocumentAsRootCommand = SimpleCommand.Create(AddActiveDocumentAsRoot);
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
 			UseGitModifiedFilesAsRootCommand = SimpleCommand.Create(UseGitModifiedFilesAsRoot);
+			LogStatsCommand = SimpleCommand.Create(LogStats);
 
 			UpdateProjects();
 		}
@@ -238,6 +246,27 @@ namespace DependsOnThat.Presentation
 			_rootDocuments.Clear();
 			_shouldUseGitForRoots = false;
 			TryUpdateGraph();
+		}
+
+		private void LogStats()
+		{
+			_joinableTaskFactory.RunAsync(async () =>
+			{
+				_outputService.WriteLine($"Gathering statistics for {Path.GetFileName(_solutionService.GetSolutionPath())}...");
+				_outputService.FocusOutput();
+				var includedProjects = Projects?.SelectedItems.ToArray();
+				var statsWriter = await Task.Run(async () =>
+				{
+					var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), includedProjects, ExcludePureGenerated, CancellationToken.None);
+					var stats = new GraphStatistics(nodeGraph);
+					return new StatisticsReporter(stats, new ConsoleHeaderFormatter(), new MarkdownStyleTableFormatter(), CompactListFormatter.OpenCommaSeparated, CompactListFormatter.CurlyCommaSeparated, showTopXDeps: (20, 30), showTopXClusters: (10, 20));
+				});
+
+				_outputService.WriteLines(statsWriter.WriteGeneralStatistics());
+				_outputService.WriteLines(statsWriter.WriteGraphingSpecificStatistics());
+				_outputService.FocusOutput();
+			});
+
 		}
 
 		private void UpdateProjects()

@@ -29,6 +29,8 @@ namespace DependsOnThat.VSIX
 	[Guid("a0c8e2a7-bd07-4d13-9e3c-855ecc9a027c")]
 	public class DependencyGraphToolWindow : ToolWindowPane
 	{
+		private const string ConsolePaneId = "64793CEA-04A1-449A-8F30-6A3EE7581BAB";
+
 		private readonly CompositeDisposable _disposables = new CompositeDisposable();
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DependencyGraphToolWindow"/> class.
@@ -67,11 +69,16 @@ namespace DependsOnThat.VSIX
 			var solutionService = new SolutionService(dte);
 			SubscribeListeners(solutionService);
 
+			var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
+			Assumes.Present(outputWindow);
+
+			var outputService = new OutputWindowOutputService(ConsolePaneId, outputWindow, "DependsOnThat");
+
 			var gitService = new GitService(solutionService).DisposeWith(_disposables);
 
 			if (Content is DependencyGraphToolWindowControl content)
 			{
-				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService)
+				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService)
 					.DisposeWith(_disposables);
 			}
 		}

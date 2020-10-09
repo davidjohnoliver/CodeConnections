@@ -6,9 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DependsOnThat.Graph;
+using DependsOnThat.Graph.Display;
 using DependsOnThat.Presentation;
 using DependsOnThat.Utilities;
 using QuickGraph;
+using QuickGraph.Algorithms.Condensation;
 
 namespace DependsOnThat.Extensions
 {
@@ -125,6 +127,16 @@ namespace DependsOnThat.Extensions
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Generates display and cluster graphs from the full <paramref name="nodeGraph"/>.
+		/// </summary>
+		public static (IMutableBidirectionalGraph<CyclicCluster, CondensedEdge<DisplayNode, DisplayEdge, CyclicCluster>> Clustered, IBidirectionalGraph<DisplayNode, DisplayEdge> Simple) GetFullClusteredGraph(this NodeGraph nodeGraph)
+		{
+			var rootNodes = nodeGraph.Nodes.Values.OfType<TypeNode>();
+			var fullDisplayGraph = GetDisplaySubgraph(nodeGraph, rootNodes, extensionDepth: 0);
+			return (fullDisplayGraph.GetClusteredGraph(), fullDisplayGraph);
 		}
 	}
 }
