@@ -204,7 +204,7 @@ namespace DependsOnThat.Presentation
 						_outputService.WriteLine($"Analyzing connections in background took about {TimeUtils.GetRoundedTime(GraphingTime.Value, CultureInfo.CurrentCulture)} for {graph.VertexCount} nodes.");
 					}
 					Graph = graph;
-					_outputService.WriteLines(statsReporter!.WriteGraphingSpecificStatistics());
+					_outputService.WriteLines(statsReporter!.WriteStatistics(StatisticsReportContent.GraphingSpecific));
 				}
 				catch (Exception e)
 				{
@@ -270,8 +270,7 @@ namespace DependsOnThat.Presentation
 					return GetStatsReporter(stats);
 				});
 
-				_outputService.WriteLines(statsWriter.WriteGeneralStatistics());
-				_outputService.WriteLines(statsWriter.WriteGraphingSpecificStatistics());
+				_outputService.WriteLines(statsWriter.WriteStatistics(StatisticsReportContent.All));
 				_outputService.FocusOutput();
 			});
 

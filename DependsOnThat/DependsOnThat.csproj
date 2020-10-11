@@ -101,6 +101,7 @@
     <Compile Include="Presentation\MultiDependencyDisplayEdge.cs" />
     <Compile Include="Presentation\SimpleCommand.cs" />
     <Compile Include="Presentation\SimpleDisplayEdge.cs" />
+    <Compile Include="Presentation\StatisticsReportContent.cs" />
     <Compile Include="Presentation\StatisticsReporter.cs" />
     <Compile Include="Presentation\ViewModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
