@@ -62,7 +62,10 @@ namespace DependsOnThat.Presentation
 					yield return row;
 				}
 
+			}
 
+			if (statisticsReportContent.HasAnyFlag(General, GraphingSpecific))
+			{
 				yield return _headerFormatter.FormatHeader("Mutual dependency cycles", headerLevel: 2);
 				foreach (var line in GetTopClusters())
 				{

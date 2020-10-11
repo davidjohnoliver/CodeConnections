@@ -66,6 +66,7 @@
     <Compile Include="Extensions\DisplayGraphExtensions.cs" />
     <Compile Include="Extensions\DisposableExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\FileStatusExtensions.cs" />
     <Compile Include="Extensions\ImmutableArrayExtensions.cs" />
     <Compile Include="Extensions\NamedTypeSymbolExtensions.cs" />
