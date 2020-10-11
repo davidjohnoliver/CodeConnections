@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependsOnThat.Utilities;
 
 namespace DependsOnThat.Presentation.Converters
 {
@@ -25,21 +26,6 @@ namespace DependsOnThat.Presentation.Converters
 
 		protected override string ConvertNull(object parameter, CultureInfo culture) => ConvertInner(null, parameter, culture);
 
-		private string GetFormattedTime(TimeSpan value, CultureInfo culture)
-		{
-			if (value.TotalSeconds > 10)
-			{
-				return $"{value.TotalSeconds:F0} s";
-			}
-			else if (value.TotalSeconds > 1)
-			{
-				var time = value.TotalSeconds.ToString("F1", culture);
-				return $"{time} s";
-			}
-			else
-			{
-				return $"{value.TotalMilliseconds:F0} ms";
-			}
-		}
+		private string GetFormattedTime(TimeSpan value, CultureInfo culture) => TimeUtils.GetRoundedTime(value, culture);
 	}
 }

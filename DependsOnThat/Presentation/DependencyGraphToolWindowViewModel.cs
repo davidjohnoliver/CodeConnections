@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ using DependsOnThat.Roslyn;
 using DependsOnThat.Services;
 using DependsOnThat.Statistics;
 using DependsOnThat.Text;
+using DependsOnThat.Utilities;
 using Microsoft.VisualStudio.Threading;
 using QuickGraph;
 
@@ -190,7 +192,7 @@ namespace DependsOnThat.Presentation
 				var stopwatch = Stopwatch.StartNew();
 				try
 				{
-					var graph = await GetGraphAsync(_graphUpdatesRegistration.GetNewToken());
+					var (graph, statsReporter) = await GetGraphAsync(_graphUpdatesRegistration.GetNewToken());
 					stopwatch.Stop();
 					if (graph == null)
 					{
@@ -199,8 +201,10 @@ namespace DependsOnThat.Presentation
 					if (graph.VertexCount > 0)
 					{
 						GraphingTime = stopwatch.Elapsed;
+						_outputService.WriteLine($"Analyzing connections in background took about {TimeUtils.GetRoundedTime(GraphingTime.Value, CultureInfo.CurrentCulture)} for {graph.VertexCount} nodes.");
 					}
 					Graph = graph;
+					_outputService.WriteLines(statsReporter!.WriteGraphingSpecificStatistics());
 				}
 				catch (Exception e)
 				{
@@ -210,34 +214,38 @@ namespace DependsOnThat.Presentation
 			});
 		}
 
-		private Task<IBidirectionalGraph<DisplayNode, DisplayEdge>?> GetGraphAsync(CancellationToken ct)
+		private Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>?, StatisticsReporter?)> GetGraphAsync(CancellationToken ct)
 		{
 			var includedProjects = Projects?.SelectedItems.ToArray();
-			return Task.Run(async () =>
+			return Task.Run<(IBidirectionalGraph<DisplayNode, DisplayEdge>?, StatisticsReporter?)>(async () =>
 			{
 				if (ct.IsCancellationRequested)
 				{
-					return null;
+					return (null, null);
 				}
 
 				var rootDocuments = _shouldUseGitForRoots ?
 					await (_gitService.GetAllModifiedAndNewFiles(ct))
 					: _rootDocuments;
 
+				await WriteLineAsync($"Building graph from {rootDocuments.Count} roots.", ct);
+
 				var rootSymbols = await _roslynService.GetDeclaredSymbolsFromFilePaths(rootDocuments, ct).ToListAsync(ct);
 				if (rootSymbols.Count == 0)
 				{
-					return Empty;
+					return (Empty, null);
 				}
 				var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), includedProjects, ExcludePureGenerated, ct);
 				var graph = nodeGraph.GetDisplaySubgraph(rootSymbols, ExtensionDepth);
 
 				if (ct.IsCancellationRequested)
 				{
-					return null;
+					return (null, null);
 				}
 
-				return graph;
+				var stats = GraphStatistics.GetForSubgraph(graph);
+
+				return (graph, GetStatsReporter(stats));
 			}, ct);
 		}
 
@@ -258,8 +266,8 @@ namespace DependsOnThat.Presentation
 				var statsWriter = await Task.Run(async () =>
 				{
 					var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), includedProjects, ExcludePureGenerated, CancellationToken.None);
-					var stats = new GraphStatistics(nodeGraph);
-					return new StatisticsReporter(stats, new ConsoleHeaderFormatter(), new MarkdownStyleTableFormatter(), CompactListFormatter.OpenCommaSeparated, CompactListFormatter.CurlyCommaSeparated, showTopXDeps: (20, 30), showTopXClusters: (10, 20));
+					var stats = GraphStatistics.GetForFullGraph(nodeGraph);
+					return GetStatsReporter(stats);
 				});
 
 				_outputService.WriteLines(statsWriter.WriteGeneralStatistics());
@@ -268,6 +276,9 @@ namespace DependsOnThat.Presentation
 			});
 
 		}
+
+		private static StatisticsReporter GetStatsReporter(GraphStatistics stats)
+			=> new StatisticsReporter(stats, new ConsoleHeaderFormatter(), new MarkdownStyleTableFormatter(), CompactListFormatter.OpenCommaSeparated, CompactListFormatter.CurlyCommaSeparated, showTopXDeps: (20, 30), showTopXClusters: (10, 20));
 
 		private void UpdateProjects()
 		{
@@ -287,6 +298,15 @@ namespace DependsOnThat.Presentation
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
 			SelectedNode = Graph.Vertices.FirstOrDefault(dn => dn.FilePath == activeDocument);
+		}
+
+		/// <summary>
+		/// Write to output window from a background thread.
+		/// </summary>
+		private async Task WriteLineAsync(string line, CancellationToken ct)
+		{
+			await _joinableTaskFactory.SwitchToMainThreadAsync(ct);
+			_outputService.WriteLine(line);
 		}
 
 		public void Dispose()

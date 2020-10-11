@@ -9,6 +9,8 @@ using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
 using DependsOnThat.Graph.Display;
 using DependsOnThat.Presentation;
+using QuickGraph;
+using QuickGraph.Algorithms.Condensation;
 
 namespace DependsOnThat.Statistics
 {
@@ -45,10 +47,8 @@ namespace DependsOnThat.Statistics
 		/// <summary>
 		/// Create a new set of statistics.
 		/// </summary>
-		/// <remarks>This may be costly, consider creating on a background thread!</remarks>
-		public GraphStatistics(NodeGraph nodeGraph)
+		public GraphStatistics(IMutableBidirectionalGraph<CyclicCluster, CondensedEdge<DisplayNode, DisplayEdge, CyclicCluster>> clusterGraph, IBidirectionalGraph<DisplayNode, DisplayEdge> simpleGraph)
 		{
-			var (clusterGraph, simpleGraph) = nodeGraph.GetFullClusteredGraph();
 
 			ClusterSizeStatistics = DiscreteStatisticsResult.Create(clusterGraph.Vertices, c => c.VertexCount);
 			ClusterSortLayerStatistics = DiscreteStatisticsResult.Create(clusterGraph.Vertices, c => c.SortLayer);
@@ -57,5 +57,14 @@ namespace DependsOnThat.Statistics
 			NodeDependenciesStatistics = DiscreteStatisticsResult.Create(simpleGraph.Vertices.Select(v => new DisplayNodeAndEdges(v, simpleGraph)), v => simpleGraph.OutDegree(v.DisplayNode));
 			NodeDependentsStatistics = DiscreteStatisticsResult.Create(simpleGraph.Vertices.Select(v => new DisplayNodeAndEdges(v, simpleGraph)), v => simpleGraph.InDegree(v.DisplayNode));
 		}
+
+		public static GraphStatistics GetForFullGraph(NodeGraph nodeGraph)
+		{
+			var (clusterGraph, simpleGraph) = nodeGraph.GetFullClusteredGraph();
+
+			return new GraphStatistics(clusterGraph, simpleGraph);
+		}
+
+		public static GraphStatistics GetForSubgraph(IBidirectionalGraph<DisplayNode, DisplayEdge> subgraph) => new GraphStatistics(subgraph.GetClusteredGraph(), subgraph);
 	}
 }
