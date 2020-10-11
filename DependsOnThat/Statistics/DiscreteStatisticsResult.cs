@@ -81,6 +81,11 @@ namespace DependsOnThat.Statistics
 		/// </summary>
 		public double MeanBucketCount { get; }
 
+		/// <summary>
+		/// The standard deviation in the number of items per bucket (calculated over dense bucket set).
+		/// </summary>
+		public double SDBucketCount { get; }
+
 		/// <param name="sample">Set of items constituting the sample</param>
 		/// <param name="valueSelector">Selector to determine the value in the distribution for each item</param>
 		public DiscreteStatisticsResult(IEnumerable<T> sample, Func<T, int> valueSelector)
@@ -149,6 +154,9 @@ namespace DependsOnThat.Statistics
 			MeanBucketCount = (double)(Histogram.Values.Sum()) / Histogram.Count;
 
 			ItemsCount = runningItemsCount;
+
+			var varianceBucketCount = Histogram.Values.Select(v => (v - MeanBucketCount) * (v - MeanBucketCount)).Sum() / Histogram.Count;
+			SDBucketCount = Math.Sqrt(varianceBucketCount);
 		}
 
 	}

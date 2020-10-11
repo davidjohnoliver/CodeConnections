@@ -107,7 +107,8 @@ namespace DependsOnThat.Presentation
 
 			yield return _headerFormatter.FormatHeader("SortLayer statistics", headerLevel: 3);
 			yield return $"Widest SortLayer: {_graphStatistics.ClusterSortLayerStatistics.MaxBucketCountBucket}, with {_graphStatistics.ClusterSortLayerStatistics.MaxBucketCount} items";
-			yield return $"Mean SortLayer width: {_graphStatistics.ClusterSortLayerStatistics.Mean}";
+			yield return $"Mean SortLayer width: {_graphStatistics.ClusterSortLayerStatistics.MeanBucketCount}";
+			yield return $"SortLayer width S.D.: {_graphStatistics.ClusterSortLayerStatistics.SDBucketCount}";
 			foreach (var row in _dictionaryFormatter.FormatDictionary("SortLayer", "Types in layer", _graphStatistics.ClusterSortLayerStatistics.Histogram))
 			{
 				yield return row;
@@ -115,7 +116,8 @@ namespace DependsOnThat.Presentation
 
 			yield return _headerFormatter.FormatHeader("SortLayerFromTop statistics", headerLevel: 3);
 			yield return $"Widest SortLayerFromTop: {_graphStatistics.ClusterSortLayerFromTopStatistics.MaxBucketCountBucket}, with {_graphStatistics.ClusterSortLayerFromTopStatistics.MaxBucketCount} items";
-			yield return $"Mean SortLayerFromTop width: {_graphStatistics.ClusterSortLayerFromTopStatistics.Mean}";
+			yield return $"Mean SortLayerFromTop width: {_graphStatistics.ClusterSortLayerFromTopStatistics.MeanBucketCount}";
+			yield return $"SortLayerFromTop width S.D.: {_graphStatistics.ClusterSortLayerFromTopStatistics.SDBucketCount}";
 			foreach (var row in _dictionaryFormatter.FormatDictionary("SortLayerFromTop", "Types in layer", _graphStatistics.ClusterSortLayerFromTopStatistics.Histogram))
 			{
 				yield return row;
