@@ -64,7 +64,7 @@ namespace DependsOnThat.Tests.StatisticsTests
 			var rawValues = new[] { 11, 11, 11, 12, 14, 14 };
 			var values = rawValues.Select(i => new SimpleWrapper(i)).ToArray();
 
-			const double expectedSD = 1.1180339887499; https://www.calculator.net/standard-deviation-calculator.html?numberinputs=3%2C+1%2C+0%2C+2&ctype=p&x=48&y=24
+			const double expectedSD = 1.1180339887499; // https://www.calculator.net/standard-deviation-calculator.html?numberinputs=3%2C+1%2C+0%2C+2&ctype=p&x=48&y=24
 
 			var statisticsResult = DiscreteStatisticsResult.Create(values, v => v.Value);
 
