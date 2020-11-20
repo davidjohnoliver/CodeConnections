@@ -12,11 +12,39 @@ namespace DependsOnThat.Tests.Utilities
 {
 	public static class AssertEx
 	{
+		public static void Contains<TSource>(IEnumerable<TSource> enumerable, TSource expectedItem)
+		{
+			var lp = new LoopProtection();
+			foreach (var item in enumerable)
+			{
+				lp.Iterate();
+				if (Equals(item, expectedItem))
+				{
+					return;
+				}
+			}
+
+			throw new AssertionException($"{enumerable} does not contain {expectedItem}");
+		}
+		public static void DoesNotContain<TSource>(IEnumerable<TSource> enumerable, TSource expectedItem)
+		{
+			var lp = new LoopProtection();
+			foreach (var item in enumerable)
+			{
+				lp.Iterate();
+				if (Equals(item, expectedItem))
+				{
+					throw new AssertionException($"{enumerable} does contain {expectedItem}");
+				}
+			}
+
+		}
+
 		/// <summary>
 		/// Asserts that <paramref name="enumerable"/> contains at least one element that satisfies <paramref name="expectedPredicate"/>.
 		/// </summary>
 		/// <returns>The first element found that satisfies the condition.</returns>
-		public static TSource Contains<TSource>(IEnumerable<TSource> enumerable,Func<TSource, bool> expectedPredicate)
+		public static TSource Contains<TSource>(IEnumerable<TSource> enumerable, Func<TSource, bool> expectedPredicate)
 		{
 			if (expectedPredicate is null)
 			{
@@ -62,7 +90,7 @@ namespace DependsOnThat.Tests.Utilities
 					else
 					{
 						hasFoundItem = true;
-						matchingItem = item; 
+						matchingItem = item;
 					}
 				}
 			}
