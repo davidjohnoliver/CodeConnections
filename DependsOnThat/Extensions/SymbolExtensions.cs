@@ -88,5 +88,20 @@ namespace DependsOnThat.Extensions
 		/// </summary>
 		public static bool IsPurelyGeneratedSymbol(this ISymbol symbol)
 			=> symbol.DeclaringSyntaxReferences.Length > 0 && symbol.DeclaringSyntaxReferences.All(tr => tr.SyntaxTree.IsGeneratedCode());
+
+		/// <summary>
+		/// Get the fullly-qualified metadata name for <paramref name="typeSymbol"/>.
+		/// </summary>
+		public static string GetFullMetadataName(this ITypeSymbol typeSymbol)
+		{
+			var fullName = typeSymbol.ToDisplayString();
+			var i = fullName.LastIndexOf('.');
+			if (i < 0)
+			{
+				return typeSymbol.MetadataName;
+			}
+
+			return $"{fullName.Substring(0, i + 1)}{typeSymbol.MetadataName}";
+		}
 	}
 }

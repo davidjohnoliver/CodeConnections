@@ -32,13 +32,30 @@ namespace DependsOnThat.Graph
 		public abstract NodeKey Key { get; }
 
 		/// <summary>
-		/// 
+		/// A list of filepaths associated with this node.
+		/// </summary>
+		public IList<string> AssociatedFiles { get; } = new List<string>(1);
+
+		/// <summary>
+		/// Add <paramref name="forwardLink"/> as a new dependency of this node, setting this node as a dependent on <paramref name="forwardLink"/> 
+		/// at the same time.
 		/// </summary>
 		/// <param name="forwardLink"></param>
 		public void AddForwardLink(Node forwardLink)
 		{
 			_forwardLinks.Add(forwardLink);
 			forwardLink._backLinks.Add(this);
+		}
+
+		/// <summary>
+		/// Remove <paramref name="forwardLink"/> as a dependency of this node, updating the <see cref="BackLinks"/> collection on 
+		/// <paramref name="forwardLink"/> at the same time.
+		/// </summary>
+		/// <param name="forwardLink"></param>
+		public void RemoveForwardLink(Node forwardLink)
+		{
+			_forwardLinks.Remove(forwardLink);
+			forwardLink._backLinks.Remove(this);
 		}
 	}
 }

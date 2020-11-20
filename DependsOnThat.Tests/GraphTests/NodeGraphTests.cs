@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace DependsOnThat.Tests.GraphTests
 {
 	[TestFixture]
-	public class NodeGraphTests
+	public partial class NodeGraphTests
 	{
 		[Test]
 		public async Task When_Building_From_Subject()

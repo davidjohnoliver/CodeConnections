@@ -69,6 +69,7 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\FileStatusExtensions.cs" />
     <Compile Include="Extensions\ImmutableArrayExtensions.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\NamedTypeSymbolExtensions.cs" />
     <Compile Include="Extensions\NodeExtensions.cs" />
     <Compile Include="Extensions\NodeGraphExtensions.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="RoslynInternal\PathUtilities.cs" />
     <Compile Include="RoslynInternal\PlatformInformation.cs" />
     <Compile Include="RoslynInternal\SyntaxTriviaExtensions.cs" />
+    <Compile Include="Roslyn\CompilationCache.cs" />
     <Compile Include="Roslyn\ProjectIdentifier.cs" />
     <Compile Include="Roslyn\TypeIdentifier.cs" />
     <Compile Include="Services\DocumentsService.cs" />
@@ -153,6 +155,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Compile Include="Graph\NodeGraph.Updates.cs" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependsOnThat.Extensions;
 using DependsOnThat.Roslyn;
 using Microsoft.CodeAnalysis;
 
@@ -21,12 +22,15 @@ namespace DependsOnThat.Graph
 
 		public string? FilePath { get; }
 
-		public TypeNode(TypeIdentifier identifier, string? filePath)
-		{
-			Identifier = identifier;
-			FilePath = filePath;
+		public string FullMetadataName { get; }
 
-			Key = new TypeNodeKey(identifier);
+		public TypeNode(TypeNodeKey key, string? filePath, IEnumerable<string> associatedFiles, string fullMetadataName)
+		{
+			Identifier = key.Identifier;
+			FilePath = filePath;
+			FullMetadataName = fullMetadataName;
+			AssociatedFiles.AddRange(associatedFiles);
+			Key = key;
 		}
 
 		public override string ToString() => $"{base.ToString()}-{Identifier.ToString()}";

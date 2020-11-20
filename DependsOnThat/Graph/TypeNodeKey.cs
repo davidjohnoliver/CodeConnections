@@ -12,16 +12,16 @@ namespace DependsOnThat.Graph
 {
 	public class TypeNodeKey : NodeKey
 	{
-		private readonly TypeIdentifier _identifier;
+		public TypeIdentifier Identifier { get; }
 
 		public TypeNodeKey(TypeIdentifier identifier)
 		{
-			_identifier = identifier;
+			Identifier = identifier;
 		}
 
-		public override bool Equals(object obj) => obj is TypeNodeKey other && Equals(_identifier, other._identifier);
+		public override bool Equals(object obj) => obj is TypeNodeKey other && Equals(Identifier, other.Identifier);
 
-		public override int GetHashCode() => _identifier.GetHashCode();
+		public override int GetHashCode() => Identifier.GetHashCode();
 
 		public static TypeNodeKey GetFromFullName(string fullName)
 		{
