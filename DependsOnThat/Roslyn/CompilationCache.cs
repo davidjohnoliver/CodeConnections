@@ -68,6 +68,7 @@ namespace DependsOnThat.Roslyn
 				_solution = null;
 				_cachedCompilations.Clear();
 				_cachedSemanticModels.Clear();
+				_cachedTypeSymbols.Clear();
 				cd = _cancellationDisposable;
 				_cancellationDisposable = null;
 			}
