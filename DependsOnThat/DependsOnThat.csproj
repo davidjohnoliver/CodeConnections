@@ -122,6 +122,7 @@
     <Compile Include="Services\GitService.cs" />
     <Compile Include="Services\IDocumentsService.cs" />
     <Compile Include="Services\IGitService.cs" />
+    <Compile Include="Services\IModificationsService.cs" />
     <Compile Include="Services\IOutputService.cs" />
     <Compile Include="Services\IRoslynService.cs" />
     <Compile Include="Services\ISolutionService.cs" />

@@ -64,7 +64,7 @@ namespace DependsOnThat.VSIX
 			var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;
 			Assumes.Present(componentModel);
 			var workspace = componentModel.GetService<VisualStudioWorkspace>();
-			var roslynService = new RoslynService(workspace);
+			var roslynService = new RoslynService(workspace).DisposeWith(_disposables);
 
 			var solutionService = new SolutionService(dte);
 			SubscribeListeners(solutionService);
