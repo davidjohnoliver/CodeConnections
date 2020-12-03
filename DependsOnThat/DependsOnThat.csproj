@@ -139,6 +139,7 @@
     <Compile Include="Text\ICompactListFormatter.cs" />
     <Compile Include="Text\MarkdownStyleTableFormatter.cs" />
     <Compile Include="Utilities\ArrayUtils.cs" />
+    <Compile Include="Utilities\IdleTimer.cs" />
     <Compile Include="Utilities\TimeUtils.cs" />
     <Compile Include="Views\Behaviours\MultiSelection.cs" />
     <Compile Include="Views\DependencyGraphLayout.cs" />
