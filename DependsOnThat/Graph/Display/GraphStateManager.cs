@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DependsOnThat.Disposables;
-using DependsOnThat.Presentation;
 using DependsOnThat.Roslyn;
 using Microsoft.CodeAnalysis;
 using ThreadHelper = Microsoft.VisualStudio.Shell.ThreadHelper;

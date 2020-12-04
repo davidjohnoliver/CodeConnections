@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
-using DependsOnThat.Presentation;
+using DependsOnThat.Graph.Display;
 using DependsOnThat.Tests.Utilities;
 using NUnit.Framework;
 

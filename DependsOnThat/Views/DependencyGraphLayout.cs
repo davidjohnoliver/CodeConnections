@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using DependsOnThat.Extensions;
-using DependsOnThat.Presentation;
+using DependsOnThat.Graph.Display;
 using GraphSharp.Algorithms.OverlapRemoval;
 using GraphSharp.AttachedBehaviours;
 using GraphSharp.Controls;

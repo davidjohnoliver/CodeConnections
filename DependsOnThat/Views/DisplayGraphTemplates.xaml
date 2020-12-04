@@ -7,7 +7,7 @@
 					xmlns:graphConverters="clr-namespace:GraphSharp.Converters;assembly=GraphSharp.Controls"
 					xmlns:local="clr-namespace:DependsOnThat.Views"
 					xmlns:converters="clr-namespace:DependsOnThat.Presentation.Converters"
-					xmlns:presentation="clr-namespace:DependsOnThat.Presentation"
+					xmlns:graphdisplay="clr-namespace:DependsOnThat.Graph.Display"
 					mc:Ignorable="d">
 
 	<!--TODO: should use editor colour scheme https://stackoverflow.com/questions/18913208/colors-in-visual-studio-extension-->
@@ -17,7 +17,7 @@
 	<converters:DisplayEdgeStrokeDashArrayConverter x:Key="DisplayEdgeStrokeDashArrayConverter"
 													MultiStrokeDashArray="4 2" />
 	<converters:DisplayEdgeTooltipConverter x:Key="DisplayEdgeTooltipConverter" />
-	<DataTemplate DataType="{x:Type presentation:DisplayNode}">
+	<DataTemplate DataType="{x:Type graphdisplay:DisplayNode}">
 		<TextBlock Text="{Binding DisplayString}" />
 	</DataTemplate>
 

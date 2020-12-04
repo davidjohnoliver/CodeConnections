@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
+using DependsOnThat.Graph.Display;
 
 namespace DependsOnThat.Presentation.Converters
 {

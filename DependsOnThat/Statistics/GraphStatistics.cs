@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
 using DependsOnThat.Graph.Display;
-using DependsOnThat.Presentation;
 using QuickGraph;
 using QuickGraph.Algorithms.Condensation;
 
