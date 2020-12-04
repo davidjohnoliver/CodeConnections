@@ -29,7 +29,7 @@ namespace DependsOnThat.Services
 			_workspace.WorkspaceChanged += OnWorkspaceChanged;
 		}
 
-		public async IAsyncEnumerable<(string FilePath, ITypeSymbol Symbol)> GetDeclaredSymbolsFromFilePaths(IEnumerable<string> filePaths, [EnumeratorCancellation] CancellationToken ct)
+		public async IAsyncEnumerable<ITypeSymbol> GetDeclaredSymbolsFromFilePaths(IEnumerable<string> filePaths, [EnumeratorCancellation] CancellationToken ct)
 		{
 			var solution = GetCurrentSolution();
 			foreach (var filePath in filePaths)
@@ -49,7 +49,7 @@ namespace DependsOnThat.Services
 				var declaredSymbols = syntaxRoot.GetAllDeclaredTypes(semanticModel);
 				foreach (var symbol in declaredSymbols)
 				{
-					yield return (filePath, symbol);
+					yield return symbol;
 				}
 			}
 		}

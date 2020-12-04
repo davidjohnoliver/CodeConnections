@@ -31,5 +31,17 @@ namespace DependsOnThat.Presentation
 
 			return false;
 		}
+
+		protected bool OnValueSet<T>(T currentValue, Action<T> setter, T newValue, [CallerMemberName] string? name = null)
+		{
+			if (!Equals(currentValue, newValue))
+			{
+				setter(newValue);
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+				return true;
+			}
+
+			return false;
+		}
 	}
 }

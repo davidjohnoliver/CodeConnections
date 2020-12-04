@@ -82,6 +82,7 @@
     <Compile Include="Extensions\SyntaxNodeExtensions.cs" />
     <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
     <Compile Include="Extensions\TypeSymbolExtensions.cs" />
+    <Compile Include="Graph\Display\GraphStateManager.cs" />
     <Compile Include="Graph\Display\CyclicCluster.cs" />
     <Compile Include="Graph\NodeGraph.Builder.cs" />
     <Compile Include="Graph\Node.cs" />

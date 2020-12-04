@@ -9,6 +9,7 @@ using DependsOnThat.Graph;
 using DependsOnThat.Graph.Display;
 using DependsOnThat.Presentation;
 using DependsOnThat.Utilities;
+using Microsoft.CodeAnalysis;
 using QuickGraph;
 using QuickGraph.Algorithms.Condensation;
 
@@ -23,8 +24,8 @@ namespace DependsOnThat.Extensions
 		/// The depth to extend the subgraph from the <paramref name="rootSymbols"/>. A value of 0 will only include the roots, a value of 1 will 
 		/// include 1st-nearest neighbours (both upstream and downstream), etc.
 		/// </param>
-		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IList<(string FilePath, Microsoft.CodeAnalysis.ITypeSymbol Symbol)> rootSymbols, int extensionDepth)
-			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl.Symbol)).Trim(), extensionDepth);
+		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IList<ITypeSymbol> rootSymbols, int extensionDepth)
+			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim(), extensionDepth);
 
 		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<TypeNode> rootNodes, int extensionDepth)
 		{

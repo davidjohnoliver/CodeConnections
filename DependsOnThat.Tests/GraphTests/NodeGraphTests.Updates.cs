@@ -25,12 +25,7 @@ namespace DependsOnThat.Tests.GraphTests
 
 			var initialState = fullGraph.Nodes.ToDictionary(kvp => kvp.Key, kvp => (kvp.Value.BackLinks.ToList(), kvp.Value.ForwardLinks.ToList()));
 
-			foreach (var id in workspace.CurrentSolution.GetAllDocumentIds())
-			{
-				fullGraph.InvalidateDocument(id);
-			}
-
-			await fullGraph.Update(workspace.CurrentSolution, default);
+			await fullGraph.Update(workspace.CurrentSolution, workspace.CurrentSolution.GetAllDocumentIds(), default);
 
 			Assert.AreEqual(initialState.Count, fullGraph.Nodes.Count);
 
@@ -78,9 +73,7 @@ namespace DependsOnThat.Tests.GraphTests
 
 			var mutatedSolution = mutatedMutableDoc.Project.Solution;
 
-			fullGraph.InvalidateDocument(mutableDoc.Id);
-
-			await fullGraph.Update(mutatedSolution, default);
+			await fullGraph.Update(mutatedSolution, new[] { mutableDoc.Id }, default);
 
 			var mutatedmutableClassNode = (TypeNode)fullGraph.Nodes[mutableClassKey]; // For now this is reference-equal to mutableClassNode, but let's try not to rely on it
 			Assert.AreEqual(2, mutableClassNode.ForwardLinks.Count);
@@ -116,9 +109,7 @@ namespace DependsOnThat.Tests.GraphTests
 
 			var mutatedSolution = mutatedMutableDoc.Project.Solution;
 
-			fullGraph.InvalidateDocument(mutableDoc.Id);
-
-			await fullGraph.Update(mutatedSolution, default);
+			await fullGraph.Update(mutatedSolution, new[] { mutableDoc.Id }, default);
 
 			var mutatedmutableClassNode = (TypeNode)fullGraph.Nodes[mutableClassKey]; // For now this is reference-equal to mutableClassNode, but let's try not to rely on it
 			Assert.AreEqual(0, mutatedmutableClassNode.ForwardLinks.Count);

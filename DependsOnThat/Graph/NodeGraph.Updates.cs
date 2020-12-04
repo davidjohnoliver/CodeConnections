@@ -23,10 +23,6 @@ namespace DependsOnThat.Graph
 		/// Nodes that have already been invalidated once in the current update, so we don't invalidate them again.
 		/// </summary>
 		private readonly HashSet<Node> _alreadyInvalidatedNodes = new HashSet<Node>();
-		/// <summary>
-		/// Documents that need to be updated.
-		/// </summary>
-		private readonly HashSet<DocumentId> _invalidatedDocuments = new HashSet<DocumentId>();
 
 		private bool _isUpdating = false;
 		private readonly object _gate = new object();
@@ -39,11 +35,10 @@ namespace DependsOnThat.Graph
 		/// <param name="ct">A cancellation token. Note that the expected usage is that an update will only be cancelled if the graph is no 
 		/// longer needed (eg the current open solution changes).</param>
 		/// <returns>A list of nodes whose connectivity has changed.</returns>
-		public async Task<ICollection<Node>> Update(Solution solution, CancellationToken ct)
+		public async Task<ICollection<Node>> Update(Solution solution, IEnumerable<DocumentId> invalidatedDocuments, CancellationToken ct)
 		{
 			// TODO: documents with compilation errors - should probably be reevaluated on every update?
 
-			List<DocumentId> invalidatedDocuments;
 			lock (_gate)
 			{
 				if (_isUpdating)
@@ -52,8 +47,6 @@ namespace DependsOnThat.Graph
 				}
 
 				_isUpdating = true;
-				invalidatedDocuments = _invalidatedDocuments.ToList();
-				_invalidatedDocuments.Clear();
 			}
 
 			try
@@ -237,18 +230,6 @@ namespace DependsOnThat.Graph
 			if (_alreadyInvalidatedNodes.Add(node))
 			{
 				_invalidatedNodes.Enqueue(node);
-			}
-		}
-
-		/// <summary>
-		/// Mark <paramref name="documentId"/> as dirty. Nodes associated with it will be updated the next time the graph updates.
-		/// </summary>
-		/// <remarks>If called during an active update, it will be applied during the subsequent update.</remarks>
-		public void InvalidateDocument(DocumentId documentId)
-		{
-			lock (_gate)
-			{
-				_invalidatedDocuments.Add(documentId);
 			}
 		}
 	}
