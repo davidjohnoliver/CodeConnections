@@ -42,6 +42,7 @@ namespace DependsOnThat.Presentation
 		private readonly GraphStateManager _graphStateManager;
 
 		private readonly SerialCancellationDisposable _projectUpdatesRegistration = new SerialCancellationDisposable();
+		private readonly SerialCancellationDisposable _statsRetrievalRegistration = new SerialCancellationDisposable();
 
 		private bool _shouldUseGitForRoots;
 
@@ -213,10 +214,16 @@ namespace DependsOnThat.Presentation
 			{
 				_outputService.WriteLine($"Gathering statistics for {Path.GetFileName(_solutionService.GetSolutionPath())}...");
 				_outputService.FocusOutput();
-				var includedProjects = Projects?.SelectedItems.ToArray();
 
-				throw new NotImplementedException(); // TODO: restore stats logging
+				var ct = _statsRetrievalRegistration.GetNewToken();
+				var stats = await _graphStateManager.GetStatisticsForFullGraph(ct);
+				if (ct.IsCancellationRequested || stats == null)
+				{
+					return;
+				}
+				var reporter = GetStatsReporter(stats);
 
+				_outputService.WriteLines(reporter.WriteStatistics(StatisticsReportContent.All));
 				_outputService.FocusOutput();
 			});
 
@@ -258,6 +265,7 @@ namespace DependsOnThat.Presentation
 		{
 			_graphStateManager.Dispose();
 			_projectUpdatesRegistration.Dispose();
+			_statsRetrievalRegistration.Dispose();
 
 			_documentsService.ActiveDocumentChanged -= OnActiveDocumentChanged;
 			_solutionService.SolutionChanged -= OnSolutionChanged;

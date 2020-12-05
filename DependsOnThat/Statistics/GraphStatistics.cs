@@ -14,7 +14,7 @@ using QuickGraph.Algorithms.Condensation;
 namespace DependsOnThat.Statistics
 {
 	/// <summary>
-	/// Calculates and holds various statistical characteristics of a <see cref="NodeGraph"/>
+	/// Calculates and holds various statistical characteristics of a <see cref="NodeGraph"/> or subgraph.
 	/// </summary>
 	public class GraphStatistics
 	{

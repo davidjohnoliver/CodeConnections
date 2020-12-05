@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Threading;
 using QuickGraph;
 using DependsOnThat.Extensions;
 using DependsOnThat.Utilities;
+using DependsOnThat.Statistics;
 
 namespace DependsOnThat.Graph.Display
 {
@@ -70,6 +71,8 @@ namespace DependsOnThat.Graph.Display
 		private readonly Func<CancellationToken, Task<IList<ITypeSymbol>>> _getCurrentRootSymbols;
 		private bool _needsDisplayGraphUpdate;
 
+		private TaskCompletionSource<GraphStatistics?>? _statisticsTCS;
+
 		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<IList<ITypeSymbol>>> getCurrentRootSymbols)
 		{
 			_joinableTaskFactory = joinableTaskFactory;
@@ -118,7 +121,7 @@ namespace DependsOnThat.Graph.Display
 
 			_needsDisplayGraphUpdate = true;
 
-			if (_currentUpdateState is UpdateState.RebuildingNodeGraph or UpdateState.UpdatingNodeGraph)
+			if (_currentUpdateState < UpdateState.RebuildingDisplayGraph)
 			{
 				// Nothing to do, the display graph update will take place with up-to-date parameters after node graph is updated
 				return;
@@ -137,6 +140,29 @@ namespace DependsOnThat.Graph.Display
 		{
 			_includedProjects = includedProjects?.ToArray();
 			InvalidateNodeGraph();
+		}
+
+		/// <summary>
+		/// Returns a <see cref="GraphStatistics"/> object describing the full <see cref="NodeGraph"/>.
+		/// </summary>
+		public Task<GraphStatistics?> GetStatisticsForFullGraph(CancellationToken ct)
+		{
+			_statisticsTCS?.TrySetResult(null);
+			TaskCompletionSource<GraphStatistics?> tcs = new TaskCompletionSource<GraphStatistics?>();
+			_statisticsTCS = tcs;
+			if (_currentUpdateState <= UpdateState.WaitingForIdle)
+			{
+				RunUpdate(waitForIdle: false);
+			}
+			ct.Register(() =>
+			{
+				tcs.TrySetResult(null);
+				if (_statisticsTCS == tcs)
+				{
+					_statisticsTCS = null;
+				}
+			});
+			return tcs.Task;
 		}
 
 		/// <summary>
@@ -169,8 +195,16 @@ namespace DependsOnThat.Graph.Display
 					DisplayGraphChanged?.Invoke(displayGraph);
 				}
 
+				if (ct.IsCancellationRequested)
+				{
+					return;
+				}
+				else if (_statisticsTCS != null) // This can happen if stats log was requested while building display graph
+				{
+					RunUpdate(waitForIdle: false);
+				}
 				// Run another update if we need incremental NodeGraph update
-				if (!ct.IsCancellationRequested && _invalidatedDocuments.Count > 0)
+				else if (_invalidatedDocuments.Count > 0)
 				{
 					RunUpdate(waitForIdle: true);
 				}
@@ -232,6 +266,22 @@ namespace DependsOnThat.Graph.Display
 				if (ct.IsCancellationRequested)
 				{
 					return null;
+				}
+
+				if (_statisticsTCS != null)
+				{
+					_currentUpdateState = UpdateState.AnalyzingFullGraphStatistics;
+					if (_nodeGraph == null)
+					{
+						_statisticsTCS.TrySetResult(null);
+					}
+					else
+					{
+						var stats = await Task.Run(() => GraphStatistics.GetForFullGraph(_nodeGraph), ct);
+						_statisticsTCS.TrySetResult(stats);
+					}
+
+					_statisticsTCS = null;
 				}
 
 				if (_needsDisplayGraphUpdate)
@@ -301,7 +351,8 @@ namespace DependsOnThat.Graph.Display
 			WaitingForIdle,
 			RebuildingNodeGraph,
 			UpdatingNodeGraph,
-			RebuildingDisplayGraph
+			AnalyzingFullGraphStatistics,
+			RebuildingDisplayGraph,
 		}
 	}
 }
