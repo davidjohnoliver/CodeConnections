@@ -86,6 +86,18 @@ namespace DependsOnThat.Statistics
 		/// </summary>
 		public double SDBucketCount { get; }
 
+		private DiscreteStatisticsResult(bool isEmpty)
+		{
+			if (!isEmpty)
+			{
+				throw new ArgumentException("Use ctor that takes a sample.");
+			}
+
+			ItemsByBucket = new Dictionary<int, IReadOnlyList<T>>();
+			Histogram = new Dictionary<int, int>();
+			BucketValues = new List<int>();
+		}
+
 		/// <param name="sample">Set of items constituting the sample</param>
 		/// <param name="valueSelector">Selector to determine the value in the distribution for each item</param>
 		public DiscreteStatisticsResult(IEnumerable<T> sample, Func<T, int> valueSelector)
@@ -159,6 +171,8 @@ namespace DependsOnThat.Statistics
 			SDBucketCount = Math.Sqrt(varianceBucketCount);
 		}
 
+		public static DiscreteStatisticsResult<T> Empty => new DiscreteStatisticsResult<T>(isEmpty: true);
+
 	}
 
 	public static class DiscreteStatisticsResult
@@ -169,7 +183,8 @@ namespace DependsOnThat.Statistics
 		/// <typeparam name="T">Item type</typeparam>
 		/// <param name="sample">Set of items constituting the sample</param>
 		/// <param name="valueSelector">Selector to determine the value in the distribution for each item</param>
-		public static DiscreteStatisticsResult<T> Create<T>(IEnumerable<T> sample, Func<T, int> valueSelector) => new DiscreteStatisticsResult<T>(sample, valueSelector);
+		public static DiscreteStatisticsResult<T> Create<T>(IEnumerable<T> sample, Func<T, int> valueSelector) 
+			=> sample.Any() ? new DiscreteStatisticsResult<T>(sample, valueSelector) :  DiscreteStatisticsResult<T>.Empty;
 
 	}
 }
