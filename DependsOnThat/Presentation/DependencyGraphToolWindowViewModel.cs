@@ -149,9 +149,13 @@ namespace DependsOnThat.Presentation
 			UpdateProjects();
 		}
 
-		private void OnDisplayGraphChanged(IBidirectionalGraph<DisplayNode, DisplayEdge> newGraph)
+		private void OnDisplayGraphChanged(IBidirectionalGraph<DisplayNode, DisplayEdge> newGraph, GraphStatistics statistics)
 		{
 			Graph = newGraph;
+
+			var reporter = GetStatsReporter(statistics);
+			// TODO: this should be opt-in/hidden behind debug flag
+			_outputService.WriteLines(reporter.WriteStatistics(StatisticsReportContent.GraphingSpecific));
 		}
 
 		private void OnDocumentInvalidated(DocumentId documentId) => _graphStateManager.InvalidateDocument(documentId);

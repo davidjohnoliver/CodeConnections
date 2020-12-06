@@ -54,7 +54,7 @@ namespace DependsOnThat.Graph.Display
 		/// <summary>
 		/// Raised whenever a new copy of the display graph is created.
 		/// </summary>
-		public event Action<IBidirectionalGraph<DisplayNode, DisplayEdge>>? DisplayGraphChanged;
+		public event Action<IBidirectionalGraph<DisplayNode, DisplayEdge>, GraphStatistics>? DisplayGraphChanged;
 
 		private UpdateState _currentUpdateState = UpdateState.NotUpdating;
 		private readonly SerialCancellationDisposable _updateSubscription = new SerialCancellationDisposable();
@@ -190,9 +190,9 @@ namespace DependsOnThat.Graph.Display
 
 				var displayGraph = await Update(waitForIdle, ct);
 
-				if (!ct.IsCancellationRequested && displayGraph != null)
+				if (!ct.IsCancellationRequested && displayGraph.Graph != null && displayGraph.Stats != null)
 				{
-					DisplayGraphChanged?.Invoke(displayGraph);
+					DisplayGraphChanged?.Invoke(displayGraph.Graph, displayGraph.Stats);
 				}
 
 				if (ct.IsCancellationRequested)
@@ -222,7 +222,7 @@ namespace DependsOnThat.Graph.Display
 		/// Even when true, this may be interrupted by subsequent invalidations that require an immediate update.
 		/// </param>
 		/// <returns>The updated display graph if it is rebuilt, or null otherwise.</returns>
-		private async Task<IBidirectionalGraph<DisplayNode, DisplayEdge>?> Update(bool waitForIdle, CancellationToken ct)
+		private async Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>? Graph, GraphStatistics? Stats)> Update(bool waitForIdle, CancellationToken ct)
 		{
 #pragma warning disable VSTHRD109 // Switch instead of assert in async methods - We're asserting an internal invariant here
 			ThreadHelper.ThrowIfNotOnUIThread();
@@ -250,7 +250,7 @@ namespace DependsOnThat.Graph.Display
 
 				if (ct.IsCancellationRequested || _nodeGraph == null)
 				{
-					return null;
+					return (null, null);
 				}
 
 				if (_invalidatedDocuments.Count > 0)
@@ -265,7 +265,7 @@ namespace DependsOnThat.Graph.Display
 
 				if (ct.IsCancellationRequested)
 				{
-					return null;
+					return (null, null);
 				}
 
 				if (_statisticsTCS != null)
@@ -293,7 +293,7 @@ namespace DependsOnThat.Graph.Display
 
 					if (ct.IsCancellationRequested)
 					{
-						return null;
+						return (null, null);
 					}
 					else
 					{
@@ -307,7 +307,7 @@ namespace DependsOnThat.Graph.Display
 
 			}
 
-			return null; // In case we updated NodeGraph but display graph did not change
+			return (null, null); // In case we updated NodeGraph but display graph did not change
 		}
 
 		private async Task<NodeGraph?> RebuildNodeGraph(Solution solution, CancellationToken ct)
@@ -321,23 +321,24 @@ namespace DependsOnThat.Graph.Display
 			return nodeGraph;
 		}
 
-		private async Task<IBidirectionalGraph<DisplayNode, DisplayEdge>?> RebuildDisplayGraph(CancellationToken ct)
+		private async Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>?, GraphStatistics?)> RebuildDisplayGraph(CancellationToken ct)
 		{
 			var nodeGraph = _nodeGraph;
 			var extensionDepth = ExtensionDepth;
 			if (nodeGraph == null)
 			{
-				return null;
+				return (null, null);
 			}
-			var displayGraph = await Task.Run(async () =>
+			var result = await Task.Run(async () =>
 			{
 				var rootSymbols = await _getCurrentRootSymbols(ct);
 
 				var graph = nodeGraph.GetDisplaySubgraph(rootSymbols, extensionDepth);
-				return graph;
+				var stats = GraphStatistics.GetForSubgraph(graph);
+				return (graph, stats);
 			}, ct);
 
-			return displayGraph;
+			return result;
 		}
 
 		public void Dispose()
