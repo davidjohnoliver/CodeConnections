@@ -121,7 +121,7 @@ namespace DependsOnThat.Graph.Display
 
 			_needsDisplayGraphUpdate = true;
 
-			if (_currentUpdateState < UpdateState.RebuildingDisplayGraph)
+			if (_currentUpdateState is > UpdateState.NotUpdating and < UpdateState.RebuildingDisplayGraph)
 			{
 				// Nothing to do, the display graph update will take place with up-to-date parameters after node graph is updated
 				return;
