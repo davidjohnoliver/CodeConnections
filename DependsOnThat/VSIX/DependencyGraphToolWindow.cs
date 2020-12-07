@@ -64,7 +64,7 @@ namespace DependsOnThat.VSIX
 			var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;
 			Assumes.Present(componentModel);
 			var workspace = componentModel.GetService<VisualStudioWorkspace>();
-			var roslynService = new RoslynService(workspace);
+			var roslynService = new RoslynService(workspace).DisposeWith(_disposables);
 
 			var solutionService = new SolutionService(dte);
 			SubscribeListeners(solutionService);
@@ -78,7 +78,7 @@ namespace DependsOnThat.VSIX
 
 			if (Content is DependencyGraphToolWindowControl content)
 			{
-				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService)
+				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService, roslynService)
 					.DisposeWith(_disposables);
 			}
 		}

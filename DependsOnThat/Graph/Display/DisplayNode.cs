@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Presentation
+namespace DependsOnThat.Graph.Display
 {
 	/// <summary>
 	/// A node in the displayable subgraph.

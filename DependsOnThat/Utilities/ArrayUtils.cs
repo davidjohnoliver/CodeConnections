@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependsOnThat.Extensions;
 
 namespace DependsOnThat.Utilities
 {
 	public static class ArrayUtils
 	{
+		private static readonly Dictionary<Type, Array> _cachedEmptyArrays = new Dictionary<Type, Array>();
 		/// <summary>
 		///  Creates a new array with pre-initialized values.
 		/// </summary>
@@ -29,6 +31,18 @@ namespace DependsOnThat.Utilities
 				array[i] = initializer(i);
 			}
 			return array;
+		}
+
+		/// <summary>
+		/// Returns an empty array of <typeparamref name="T"/>.
+		/// </summary>
+		public static T[] GetEmpty<T>()
+		{
+			lock (_cachedEmptyArrays)
+			{
+				var array = _cachedEmptyArrays.GetOrCreate(typeof(T), _ => new T[0]);
+				return (T[])array;
+			}
 		}
 	}
 }

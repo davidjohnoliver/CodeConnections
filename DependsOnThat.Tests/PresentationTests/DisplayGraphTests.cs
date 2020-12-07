@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
-using DependsOnThat.Presentation;
+using DependsOnThat.Graph.Display;
 using DependsOnThat.Tests.Utilities;
 using NUnit.Framework;
 
@@ -37,7 +37,7 @@ namespace DependsOnThat.Tests.PresentationTests
 				var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution,
 					ct: default);
 
-				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 0);
+				var displayGraph = fullGraph.GetDisplaySubgraph(roots, extensionDepth: 0);
 				Assert.AreEqual(2, displayGraph.VertexCount);
 				var simpleEdges = displayGraph.Edges.OfType<SimpleDisplayEdge>().ToArray();
 				var multiEdges = displayGraph.Edges.OfType<MultiDependencyDisplayEdge>().ToArray();
@@ -64,7 +64,7 @@ namespace DependsOnThat.Tests.PresentationTests
 					workspace.CurrentSolution,
 					ct: default);
 
-				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 1);
+				var displayGraph = fullGraph.GetDisplaySubgraph(roots, extensionDepth: 1);
 				Assert.AreEqual(7, displayGraph.VertexCount);
 				Assert.AreEqual(7, displayGraph.EdgeCount);
 			}
@@ -87,7 +87,7 @@ namespace DependsOnThat.Tests.PresentationTests
 					workspace.CurrentSolution,
 					ct: default);
 
-				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 1);
+				var displayGraph = fullGraph.GetDisplaySubgraph(roots, extensionDepth: 1);
 				Assert.AreEqual(5, displayGraph.VertexCount);
 				Assert.AreEqual(4, displayGraph.EdgeCount);
 			}
@@ -111,7 +111,7 @@ namespace DependsOnThat.Tests.PresentationTests
 					workspace.CurrentSolution,
 					ct: default);
 
-				var displayGraph = fullGraph.GetDisplaySubgraph(GetRootsWithPath(roots), extensionDepth: 2);
+				var displayGraph = fullGraph.GetDisplaySubgraph(roots, extensionDepth: 2);
 				Assert.AreEqual(10, displayGraph.VertexCount);
 				Assert.AreEqual(10, displayGraph.EdgeCount);
 			}
@@ -165,11 +165,6 @@ namespace DependsOnThat.Tests.PresentationTests
 				AssertEx.Contains(displayGraph.Vertices, n => n.DisplayString.EndsWith("SomeDeeperClass"));
 				AssertEx.Contains(displayGraph.Vertices, n => n.DisplayString.EndsWith("SomeClassDepth5"));
 			}
-		}
-
-		private static IList<(string FilePath, Microsoft.CodeAnalysis.ITypeSymbol Symbol)> GetRootsWithPath(Microsoft.CodeAnalysis.ITypeSymbol[] rootSymbols)
-		{
-			return rootSymbols.Select(s => (s.GetPreferredDeclaration(), s)).ToArray();
 		}
 	}
 }

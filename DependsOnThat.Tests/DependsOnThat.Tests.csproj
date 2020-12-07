@@ -51,9 +51,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExtensionsTests\ListExtensionsTests.cs" />
     <Compile Include="ExtensionsTests\SymbolExtensionsTests.cs" />
     <Compile Include="ExtensionsTests\SyntaxNodeExtensionsTests.cs" />
     <Compile Include="GraphTests\NodeGraphTests.cs" />
+    <Compile Include="GraphTests\NodeGraphTests.Updates.cs" />
     <Compile Include="GraphTests\NodePathTests.cs" />
     <Compile Include="PresentationTests\DisplayGraphTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

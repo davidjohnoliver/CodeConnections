@@ -23,28 +23,9 @@ namespace DependsOnThat.Graph
 		/// If true, types that are only declared in generated code will be ignored (types with both authored and generated declarations 
 		/// will be treated normally).
 		/// </param>
-		private static async Task BuildGraph(NodeGraph graph, Solution solution, IEnumerable<ProjectIdentifier>? includedProjects, bool excludePureGenerated, CancellationToken ct)
+		private static async Task BuildGraph(NodeGraph graph, Solution solution, IEnumerable<Project> projects, CancellationToken ct)
 		{
 			var knownNodes = new Dictionary<TypeIdentifier, TypeNode>();
-
-			var projects = includedProjects?.Select(pi => solution.GetProject(pi.Id)).Trim() ?? solution.Projects;
-
-			var includedAssemblies = projects.Select(p => p.AssemblyName).ToHashSet();
-
-			bool IsSymbolIncluded(ITypeSymbol foundSymbol)
-			{
-				if (!includedAssemblies.Contains(foundSymbol.ContainingAssembly.Name))
-				{
-					return false;
-				}
-
-				if (excludePureGenerated && foundSymbol.IsPurelyGeneratedSymbol())
-				{
-					return false;
-				}
-
-				return true;
-			}
 
 			//// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
 			//// anyway https://softwareengineering.stackexchange.com/a/330028/336780, and (b) the UX we want is a stable ordering of node links, which wouldn't 
@@ -68,7 +49,7 @@ namespace DependsOnThat.Graph
 					}
 					var root = await syntaxTree.GetRootAsync(ct);
 					var semanticModel = compilation.GetSemanticModel(syntaxTree);
-					declaredSymbols.UnionWith(root.GetAllDeclaredTypes(semanticModel).Where(IsSymbolIncluded));
+					declaredSymbols.UnionWith(graph.GetIncludedSymbolsFromSyntaxRoot(root, semanticModel));
 				}
 
 				foreach (var symbol in declaredSymbols)
@@ -82,13 +63,13 @@ namespace DependsOnThat.Graph
 					// TODO: GetTypeDependencies calls GetSemanticModel() a second time, now that we're always considering all SyntaxTrees it'd be more efficient to refactor to only create it once (eg GetTypeDependenciesForDefinition)
 					await foreach (var dependency in symbol.GetTypeDependencies(compilation, includeExternalMetadata: false, ct))
 					{
-						if (IsSymbolIncluded(dependency))
+						if (graph.IsSymbolIncluded(dependency))
 						{
 							var dependencyNode = GetFromKnownNodes(dependency);
 
 							if (node != dependencyNode)
 							{
-								node.AddForwardLink(dependencyNode); 
+								node.AddForwardLink(dependencyNode);
 							}
 						}
 					}
@@ -99,7 +80,8 @@ namespace DependsOnThat.Graph
 					var identifier = symbol.ToIdentifier();
 					if (!knownNodes.TryGetValue(identifier, out var node))
 					{
-						node = new TypeNode(identifier, symbol.GetPreferredDeclaration());
+						var key = new TypeNodeKey(identifier);
+						node = CreateTypeNodeForSymbol(symbol, key);
 						knownNodes[identifier] = node;
 						graph.AddNode(node);
 					}
@@ -107,6 +89,51 @@ namespace DependsOnThat.Graph
 					return node;
 				}
 			}
+		}
+
+		private static TypeNode CreateTypeNodeForSymbol(ITypeSymbol symbol, TypeNodeKey key)
+			=> new TypeNode(key, symbol.GetPreferredDeclaration(), GetAssociatedFiles(symbol), symbol.GetFullMetadataName());
+
+		private static IEnumerable<string> GetAssociatedFiles(ITypeSymbol symbol)
+			=> symbol.DeclaringSyntaxReferences.Select(sr => sr.SyntaxTree.FilePath).ToHashSet();
+
+		/// <summary>
+		/// Get node for <paramref name="symbol"/>. If none is present, create one and add it to the graph.
+		/// </summary>
+		private TypeNode GetOrCreateNode(ITypeSymbol symbol)
+		{
+			var identifier = symbol.ToIdentifier();
+			var key = new TypeNodeKey(identifier);
+			if (!_nodes.TryGetValue(key, out var node))
+			{
+				node = CreateTypeNodeForSymbol(symbol, key);
+				AddNode(node);
+			}
+			return (TypeNode)node;
+		}
+
+		/// <summary>
+		/// Get symbols for types declared in <paramref name="root"/> that meet the inclusion rules for the graph.
+		/// </summary>
+		private IEnumerable<ITypeSymbol> GetIncludedSymbolsFromSyntaxRoot(SyntaxNode root, SemanticModel semanticModel)
+			=> root.GetAllDeclaredTypes(semanticModel).Where(foundSymbol => IsSymbolIncluded(foundSymbol));
+
+		/// <summary>
+		/// Should this symbol be included in the graph, based on configured inclusion rules?
+		/// </summary>
+		private bool IsSymbolIncluded(ITypeSymbol foundSymbol)
+		{
+			if (!_includedAssemblies.Contains(foundSymbol.ContainingAssembly.Name))
+			{
+				return false;
+			}
+
+			if (_excludePureGenerated && foundSymbol.IsPurelyGeneratedSymbol())
+			{
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

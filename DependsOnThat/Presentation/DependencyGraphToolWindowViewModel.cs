@@ -15,60 +15,52 @@ using DependsOnThat.Collections;
 using DependsOnThat.Disposables;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
+using DependsOnThat.Graph.Display;
 using DependsOnThat.Roslyn;
 using DependsOnThat.Services;
 using DependsOnThat.Statistics;
 using DependsOnThat.Text;
 using DependsOnThat.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Threading;
 using QuickGraph;
 
 namespace DependsOnThat.Presentation
 {
-	internal class DependencyGraphToolWindowViewModel : ViewModelBase, IDisposable
+	internal sealed class DependencyGraphToolWindowViewModel : ViewModelBase, IDisposable
 	{
 		private readonly IDocumentsService _documentsService;
 		private readonly IRoslynService _roslynService;
 		private readonly IGitService _gitService;
 		private readonly ISolutionService _solutionService;
 		private readonly IOutputService _outputService;
+		private readonly IModificationsService _modificationsService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
+
 		private readonly HashSet<string> _rootDocuments = new HashSet<string>();
-		private readonly SerialCancellationDisposable _graphUpdatesRegistration = new SerialCancellationDisposable();
+
+		private readonly GraphStateManager _graphStateManager;
+
 		private readonly SerialCancellationDisposable _projectUpdatesRegistration = new SerialCancellationDisposable();
+		private readonly SerialCancellationDisposable _statsRetrievalRegistration = new SerialCancellationDisposable();
 
-
-		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
 		private bool _shouldUseGitForRoots;
 
 		public IBidirectionalGraph<DisplayNode, DisplayEdge> Graph { get => _graph; set => OnValueSet(ref _graph, value); }
 
+		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
 		private static IBidirectionalGraph<DisplayNode, DisplayEdge> Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
 
-		private int _extensionDepth = 1;
 		public int ExtensionDepth
 		{
-			get => _extensionDepth;
-			set
-			{
-				if (OnValueSet(ref _extensionDepth, value))
-				{
-					TryUpdateGraph();
-				}
-			}
+			get => _graphStateManager.ExtensionDepth;
+			set => OnValueSet(_graphStateManager.ExtensionDepth, v => _graphStateManager.ExtensionDepth = v, value);
 		}
 
-		private bool _excludePureGenerated;
 		public bool ExcludePureGenerated
 		{
-			get => _excludePureGenerated;
-			set
-			{
-				if (OnValueSet(ref _excludePureGenerated, value))
-				{
-					TryUpdateGraph();
-				}
-			}
+			get => _graphStateManager.ExcludePureGenerated;
+			set => OnValueSet(_graphStateManager.ExcludePureGenerated, v => _graphStateManager.ExcludePureGenerated = v, value);
 		}
 
 		private DisplayNode? _selectedNode;
@@ -123,44 +115,58 @@ namespace DependsOnThat.Presentation
 			}
 		}
 
-		private void OnProjectsSelectionChanged() => TryUpdateGraph();
+		private void OnProjectsSelectionChanged() => _graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
 
 		public ICommand AddActiveDocumentAsRootCommand { get; }
 		public ICommand ClearRootsCommand { get; }
 		public ICommand UseGitModifiedFilesAsRootCommand { get; }
-
 		public ICommand LogStatsCommand { get; }
 
-		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService)
+		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService)
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));
-			_documentsService.ActiveDocumentChanged += OnActiveDocumentChanged;
 			_roslynService = roslynService ?? throw new ArgumentNullException(nameof(roslynService));
 			_gitService = gitService ?? throw new ArgumentNullException(nameof(gitService));
 			_solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
 			_outputService = outputService ?? throw new ArgumentNullException(nameof(outputService));
+			_modificationsService = modificationsService ?? throw new ArgumentNullException(nameof(modificationsService));
+
+			_documentsService.ActiveDocumentChanged += OnActiveDocumentChanged;
 			_solutionService.SolutionChanged += OnSolutionChanged;
+			_modificationsService.DocumentInvalidated += OnDocumentInvalidated;
+			_modificationsService.SolutionInvalidated += OnSolutionChanged;
 
 			AddActiveDocumentAsRootCommand = SimpleCommand.Create(AddActiveDocumentAsRoot);
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
 			UseGitModifiedFilesAsRootCommand = SimpleCommand.Create(UseGitModifiedFilesAsRoot);
 			LogStatsCommand = SimpleCommand.Create(LogStats);
 
+			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), GetCurrentRootSymbols);
+			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
+			ExtensionDepth = 1;
+
 			UpdateProjects();
 		}
 
-		private void OnSolutionChanged()
+		private void OnDisplayGraphChanged(IBidirectionalGraph<DisplayNode, DisplayEdge> newGraph, GraphStatistics statistics)
 		{
-			ResetGraph();
-			UpdateProjects();
+			Graph = newGraph;
+
+			var reporter = GetStatsReporter(statistics);
+			// TODO: this should be opt-in/hidden behind debug flag
+			_outputService.WriteLines(reporter.WriteStatistics(StatisticsReportContent.GraphingSpecific));
 		}
 
-		private void ResetGraph()
+		private void OnDocumentInvalidated(DocumentId documentId) => _graphStateManager.InvalidateDocument(documentId);
+
+		private void ResetNodeGraph()
 		{
-			_graphUpdatesRegistration.Cancel();
 			Graph = Empty;
+			_graphStateManager.InvalidateNodeGraph();
 		}
+
+		private void OnSolutionChanged() => ResetNodeGraph();
 
 		private void AddActiveDocumentAsRoot()
 		{
@@ -173,87 +179,37 @@ namespace DependsOnThat.Presentation
 			_shouldUseGitForRoots = false;
 			if (_rootDocuments.Add(active))
 			{
-				TryUpdateGraph();
+				_graphStateManager.InvalidateDisplayGraph();
 			}
 		}
 
 		private void UseGitModifiedFilesAsRoot()
 		{
-			_shouldUseGitForRoots = true;
-			TryUpdateGraph();
+			if (!_shouldUseGitForRoots)
+			{
+				_shouldUseGitForRoots = true;
+				_graphStateManager.InvalidateDisplayGraph();
+			}
 		}
 
-		private void TryUpdateGraph()
+		private async Task<IList<ITypeSymbol>> GetCurrentRootSymbols(CancellationToken ct)
 		{
-			GraphingTime = null;
-			GraphingError = null;
-			_joinableTaskFactory.RunAsync(async () =>
-			{
-				var stopwatch = Stopwatch.StartNew();
-				try
-				{
-					var (graph, statsReporter) = await GetGraphAsync(_graphUpdatesRegistration.GetNewToken());
-					stopwatch.Stop();
-					if (graph == null)
-					{
-						return;
-					}
-					if (graph.VertexCount > 0)
-					{
-						GraphingTime = stopwatch.Elapsed;
-						_outputService.WriteLine($"Analyzing connections in background took about {TimeUtils.GetRoundedTime(GraphingTime.Value, CultureInfo.CurrentCulture)} for {graph.VertexCount} nodes.");
-					}
-					Graph = graph;
-					_outputService.WriteLines(statsReporter!.WriteStatistics(StatisticsReportContent.GraphingSpecific));
-				}
-				catch (Exception e)
-				{
-					stopwatch.Stop();
-					GraphingError = $"Error: {e}";
-				}
-			});
-		}
-
-		private Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>?, StatisticsReporter?)> GetGraphAsync(CancellationToken ct)
-		{
-			var includedProjects = Projects?.SelectedItems.ToArray();
-			return Task.Run<(IBidirectionalGraph<DisplayNode, DisplayEdge>?, StatisticsReporter?)>(async () =>
-			{
-				if (ct.IsCancellationRequested)
-				{
-					return (null, null);
-				}
-
-				var rootDocuments = _shouldUseGitForRoots ?
+			var rootDocuments = _shouldUseGitForRoots ?
 					await (_gitService.GetAllModifiedAndNewFiles(ct))
 					: _rootDocuments;
 
-				await WriteLineAsync($"Building graph from {rootDocuments.Count} roots.", ct);
+			await WriteLineAsync($"Building graph from {rootDocuments.Count} roots.", ct);
 
-				var rootSymbols = await _roslynService.GetDeclaredSymbolsFromFilePaths(rootDocuments, ct).ToListAsync(ct);
-				if (rootSymbols.Count == 0)
-				{
-					return (Empty, null);
-				}
-				var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), includedProjects, ExcludePureGenerated, ct);
-				var graph = nodeGraph.GetDisplaySubgraph(rootSymbols, ExtensionDepth);
-
-				if (ct.IsCancellationRequested)
-				{
-					return (null, null);
-				}
-
-				var stats = GraphStatistics.GetForSubgraph(graph);
-
-				return (graph, GetStatsReporter(stats));
-			}, ct);
+			var rootSymbols = await _roslynService.GetDeclaredSymbolsFromFilePaths(rootDocuments, ct).ToListAsync(ct);
+			return rootSymbols;
 		}
+
 
 		private void ClearRoots()
 		{
 			_rootDocuments.Clear();
 			_shouldUseGitForRoots = false;
-			TryUpdateGraph();
+			_graphStateManager.InvalidateDisplayGraph();
 		}
 
 		private void LogStats()
@@ -262,15 +218,16 @@ namespace DependsOnThat.Presentation
 			{
 				_outputService.WriteLine($"Gathering statistics for {Path.GetFileName(_solutionService.GetSolutionPath())}...");
 				_outputService.FocusOutput();
-				var includedProjects = Projects?.SelectedItems.ToArray();
-				var statsWriter = await Task.Run(async () =>
-				{
-					var nodeGraph = await NodeGraph.BuildGraph(_roslynService.GetCurrentSolution(), includedProjects, ExcludePureGenerated, CancellationToken.None);
-					var stats = GraphStatistics.GetForFullGraph(nodeGraph);
-					return GetStatsReporter(stats);
-				});
 
-				_outputService.WriteLines(statsWriter.WriteStatistics(StatisticsReportContent.All));
+				var ct = _statsRetrievalRegistration.GetNewToken();
+				var stats = await _graphStateManager.GetStatisticsForFullGraph(ct);
+				if (ct.IsCancellationRequested || stats == null)
+				{
+					return;
+				}
+				var reporter = GetStatsReporter(stats);
+
+				_outputService.WriteLines(reporter.WriteStatistics(StatisticsReportContent.All));
 				_outputService.FocusOutput();
 			});
 
@@ -310,10 +267,14 @@ namespace DependsOnThat.Presentation
 
 		public void Dispose()
 		{
-			_graphUpdatesRegistration.Dispose();
+			_graphStateManager.Dispose();
 			_projectUpdatesRegistration.Dispose();
+			_statsRetrievalRegistration.Dispose();
+
 			_documentsService.ActiveDocumentChanged -= OnActiveDocumentChanged;
 			_solutionService.SolutionChanged -= OnSolutionChanged;
+			_modificationsService.DocumentInvalidated -= OnDocumentInvalidated;
+			_modificationsService.SolutionInvalidated -= OnSolutionChanged;
 			if (Projects != null)
 			{
 				Projects.SelectionChanged -= OnProjectsSelectionChanged;

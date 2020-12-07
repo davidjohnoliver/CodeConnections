@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DependsOnThat.Graph;
-using DependsOnThat.Presentation;
+using DependsOnThat.Graph.Display;
 
 namespace DependsOnThat.Extensions
 {

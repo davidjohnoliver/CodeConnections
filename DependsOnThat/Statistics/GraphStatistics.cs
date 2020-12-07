@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
 using DependsOnThat.Graph.Display;
-using DependsOnThat.Presentation;
 using QuickGraph;
 using QuickGraph.Algorithms.Condensation;
 
 namespace DependsOnThat.Statistics
 {
 	/// <summary>
-	/// Calculates and holds various statistical characteristics of a <see cref="NodeGraph"/>
+	/// Calculates and holds various statistical characteristics of a <see cref="NodeGraph"/> or subgraph.
 	/// </summary>
 	public class GraphStatistics
 	{
