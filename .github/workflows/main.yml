@@ -26,10 +26,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.1
+      uses: microsoft/setup-msbuild@v1
     
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
+      uses: NuGet/setup-nuget@v1
 
     - name: Add VSTest to PATH
       uses: darenm/Setup-VSTest@v1
