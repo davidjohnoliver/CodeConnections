@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +16,7 @@ namespace DependsOnThat.Text
 	public class MarkdownStyleTableFormatter : IDictionaryFormatter
 	{
 		public IEnumerable<string> FormatDictionary<TKey, TValue>(string keyHeader, string valueHeader, IEnumerable<KeyValuePair<TKey, TValue>> dictionary)
-			=> FormatTable(new[] { keyHeader, valueHeader }, dictionary.Select(kvp => new[] { kvp.Key.ToString(), kvp.Value?.ToString() ?? "" }).ToList());
+			=> FormatTable(new[] { keyHeader, valueHeader }, dictionary.Select(kvp => new[] { kvp.Key!.ToString(), kvp.Value?.ToString() ?? "" }).ToList());
 
 		public IEnumerable<string> FormatTable(IList<string> headers, IEnumerable<IList<string>> rows)
 		{

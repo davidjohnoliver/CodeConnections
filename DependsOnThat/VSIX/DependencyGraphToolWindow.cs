@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using DependsOnThat.Disposables;
 using DependsOnThat.Extensions;
@@ -49,6 +50,8 @@ namespace DependsOnThat.VSIX
 		{
 			base.Initialize();
 
+			ThreadHelper.ThrowIfNotOnUIThread();
+
 			InitializeViewModel();
 		}
 
@@ -57,12 +60,12 @@ namespace DependsOnThat.VSIX
 			ThreadHelper.ThrowIfNotOnUIThread();
 
 			var dte = GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
-			Assumes.Present(dte);
+			AssumePresent(dte);
 			var documentsService = new DocumentsService(dte);
 			SubscribeListeners(documentsService);
 
 			var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;
-			Assumes.Present(componentModel);
+			AssumePresent(componentModel);
 			var workspace = componentModel.GetService<VisualStudioWorkspace>();
 			var roslynService = new RoslynService(workspace).DisposeWith(_disposables);
 
@@ -70,7 +73,7 @@ namespace DependsOnThat.VSIX
 			SubscribeListeners(solutionService);
 
 			var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
-			Assumes.Present(outputWindow);
+			AssumePresent(outputWindow);
 
 			var outputService = new OutputWindowOutputService(ConsolePaneId, outputWindow, "DependsOnThat");
 
@@ -91,6 +94,7 @@ namespace DependsOnThat.VSIX
 				var rdt = (IVsRunningDocumentTable)GetService(typeof(SVsRunningDocumentTable));
 				Assumes.Present(rdt);
 				rdt.AdviseRunningDocTableEvents(runningDocTableEvents, out var cookie);
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
 				_disposables.Add(Disposable.Create(() =>
 				{
 					if (ThreadHelper.CheckAccess())
@@ -103,7 +107,7 @@ namespace DependsOnThat.VSIX
 			if (service is IVsSolutionEvents solutionEvents)
 			{
 				var solution = GetService(typeof(SVsSolution)) as IVsSolution;
-				Assumes.Present(solution);
+				AssumePresent(solution);
 				solution.AdviseSolutionEvents(solutionEvents, out var cookie);
 				_disposables.Add(Disposable.Create(() =>
 				{
@@ -112,6 +116,7 @@ namespace DependsOnThat.VSIX
 						solution.UnadviseSolutionEvents(cookie);
 					}
 				}));
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
 			}
 		}
 
@@ -125,5 +130,12 @@ namespace DependsOnThat.VSIX
 
 			_disposables.Dispose();
 		}
+
+		private static void AssumePresent<T>([NotNull] T? component) where T : class
+		{
+			Assumes.Present(component);
+#pragma warning disable CS8777 // Parameter must have a non-null value when exiting. - Assumes.Present() will throw if null
+		}
+#pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
 	}
 }

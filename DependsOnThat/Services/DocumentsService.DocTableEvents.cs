@@ -21,6 +21,8 @@ namespace DependsOnThat.Services
 
 		public int OnBeforeDocumentWindowShow(uint docCookie, int fFirstShow, IVsWindowFrame pFrame)
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+
 			var activeDocument = GetActiveDocument();
 			if (activeDocument != _oldActiveDocument)
 			{

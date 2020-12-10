@@ -85,7 +85,7 @@ namespace DependsOnThat.Graph.Display
 		/// </summary>
 		public void InvalidateNodeGraph()
 		{
-			ThreadHelper.ThrowIfNotOnUIThread();
+			ThreadUtils.ThrowIfNotOnUIThread();
 
 			_invalidatedDocuments.Clear();
 			_nodeGraph = null;
@@ -97,7 +97,7 @@ namespace DependsOnThat.Graph.Display
 		/// </summary>
 		public void InvalidateDocument(DocumentId documentId)
 		{
-			ThreadHelper.ThrowIfNotOnUIThread();
+			ThreadUtils.ThrowIfNotOnUIThread();
 
 			_invalidatedDocuments.Add(documentId);
 
@@ -117,7 +117,7 @@ namespace DependsOnThat.Graph.Display
 		/// </summary>
 		public void InvalidateDisplayGraph()
 		{
-			ThreadHelper.ThrowIfNotOnUIThread();
+			ThreadUtils.ThrowIfNotOnUIThread();
 
 			_needsDisplayGraphUpdate = true;
 
@@ -171,7 +171,7 @@ namespace DependsOnThat.Graph.Display
 		/// <param name="waitForIdle">If true, the update should be delayed until after an idle state (no user input) is reached. If false, it should run immediately.</param>
 		private void RunUpdate(bool waitForIdle)
 		{
-			ThreadHelper.ThrowIfNotOnUIThread();
+			ThreadUtils.ThrowIfNotOnUIThread();
 
 			if (_currentUpdateState == UpdateState.WaitingForIdle)
 			{
@@ -225,7 +225,7 @@ namespace DependsOnThat.Graph.Display
 		private async Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>? Graph, GraphStatistics? Stats)> Update(bool waitForIdle, CancellationToken ct)
 		{
 #pragma warning disable VSTHRD109 // Switch instead of assert in async methods - We're asserting an internal invariant here
-			ThreadHelper.ThrowIfNotOnUIThread();
+			ThreadUtils.ThrowIfNotOnUIThread();
 #pragma warning restore VSTHRD109 // Switch instead of assert in async methods
 			try
 			{

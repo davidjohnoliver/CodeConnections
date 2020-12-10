@@ -34,7 +34,9 @@ namespace Roslyn.Utilities
 
 				foreach (var attribute in symbol.GetAttributes())
 				{
+#pragma warning disable RS1024 // Compare symbols correctly - imported code
 					if (generatedCodeAttribute.Equals(attribute.AttributeClass))
+#pragma warning restore RS1024 // Compare symbols correctly
 					{
 						return true;
 					}

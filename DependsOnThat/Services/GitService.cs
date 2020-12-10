@@ -47,7 +47,9 @@ namespace DependsOnThat.Services
 
 		public async Task<ICollection<string>> GetAllModifiedAndNewFiles(CancellationToken ct)
 		{
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks - not a foreign Task
 			await _checkReady;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
 
 			var path = _repositoryPath;
 			if (path.IsNullOrWhiteSpace())
