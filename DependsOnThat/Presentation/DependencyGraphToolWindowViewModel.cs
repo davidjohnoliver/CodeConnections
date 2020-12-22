@@ -169,7 +169,11 @@ namespace DependsOnThat.Presentation
 			_graphStateManager.InvalidateNodeGraph();
 		}
 
-		private void OnSolutionChanged() => ResetNodeGraph();
+		private void OnSolutionChanged()
+		{
+			ResetNodeGraph();
+			UpdateProjects();
+		}
 
 		private void AddActiveDocumentAsRoot()
 		{
