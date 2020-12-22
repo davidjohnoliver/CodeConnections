@@ -155,7 +155,10 @@ namespace DependsOnThat.Presentation
 
 			var reporter = GetStatsReporter(statistics);
 			// TODO: this should be opt-in/hidden behind debug flag
-			_outputService.WriteLines(reporter.WriteStatistics(StatisticsReportContent.GraphingSpecific));
+			if (!Graph.IsVerticesEmpty)
+			{
+				_outputService.WriteLines(reporter.WriteStatistics(StatisticsReportContent.GraphingSpecific));
+			}
 		}
 
 		private void OnDocumentInvalidated(DocumentId documentId) => _graphStateManager.InvalidateDocument(documentId);
