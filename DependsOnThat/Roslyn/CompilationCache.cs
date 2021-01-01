@@ -17,6 +17,10 @@ namespace DependsOnThat.Roslyn
 	/// <summary>
 	/// Caches <see cref="SemanticModel"/>s and other Roslyn compilation data for reuse within a specific time window.
 	/// </summary>
+	/// <remarks>
+	/// It's assumed that <see cref="SetSolution(Solution)"/> and <see cref="ClearSolution"/> will only ever be called from the main thread,
+	/// but read methods may be called from any thread.
+	/// </remarks>
 	public sealed class CompilationCache
 	{
 		private readonly object _gate = new object();
@@ -31,11 +35,24 @@ namespace DependsOnThat.Roslyn
 		/// <summary>
 		/// Activates the cache using <paramref name="solution"/>.
 		/// </summary>
-		public void Activate(Solution solution)
+		public void SetSolution(Solution solution)
 		{
 			if (solution is null)
 			{
 				throw new ArgumentNullException(nameof(solution));
+			}
+
+			if (_solution is { })
+			{
+				if (_solution == solution)
+				{
+					// No need to do anything
+					return;
+				}
+				else
+				{
+					ClearSolution();
+				}
 			}
 
 			lock (_gate)
@@ -54,16 +71,11 @@ namespace DependsOnThat.Roslyn
 		/// <summary>
 		/// Deactivates the cache. Held values will be released.
 		/// </summary>
-		public void Reset()
+		public void ClearSolution()
 		{
 			IDisposable? cd = null;
 			lock (_gate)
 			{
-				if (!_isActive)
-				{
-					throw new InvalidOperationException($"{this} is already active.");
-				}
-
 				_isActive = false;
 				_solution = null;
 				_cachedCompilations.Clear();
@@ -225,6 +237,16 @@ namespace DependsOnThat.Roslyn
 			return default;
 		}
 
+		public Document? GetDocument(DocumentId? documentId)
+		{
+			if (!_isActive)
+			{
+				return null;
+			}
+
+			return _solution?.GetDocument(documentId);
+		}
+
 		private Project? GetContainingProject(TypeNode typeNode)
 		{
 			if (_solution == null)
@@ -248,5 +270,14 @@ namespace DependsOnThat.Roslyn
 			return null;
 		}
 
+		/// <summary>
+		/// Returns a cache pre-loaded with <paramref name="solution"/>, used by tests.
+		/// </summary>
+		public static CompilationCache CacheWithSolution(Solution solution)
+		{
+			var cache = new CompilationCache();
+			cache.SetSolution(solution);
+			return cache;
+		}
 	}
 }

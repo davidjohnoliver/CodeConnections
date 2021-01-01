@@ -27,9 +27,9 @@ namespace DependsOnThat.Tests.GraphTests
 				var someClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClass")];
 				var someCircularClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeCircularClass")];
 
-				var roots = new HashSet<TypeNode>();
-				roots.Add(someClassNode as TypeNode);
-				roots.Add(someCircularClassNode as TypeNode);
+				var roots = new HashSet<Node>();
+				roots.Add(someClassNode);
+				roots.Add(someCircularClassNode);
 
 				var paths = NodeGraphExtensions.GetMultiDependencyRootPaths(graph, roots).ToArray();
 				var path = paths.Single();
@@ -53,9 +53,9 @@ namespace DependsOnThat.Tests.GraphTests
 				var someClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClass")];
 				var deepClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClassDepth5")];
 
-				var roots = new HashSet<TypeNode>();
-				roots.Add(someClassNode as TypeNode);
-				roots.Add(deepClassNode as TypeNode);
+				var roots = new HashSet<Node>();
+				roots.Add(someClassNode);
+				roots.Add(deepClassNode);
 
 				var paths = NodeGraphExtensions.GetMultiDependencyRootPaths(graph, roots).ToArray();
 				var path = paths.Single();

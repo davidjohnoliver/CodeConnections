@@ -55,6 +55,7 @@ namespace DependsOnThat.Views
 		private void OnDisplayGraphChanged(object oldValue, object newValue)
 		{
 			StartTimer();
+			SelectedVertexControl = null;
 			// Workaround for XamlParseException when binding directly to Graph property https://stackoverflow.com/questions/13007129/method-or-operation-not-implemented-error-on-binding
 			Graph = newValue as IBidirectionalGraph<DisplayNode, DisplayEdge>;
 #pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs - measuring low-level timing information

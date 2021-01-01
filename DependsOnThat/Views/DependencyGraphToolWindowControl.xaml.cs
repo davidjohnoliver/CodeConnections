@@ -11,7 +11,6 @@ namespace DependsOnThat.Views
 		public DependencyGraphToolWindowControl()
 		{
 			typeof(ZoomControl).ToString(); // Force an explicit dependency on GraphSharp here, so that assembly is resolved before parsing Xaml
-			typeof(IntegerUpDown).ToString();
 			this.InitializeComponent();
 		}
 	}

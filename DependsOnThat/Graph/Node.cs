@@ -27,6 +27,11 @@ namespace DependsOnThat.Graph
 		public IReadOnlyCollection<Node> BackLinks => _backLinks;
 
 		/// <summary>
+		/// Total number of dependencies and dependents.
+		/// </summary>
+		public int LinkCount => ForwardLinks.Count + BackLinks.Count;
+
+		/// <summary>
 		/// Key with which the node can be retrieved from a collection.
 		/// </summary>
 		public abstract NodeKey Key { get; }

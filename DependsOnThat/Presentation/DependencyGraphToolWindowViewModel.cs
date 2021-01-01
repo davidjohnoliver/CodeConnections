@@ -37,25 +37,15 @@ namespace DependsOnThat.Presentation
 		private readonly IModificationsService _modificationsService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 
-		private readonly HashSet<string> _rootDocuments = new HashSet<string>();
-
 		private readonly GraphStateManager _graphStateManager;
 
 		private readonly SerialCancellationDisposable _projectUpdatesRegistration = new SerialCancellationDisposable();
 		private readonly SerialCancellationDisposable _statsRetrievalRegistration = new SerialCancellationDisposable();
 
-		private bool _shouldUseGitForRoots;
-
 		public IBidirectionalGraph<DisplayNode, DisplayEdge> Graph { get => _graph; set => OnValueSet(ref _graph, value); }
 
 		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
 		private static IBidirectionalGraph<DisplayNode, DisplayEdge> Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
-
-		public int ExtensionDepth
-		{
-			get => _graphStateManager.ExtensionDepth;
-			set => OnValueSet(_graphStateManager.ExtensionDepth, v => _graphStateManager.ExtensionDepth = v, value);
-		}
 
 		public bool ExcludePureGenerated
 		{
@@ -117,9 +107,7 @@ namespace DependsOnThat.Presentation
 
 		private void OnProjectsSelectionChanged() => _graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
 
-		public ICommand AddActiveDocumentAsRootCommand { get; }
 		public ICommand ClearRootsCommand { get; }
-		public ICommand UseGitModifiedFilesAsRootCommand { get; }
 		public ICommand LogStatsCommand { get; }
 
 		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService)
@@ -137,14 +125,11 @@ namespace DependsOnThat.Presentation
 			_modificationsService.DocumentInvalidated += OnDocumentInvalidated;
 			_modificationsService.SolutionInvalidated += OnSolutionChanged;
 
-			AddActiveDocumentAsRootCommand = SimpleCommand.Create(AddActiveDocumentAsRoot);
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
-			UseGitModifiedFilesAsRootCommand = SimpleCommand.Create(UseGitModifiedFilesAsRoot);
 			LogStatsCommand = SimpleCommand.Create(LogStats);
 
-			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), GetCurrentRootSymbols);
+			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution());
 			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
-			ExtensionDepth = 1;
 
 			UpdateProjects();
 		}
@@ -152,6 +137,8 @@ namespace DependsOnThat.Presentation
 		private void OnDisplayGraphChanged(IBidirectionalGraph<DisplayNode, DisplayEdge> newGraph, GraphStatistics statistics)
 		{
 			Graph = newGraph;
+
+			SetActiveDocumentAsSelected();
 
 			var reporter = GetStatsReporter(statistics);
 			// TODO: this should be opt-in/hidden behind debug flag
@@ -175,48 +162,10 @@ namespace DependsOnThat.Presentation
 			UpdateProjects();
 		}
 
-		private void AddActiveDocumentAsRoot()
-		{
-			var active = _documentsService.GetActiveDocument();
-			if (active == null)
-			{
-				// Ideally the command couldn't be executed if there were no active document
-				return;
-			}
-			_shouldUseGitForRoots = false;
-			if (_rootDocuments.Add(active))
-			{
-				_graphStateManager.InvalidateDisplayGraph();
-			}
-		}
-
-		private void UseGitModifiedFilesAsRoot()
-		{
-			if (!_shouldUseGitForRoots)
-			{
-				_shouldUseGitForRoots = true;
-				_graphStateManager.InvalidateDisplayGraph();
-			}
-		}
-
-		private async Task<IList<ITypeSymbol>> GetCurrentRootSymbols(CancellationToken ct)
-		{
-			var rootDocuments = _shouldUseGitForRoots ?
-					await (_gitService.GetAllModifiedAndNewFiles(ct))
-					: _rootDocuments;
-
-			await WriteLineAsync($"Building graph from {rootDocuments.Count} roots.", ct);
-
-			var rootSymbols = await _roslynService.GetDeclaredSymbolsFromFilePaths(rootDocuments, ct).ToListAsync(ct);
-			return rootSymbols;
-		}
-
 
 		private void ClearRoots()
 		{
-			_rootDocuments.Clear();
-			_shouldUseGitForRoots = false;
-			_graphStateManager.InvalidateDisplayGraph();
+			throw new NotImplementedException(); // TODO: reimplement
 		}
 
 		private void LogStats()
@@ -258,6 +207,24 @@ namespace DependsOnThat.Presentation
 		}
 
 		private void OnActiveDocumentChanged()
+		{
+			SetActiveDocumentAsSelected();
+			var activeDocument = _documentsService.GetActiveDocument();
+			if (activeDocument != null)
+			{
+				var solution = _roslynService.GetCurrentSolution();
+				const int maxLinks = 30;
+				_graphStateManager.ModifySubgraph(Subgraph.SetSelected(GetNodeKey, maxLinks));
+
+				async Task<NodeKey?> GetNodeKey(CancellationToken ct)
+				{
+					var symbols = await solution.GetDeclaredSymbolsFromFilePath(activeDocument, ct);
+					return symbols.FirstOrDefault()?.ToNodeKey();
+				}
+			}
+		}
+
+		private void SetActiveDocumentAsSelected()
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
 			SelectedNode = Graph.Vertices.FirstOrDefault(dn => dn.FilePath == activeDocument);

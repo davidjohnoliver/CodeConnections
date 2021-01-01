@@ -33,8 +33,6 @@ namespace DependsOnThat.Graph
 		/// </summary>
 		private readonly HashSet<string> _includedAssemblies;
 
-		private readonly CompilationCache _compilationCache = new CompilationCache();
-
 		private NodeGraph(bool excludePureGenerated, IEnumerable<string> includedAssemblies)
 		{
 			_excludePureGenerated = excludePureGenerated;
@@ -69,7 +67,7 @@ namespace DependsOnThat.Graph
 			}
 		}
 
-		public TypeNode? GetNodeForType(ITypeSymbol type) => _nodes.GetOrDefault(new TypeNodeKey(type.ToIdentifier())) as TypeNode;
+		public TypeNode? GetNodeForType(ITypeSymbol type) => _nodes.GetOrDefault(type.ToNodeKey()) as TypeNode;
 
 		public static async Task<NodeGraph?> BuildGraph(Solution solution, IEnumerable<ProjectIdentifier>? includedProjects = null, bool excludePureGenerated = false, CancellationToken ct = default)
 		{

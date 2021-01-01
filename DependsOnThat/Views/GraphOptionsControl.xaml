@@ -1,0 +1,102 @@
+﻿<UserControl x:Class="DependsOnThat.Views.GraphOptionsControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="clr-namespace:DependsOnThat.Views"
+			 xmlns:ext="clr-namespace:DependsOnThat.Views.Behaviours"
+			 xmlns:vsimaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+			 xmlns:vsimagecat="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+			 mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Styles/Button.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+		<!--<Style x:Key="IconButtonStyle"
+			   TargetType="Button">
+			<Setter Property="Padding"
+					Value="2" />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="border"
+								BorderThickness="1"
+								BorderBrush="Transparent">
+							<ContentPresenter x:Name="contentPresenter"
+											  Focusable="False"
+											  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+											  Margin="{TemplateBinding Padding}"
+											  RecognizesAccessKey="True"
+											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver"
+									 Value="true">
+								<Setter Property="Background"
+										TargetName="border"
+										Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseOverBackgroundGradientKey}}" />
+								<Setter Property="BorderBrush"
+										TargetName="border"
+										Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarBorderKey}}" />
+							</Trigger>
+							<Trigger Property="IsPressed"
+									 Value="true">
+								<Setter Property="Background"
+										TargetName="border"
+										Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseDownBackgroundGradientKey}}" />
+								<Setter Property="BorderBrush"
+										TargetName="border"
+										Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarBorderKey}}" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>-->
+	</UserControl.Resources>
+	<Border Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
+			BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBorderKey}}"
+			BorderThickness="0"
+			CornerRadius="3">
+		<StackPanel>
+			<Button Style="{StaticResource IconButtonStyle}"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top"
+					Margin="3"
+					ToolTip="Clear pinned graph nodes"
+					Command="{Binding ClearRootsCommand}">
+				<vsimaging:CrispImage Width="16"
+									  Height="16"
+									  Moniker="{x:Static vsimagecat:KnownMonikers.Cancel}" />
+			</Button>
+			<ComboBox HorizontalAlignment="Left" Margin="3" IsEditable="True"
+					  IsReadOnly="True"
+					  Text="Mode..." />
+			<!--TODO - Mode-->
+			<Expander Header="Options">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+					<CheckBox Margin="0,10,0,0"
+							  Content="Exclude generated types"
+							  IsChecked="{Binding ExcludePureGenerated, Mode=TwoWay}" />
+					<TextBlock Grid.Row="1"
+							   Text="Included projects:"
+							   Margin="0,12,0,3" />
+					<ListView Grid.Row="2"
+							  MaxHeight="300"
+							  ext:MultiSelection.ItemsSource="{Binding Projects}"
+							  DisplayMemberPath="ProjectName"
+							  ext:MultiSelection.InitialSelectionState="Selected"
+							  VerticalAlignment="Top" />
+				</Grid>
+			</Expander>
+		</StackPanel>
+	</Border>
+</UserControl>

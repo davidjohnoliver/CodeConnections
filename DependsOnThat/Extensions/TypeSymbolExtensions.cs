@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependsOnThat.Graph;
 using DependsOnThat.Roslyn;
 using Microsoft.CodeAnalysis;
 
@@ -24,6 +25,8 @@ namespace DependsOnThat.Extensions
 			var shortName = fullName.Split('.').Last();
 			return new TypeIdentifier(fullName, shortName);
 		}
+
+		public static TypeNodeKey ToNodeKey(this ITypeSymbol symbol) => new TypeNodeKey(ToIdentifier(symbol));
 
 		/// <summary>
 		/// Returns all the types implied as dependencies by the presence of <paramref name="typeSymbol"/>, ie the various types that went into <paramref name="typeSymbol"/>'s construction.

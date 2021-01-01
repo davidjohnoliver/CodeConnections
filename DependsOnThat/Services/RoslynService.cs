@@ -29,31 +29,6 @@ namespace DependsOnThat.Services
 			_workspace.WorkspaceChanged += OnWorkspaceChanged;
 		}
 
-		public async IAsyncEnumerable<ITypeSymbol> GetDeclaredSymbolsFromFilePaths(IEnumerable<string> filePaths, [EnumeratorCancellation] CancellationToken ct)
-		{
-			var solution = GetCurrentSolution();
-			foreach (var filePath in filePaths)
-			{
-				var document = solution.GetDocument(filePath);
-				if (document == null)
-				{
-					continue;
-				}
-				var syntaxRoot = await document.GetSyntaxRootAsync(ct);
-				var semanticModel = await document.GetSemanticModelAsync(ct);
-				if (syntaxRoot == null || semanticModel == null)
-				{
-					continue;
-				}
-
-				var declaredSymbols = syntaxRoot.GetAllDeclaredTypes(semanticModel);
-				foreach (var symbol in declaredSymbols)
-				{
-					yield return symbol;
-				}
-			}
-		}
-
 		public Solution GetCurrentSolution() => _workspace.CurrentSolution;
 
 		public IEnumerable<ProjectIdentifier> GetSortedProjects()

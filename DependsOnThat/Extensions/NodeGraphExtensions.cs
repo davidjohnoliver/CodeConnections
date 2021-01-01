@@ -27,7 +27,7 @@ namespace DependsOnThat.Extensions
 		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IList<ITypeSymbol> rootSymbols, int extensionDepth)
 			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim(), extensionDepth);
 
-		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<TypeNode> rootNodes, int extensionDepth)
+		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> rootNodes, int extensionDepth)
 		{
 			var rootNodesSet = rootNodes.ToHashSet();
 			var subgraphNodes = nodeGraph.ExtendSubgraphFromRoots(rootNodesSet, extensionDepth);
@@ -64,7 +64,7 @@ namespace DependsOnThat.Extensions
 			return graph;
 		}
 
-		public static IEnumerable<NodePath> GetMultiDependencyRootPaths(NodeGraph graph, HashSet<TypeNode> roots)
+		public static IEnumerable<NodePath> GetMultiDependencyRootPaths(NodeGraph graph, ISet<Node> roots)
 		{
 			if (roots.Count < 2)
 			{

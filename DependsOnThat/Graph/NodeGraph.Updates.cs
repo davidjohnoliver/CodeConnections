@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
+using DependsOnThat.Roslyn;
 using DependsOnThat.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Debugger.Evaluation.IL;
@@ -35,7 +36,7 @@ namespace DependsOnThat.Graph
 		/// <param name="ct">A cancellation token. Note that the expected usage is that an update will only be cancelled if the graph is no 
 		/// longer needed (eg the current open solution changes).</param>
 		/// <returns>A list of nodes whose connectivity has changed.</returns>
-		public async Task<ICollection<Node>> Update(Solution solution, IEnumerable<DocumentId> invalidatedDocuments, CancellationToken ct)
+		public async Task<ICollection<Node>> Update(CompilationCache compilationCache, IEnumerable<DocumentId> invalidatedDocuments, CancellationToken ct)
 		{
 			// TODO: documents with compilation errors - should probably be reevaluated on every update?
 
@@ -51,8 +52,6 @@ namespace DependsOnThat.Graph
 
 			try
 			{
-				_compilationCache.Activate(solution);
-
 				foreach (var doc in invalidatedDocuments)
 				{
 					if (ct.IsCancellationRequested)
@@ -60,7 +59,7 @@ namespace DependsOnThat.Graph
 						return ArrayUtils.GetEmpty<Node>();
 					}
 
-					await UpdateForDocument(doc, solution, ct);
+					await UpdateForDocument(doc, compilationCache, ct);
 				}
 
 				var allModified = new HashSet<Node>();
@@ -73,7 +72,7 @@ namespace DependsOnThat.Graph
 					}
 
 					var node = _invalidatedNodes.Dequeue();
-					var modifiedNodes = await UpdateNode(node, solution, ct);
+					var modifiedNodes = await UpdateNode(node, compilationCache, ct);
 					allModified.UnionWith(modifiedNodes);
 				}
 
@@ -82,7 +81,6 @@ namespace DependsOnThat.Graph
 			finally
 			{
 				_alreadyInvalidatedNodes.Clear();
-				_compilationCache.Reset();
 				lock (_gate)
 				{
 					_isUpdating = false;
@@ -90,9 +88,9 @@ namespace DependsOnThat.Graph
 			}
 		}
 
-		private async Task UpdateForDocument(DocumentId documentId, Solution solution, CancellationToken ct)
+		private async Task UpdateForDocument(DocumentId documentId, CompilationCache compilationCache, CancellationToken ct)
 		{
-			var document = solution.GetDocument(documentId);
+			var document = compilationCache.GetDocument(documentId);
 			if (document == null)
 			{
 				return;
@@ -112,7 +110,7 @@ namespace DependsOnThat.Graph
 				return;
 			}
 
-			var model = await _compilationCache.GetSemanticModel(syntaxRoot, document.Project.ToIdentifier(), ct);
+			var model = await compilationCache.GetSemanticModel(syntaxRoot, document.Project.ToIdentifier(), ct);
 			if (ct.IsCancellationRequested)
 			{
 				return;
@@ -141,9 +139,9 @@ namespace DependsOnThat.Graph
 			}
 		}
 
-		private async Task<ICollection<Node>> UpdateNode(Node node, Solution solution, CancellationToken ct)
+		private async Task<ICollection<Node>> UpdateNode(Node node, CompilationCache compilationCache, CancellationToken ct)
 		{
-			var (symbol, compilation) = await _compilationCache.GetSymbolForNode(node, ct);
+			var (symbol, compilation) = await compilationCache.GetSymbolForNode(node, ct);
 
 			if (symbol == null)
 			{

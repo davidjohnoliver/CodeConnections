@@ -23,20 +23,6 @@ namespace DependsOnThat.Graph.Display
 	/// </summary>
 	public sealed class GraphStateManager : IDisposable
 	{
-		private int _extensionDepth;
-		/// <summary>
-		/// N, where the display graph will include the Nth-nearest neighbours of the graph roots.
-		/// </summary>
-		public int ExtensionDepth
-		{
-			get => _extensionDepth;
-			set
-			{
-				_extensionDepth = value;
-				InvalidateDisplayGraph();
-			}
-		}
-
 		private bool _excludePureGenerated;
 		/// <summary>
 		/// Should types defined exclusively in generated code be excluded?
@@ -68,16 +54,17 @@ namespace DependsOnThat.Graph.Display
 		private readonly HashSet<DocumentId> _invalidatedDocuments = new HashSet<DocumentId>();
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly Func<Solution> _getCurrentSolution;
-		private readonly Func<CancellationToken, Task<IList<ITypeSymbol>>> _getCurrentRootSymbols;
 		private bool _needsDisplayGraphUpdate;
 
 		private TaskCompletionSource<GraphStatistics?>? _statisticsTCS;
 
-		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<IList<ITypeSymbol>>> getCurrentRootSymbols)
+		private Subgraph _includedNodes = new();
+		private readonly List<Subgraph.Operation> _pendingSubgraphOperations = new();
+
+		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution/*, Func<CancellationToken, Task<IList<ITypeSymbol>>> getCurrentRootSymbols*/)
 		{
 			_joinableTaskFactory = joinableTaskFactory;
 			_getCurrentSolution = getCurrentSolution ?? throw new ArgumentNullException(nameof(getCurrentSolution));
-			_getCurrentRootSymbols = getCurrentRootSymbols ?? throw new ArgumentNullException(nameof(getCurrentRootSymbols));
 		}
 
 		/// <summary>
@@ -89,6 +76,7 @@ namespace DependsOnThat.Graph.Display
 
 			_invalidatedDocuments.Clear();
 			_nodeGraph = null;
+			_includedNodes = new();
 			RunUpdate(waitForIdle: false);
 		}
 
@@ -142,6 +130,21 @@ namespace DependsOnThat.Graph.Display
 			InvalidateNodeGraph();
 		}
 
+		public void ModifySubgraph(Subgraph.Operation operation)
+		{
+			ThreadUtils.ThrowIfNotOnUIThread();
+
+			_pendingSubgraphOperations.Add(operation);
+
+			if (_currentUpdateState != UpdateState.NotUpdating)
+			{
+				// Nothing to do. Either we haven't reached subgraph updates and it'll be considered then, or we've passed it and another update will 
+				// be queued up at the end of the current one.
+			}
+
+			RunUpdate(waitForIdle: false);
+		}
+
 		/// <summary>
 		/// Returns a <see cref="GraphStatistics"/> object describing the full <see cref="NodeGraph"/>.
 		/// </summary>
@@ -178,10 +181,14 @@ namespace DependsOnThat.Graph.Display
 				if (!waitForIdle)
 				{
 					_idleTimer.FastTrackTimer();
+					// The idling update will execute
+					return;
 				}
-
-				// An update is already running and waiting for idle, nothing to do
-				return;
+				else
+				{
+					// An update is already running and waiting for idle, nothing to do
+					return;
+				}
 			}
 
 			var ct = _updateSubscription.GetNewToken();
@@ -203,9 +210,14 @@ namespace DependsOnThat.Graph.Display
 				{
 					RunUpdate(waitForIdle: false);
 				}
-				// Run another update if we need incremental NodeGraph update
+				else if (_pendingSubgraphOperations.Count > 0)
+				{
+					// Run another update if we have uncommitted subgraph operations
+					RunUpdate(waitForIdle: false);
+				}
 				else if (_invalidatedDocuments.Count > 0)
 				{
+					// Run another update if we need incremental NodeGraph update
 					RunUpdate(waitForIdle: true);
 				}
 			});
@@ -224,9 +236,9 @@ namespace DependsOnThat.Graph.Display
 		/// <returns>The updated display graph if it is rebuilt, or null otherwise.</returns>
 		private async Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>? Graph, GraphStatistics? Stats)> Update(bool waitForIdle, CancellationToken ct)
 		{
-#pragma warning disable VSTHRD109 // Switch instead of assert in async methods - We're asserting an internal invariant here
 			ThreadUtils.ThrowIfNotOnUIThread();
-#pragma warning restore VSTHRD109 // Switch instead of assert in async methods
+
+			CompilationCache? compilationCache = null;
 			try
 			{
 				if (waitForIdle)
@@ -240,6 +252,7 @@ namespace DependsOnThat.Graph.Display
 					_currentUpdateState = UpdateState.RebuildingDisplayGraph;
 
 					var solution = _getCurrentSolution();
+					// TODO: rebuild should use compilation cache
 					var nodeGraph = await RebuildNodeGraph(solution, ct);
 					if (!ct.IsCancellationRequested)
 					{
@@ -259,7 +272,9 @@ namespace DependsOnThat.Graph.Display
 					var invalidatedDocuments = _invalidatedDocuments.ToList();
 					_invalidatedDocuments.Clear();
 					var solution = _getCurrentSolution();
-					var alteredNodes = await _nodeGraph.Update(solution, invalidatedDocuments, ct);
+					compilationCache ??= new CompilationCache();
+					compilationCache.SetSolution(solution);
+					var alteredNodes = await _nodeGraph.Update(compilationCache, invalidatedDocuments, ct);
 					_needsDisplayGraphUpdate |= alteredNodes?.Count > 0;
 				}
 
@@ -277,11 +292,50 @@ namespace DependsOnThat.Graph.Display
 					}
 					else
 					{
-						var stats = await Task.Run(() => GraphStatistics.GetForFullGraph(_nodeGraph), ct);
+						var nodeGraph = _nodeGraph;
+						var stats = await Task.Run(() => GraphStatistics.GetForFullGraph(nodeGraph), ct);
 						_statisticsTCS.TrySetResult(stats);
 					}
 
 					_statisticsTCS = null;
+				}
+
+				if (_pendingSubgraphOperations.Count > 0 && _nodeGraph != null)
+				{
+					_currentUpdateState = UpdateState.UpdatingSubgraph;
+					var subgraphOperations = _pendingSubgraphOperations.ToList();
+					_pendingSubgraphOperations.Clear();
+
+					var nodeGraph = _nodeGraph;
+
+					var includedNodes = _includedNodes;
+
+					var modified = false;
+					await Task.Run(async () =>
+					{
+						modified |= await Subgraph.Sanitize().Apply(includedNodes, nodeGraph, ct);
+						foreach (var op in subgraphOperations)
+						{
+							modified |= await op.Apply(includedNodes, nodeGraph, ct);
+							if (op.Callback is Action callback)
+							{
+								await ThreadUtils.RunOnUIThread(() =>
+								{
+									if (!ct.IsCancellationRequested)
+									{
+										callback();
+									}
+								}, ct);
+							}
+						}
+					}, ct);
+
+					_needsDisplayGraphUpdate |= modified && _includedNodes == includedNodes;
+				}
+
+				if (ct.IsCancellationRequested)
+				{
+					return (null, null);
 				}
 
 				if (_needsDisplayGraphUpdate)
@@ -289,7 +343,7 @@ namespace DependsOnThat.Graph.Display
 					_currentUpdateState = UpdateState.RebuildingDisplayGraph;
 					_needsDisplayGraphUpdate = false;
 
-					var displayGraph = await RebuildDisplayGraph(ct);
+					var displayGraph = await RebuildDisplayGraph(_includedNodes, ct);
 
 					if (ct.IsCancellationRequested)
 					{
@@ -304,7 +358,7 @@ namespace DependsOnThat.Graph.Display
 			finally
 			{
 				_currentUpdateState = UpdateState.NotUpdating;
-
+				compilationCache?.ClearSolution();
 			}
 
 			return (null, null); // In case we updated NodeGraph but display graph did not change
@@ -321,19 +375,16 @@ namespace DependsOnThat.Graph.Display
 			return nodeGraph;
 		}
 
-		private async Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>?, GraphStatistics?)> RebuildDisplayGraph(CancellationToken ct)
+		private async Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>?, GraphStatistics?)> RebuildDisplayGraph(Subgraph includedNodes, CancellationToken ct)
 		{
 			var nodeGraph = _nodeGraph;
-			var extensionDepth = ExtensionDepth;
 			if (nodeGraph == null)
 			{
 				return (null, null);
 			}
-			var result = await Task.Run(async () =>
+			var result = await Task.Run(() =>
 			{
-				var rootSymbols = await _getCurrentRootSymbols(ct);
-
-				var graph = nodeGraph.GetDisplaySubgraph(rootSymbols, extensionDepth);
+				var graph = nodeGraph.GetDisplaySubgraph(includedNodes.AllNodes.Select(k => nodeGraph.Nodes[k]), extensionDepth: 0);
 				var stats = GraphStatistics.GetForSubgraph(graph);
 				return (graph, stats);
 			}, ct);
@@ -353,6 +404,7 @@ namespace DependsOnThat.Graph.Display
 			RebuildingNodeGraph,
 			UpdatingNodeGraph,
 			AnalyzingFullGraphStatistics,
+			UpdatingSubgraph,
 			RebuildingDisplayGraph,
 		}
 	}

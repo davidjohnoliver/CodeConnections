@@ -1,9 +1,13 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
+using Task = System.Threading.Tasks.Task;
 
 namespace DependsOnThat.Utilities
 {
@@ -21,6 +25,17 @@ namespace DependsOnThat.Utilities
 		private static void ThrowInner()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
+		}
+
+		public static async Task RunOnUIThread(Action callback, CancellationToken ct)
+		{
+			if (callback is null)
+			{
+				throw new ArgumentNullException(nameof(callback));
+			}
+
+			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(ct);
+			callback();
 		}
 	}
 }
