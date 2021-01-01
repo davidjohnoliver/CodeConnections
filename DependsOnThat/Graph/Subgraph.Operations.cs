@@ -51,8 +51,6 @@ namespace DependsOnThat.Graph
 			/// <returns>True if <paramref name="subgraph"/> was modified by the operation, false otherwise.</returns>
 
 			public abstract Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct);
-
-			public virtual Action? Callback => null;
 		}
 
 		private class CompositeOperation : Operation

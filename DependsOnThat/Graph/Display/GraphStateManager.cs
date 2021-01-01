@@ -317,16 +317,6 @@ namespace DependsOnThat.Graph.Display
 						foreach (var op in subgraphOperations)
 						{
 							modified |= await op.Apply(includedNodes, nodeGraph, ct);
-							if (op.Callback is Action callback)
-							{
-								await ThreadUtils.RunOnUIThread(() =>
-								{
-									if (!ct.IsCancellationRequested)
-									{
-										callback();
-									}
-								}, ct);
-							}
 						}
 					}, ct);
 
