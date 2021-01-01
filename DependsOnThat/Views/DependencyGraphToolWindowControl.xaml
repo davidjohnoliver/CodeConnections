@@ -18,7 +18,7 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="DisplayGraphTemplates.xaml" />
+				<ResourceDictionary Source="Styles/DisplayGraphTemplates.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<converters:OperationTimeTextConverter x:Key="RenderTimeTextConverter"
 												   OperationType="Rendering" />
