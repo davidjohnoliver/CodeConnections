@@ -28,17 +28,19 @@ namespace DependsOnThat.Graph
 			}
 		}
 
-		private static readonly HashSet<NodeKey> _pinnedNodes = new HashSet<NodeKey>();
+		public int Count => _pinnedNodes.Count + _additionalNodes.Count;
+
+		private readonly HashSet<NodeKey> _pinnedNodes = new HashSet<NodeKey>();
 		/// <summary>
 		/// Nodes that are considered 'pinned' to the subgraph.
 		/// </summary>
-		public IEnumerable<NodeKey> PinnedNodes { get; } = _pinnedNodes;
+		public IEnumerable<NodeKey> PinnedNodes => _pinnedNodes;
 
-		private static readonly HashSet<NodeKey> _additionalNodes = new HashSet<NodeKey>();
+		private readonly HashSet<NodeKey> _additionalNodes = new HashSet<NodeKey>();
 		/// <summary>
 		/// Any other nodes included in the subgraph.
 		/// </summary>
-		public IEnumerable<NodeKey> AdditionalNodes { get; } = _additionalNodes;
+		public IEnumerable<NodeKey> AdditionalNodes => _additionalNodes;
 
 		private bool AddPinnedNode(NodeKey nodeKey)
 		{

@@ -76,8 +76,20 @@ namespace DependsOnThat.Graph.Display
 
 			_invalidatedDocuments.Clear();
 			_nodeGraph = null;
-			_includedNodes = new();
+			ClearSubgraphAndPendingOperations();
 			RunUpdate(waitForIdle: false);
+		}
+
+		/// <summary>
+		/// Clear included nodes and any pending operations.
+		/// </summary>
+		/// <returns>True if there were previously included nodes, false otherwise. </returns>
+		private bool ClearSubgraphAndPendingOperations()
+		{
+			_pendingSubgraphOperations.Clear();
+			var hadNodes = _includedNodes.Count > 0;
+			_includedNodes = new();
+			return hadNodes;
 		}
 
 		/// <summary>
@@ -143,6 +155,16 @@ namespace DependsOnThat.Graph.Display
 			}
 
 			RunUpdate(waitForIdle: false);
+		}
+
+		public void ClearSubgraph()
+		{
+			ThreadUtils.ThrowIfNotOnUIThread();
+
+			if (ClearSubgraphAndPendingOperations())
+			{
+				InvalidateDisplayGraph();
+			}
 		}
 
 		/// <summary>

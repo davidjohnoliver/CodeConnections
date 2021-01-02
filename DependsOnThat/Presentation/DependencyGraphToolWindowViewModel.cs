@@ -163,10 +163,7 @@ namespace DependsOnThat.Presentation
 		}
 
 
-		private void ClearRoots()
-		{
-			throw new NotImplementedException(); // TODO: reimplement
-		}
+		private void ClearRoots() => _graphStateManager.ClearSubgraph();
 
 		private void LogStats()
 		{
