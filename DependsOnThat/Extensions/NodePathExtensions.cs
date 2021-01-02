@@ -13,16 +13,16 @@ namespace DependsOnThat.Extensions
 {
 	public static class NodePathExtensions
 	{
-		public static MultiDependencyDisplayEdge ToDisplayEdge(this NodePath path, int extensionDepth, IDictionary<Node, DisplayNode> displayNodes)
+		public static MultiDependencyDisplayEdge ToDisplayEdge(this NodePath path, IDictionary<Node, DisplayNode> displayNodes)
 		{
-			if (path.IntermediateLength <= extensionDepth * 2)
+			if (path.IntermediateLength <= 0)
 			{
 				throw new ArgumentOutOfRangeException();
 			}
-			var source = path[extensionDepth];
-			var target = path[^(extensionDepth + 1)];
+			var source = path[0];
+			var target = path[^(1)];
 
-			var range = path[extensionDepth..^extensionDepth];
+			var range = path[0..^0];
 
 			return new MultiDependencyDisplayEdge(displayNodes[source], displayNodes[target], GetPathInfo(range));
 		}

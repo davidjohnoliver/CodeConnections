@@ -20,17 +20,13 @@ namespace DependsOnThat.Extensions
 		/// <summary>
 		/// Get subgraph ready for display.
 		/// </summary>
-		/// <param name="extensionDepth">
-		/// The depth to extend the subgraph from the <paramref name="rootSymbols"/>. A value of 0 will only include the roots, a value of 1 will 
-		/// include 1st-nearest neighbours (both upstream and downstream), etc.
-		/// </param>
-		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IList<ITypeSymbol> rootSymbols, int extensionDepth)
-			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim(), extensionDepth);
+		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IList<ITypeSymbol> rootSymbols)
+			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim());
 
-		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> rootNodes, int extensionDepth)
+		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> rootNodes)
 		{
 			var rootNodesSet = rootNodes.ToHashSet();
-			var subgraphNodes = nodeGraph.ExtendSubgraphFromRoots(rootNodesSet, extensionDepth);
+			var subgraphNodes = rootNodesSet;
 			var graph = new BidirectionalGraph<DisplayNode, DisplayEdge>();
 			var displayNodes = subgraphNodes.ToDictionary(n => n, n => n.ToDisplayNode(n is TypeNode typeNode && rootNodesSet.Contains(typeNode)));
 			foreach (var kvp in displayNodes)
@@ -54,10 +50,10 @@ namespace DependsOnThat.Extensions
 			{
 				// Add multi-dependency edges, if any applicable
 				var rootPaths = GetMultiDependencyRootPaths(nodeGraph, rootNodesSet);
-				var pathsToDisplay = rootPaths.Where(p => p.IntermediateLength > extensionDepth * 2); //
+				var pathsToDisplay = rootPaths.Where(p => p.IntermediateLength > 0); //
 				foreach (var path in pathsToDisplay)
 				{
-					graph.AddEdge(path.ToDisplayEdge(extensionDepth, displayNodes));
+					graph.AddEdge(path.ToDisplayEdge(displayNodes));
 				}
 			}
 
@@ -136,7 +132,7 @@ namespace DependsOnThat.Extensions
 		public static (IMutableBidirectionalGraph<CyclicCluster, CondensedEdge<DisplayNode, DisplayEdge, CyclicCluster>> Clustered, IBidirectionalGraph<DisplayNode, DisplayEdge> Simple) GetFullClusteredGraph(this NodeGraph nodeGraph)
 		{
 			var rootNodes = nodeGraph.Nodes.Values.OfType<TypeNode>();
-			var fullDisplayGraph = GetDisplaySubgraph(nodeGraph, rootNodes, extensionDepth: 0);
+			var fullDisplayGraph = GetDisplaySubgraph(nodeGraph, rootNodes);
 			return (fullDisplayGraph.GetClusteredGraph(), fullDisplayGraph);
 		}
 	}

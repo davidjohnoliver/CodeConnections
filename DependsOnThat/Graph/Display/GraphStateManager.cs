@@ -396,7 +396,7 @@ namespace DependsOnThat.Graph.Display
 			}
 			var result = await Task.Run(() =>
 			{
-				var graph = nodeGraph.GetDisplaySubgraph(includedNodes.AllNodes.Select(k => nodeGraph.Nodes[k]), extensionDepth: 0);
+				var graph = nodeGraph.GetDisplaySubgraph(includedNodes.AllNodes.Select(k => nodeGraph.Nodes[k]));
 				var stats = GraphStatistics.GetForSubgraph(graph);
 				return (graph, stats);
 			}, ct);
