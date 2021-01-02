@@ -23,12 +23,11 @@ namespace DependsOnThat.Extensions
 		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IList<ITypeSymbol> rootSymbols)
 			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim());
 
-		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> rootNodes)
+		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> subgraphNodes)
 		{
-			var rootNodesSet = rootNodes.ToHashSet();
-			var subgraphNodes = rootNodesSet;
+			var subgraphNodesSet = subgraphNodes.ToHashSet();
 			var graph = new BidirectionalGraph<DisplayNode, DisplayEdge>();
-			var displayNodes = subgraphNodes.ToDictionary(n => n, n => n.ToDisplayNode(n is TypeNode typeNode && rootNodesSet.Contains(typeNode)));
+			var displayNodes = subgraphNodesSet.ToDictionary(n => n, n => n.ToDisplayNode());
 			foreach (var kvp in displayNodes)
 			{
 				graph.AddVertex(kvp.Value);
@@ -46,10 +45,10 @@ namespace DependsOnThat.Extensions
 				}
 			}
 
-			if (rootNodesSet.Count > 1)
+			if (subgraphNodesSet.Count > 1)
 			{
 				// Add multi-dependency edges, if any applicable
-				var rootPaths = GetMultiDependencyRootPaths(nodeGraph, rootNodesSet);
+				var rootPaths = GetMultiDependencyRootPaths(nodeGraph, subgraphNodesSet);
 				var pathsToDisplay = rootPaths.Where(p => p.IntermediateLength > 0); //
 				foreach (var path in pathsToDisplay)
 				{

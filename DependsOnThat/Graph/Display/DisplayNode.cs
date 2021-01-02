@@ -15,14 +15,11 @@ namespace DependsOnThat.Graph.Display
 	{
 		public string DisplayString { get; }
 
-		public bool IsRoot { get; }
-
 		public string? FilePath { get; }
 
-		public DisplayNode(string displayString, bool isRoot, string? filePath)
+		public DisplayNode(string displayString, string? filePath)
 		{
 			DisplayString = displayString;
-			IsRoot = isRoot;
 			FilePath = filePath;
 		}
 

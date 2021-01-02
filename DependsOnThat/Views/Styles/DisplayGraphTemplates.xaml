@@ -12,8 +12,7 @@
 
 	<!--TODO: should use editor colour scheme https://stackoverflow.com/questions/18913208/colors-in-visual-studio-extension-->
 	<converters:DisplayNodeBackgroundConverter x:Key="DisplayNodeBackgroundConverter"
-											   DefaultBrush="LightGray"
-											   RootNodeBrush="LimeGreen" />
+											   DefaultBrush="LightGray" />
 	<converters:DisplayEdgeStrokeDashArrayConverter x:Key="DisplayEdgeStrokeDashArrayConverter"
 													MultiStrokeDashArray="4 2" />
 	<converters:DisplayEdgeTooltipConverter x:Key="DisplayEdgeTooltipConverter" />

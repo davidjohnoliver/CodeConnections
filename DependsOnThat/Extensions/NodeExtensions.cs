@@ -10,9 +10,8 @@ namespace DependsOnThat.Extensions
 {
 	public static class NodeExtensions
 	{
-		public static DisplayNode ToDisplayNode(this Node node, bool isRoot) => new DisplayNode(
+		public static DisplayNode ToDisplayNode(this Node node) => new DisplayNode(
 			ToDisplayString(node),
-			isRoot,
 			(node as TypeNode)?.FilePath
 		);
 
