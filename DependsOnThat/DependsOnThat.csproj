@@ -93,6 +93,7 @@
     <Compile Include="Graph\Subgraph.Operations.cs" />
     <Compile Include="Graph\TypeNode.cs" />
     <Compile Include="Graph\TypeNodeKey.cs" />
+    <Compile Include="Input\IToggleCommand.cs" />
     <Compile Include="Presentation\Converters\DebugConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayNodeBackgroundConverter.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Graph\Display\MultiDependencyDisplayEdge.cs" />
     <Compile Include="Presentation\SimpleCommand.cs" />
     <Compile Include="Graph\Display\SimpleDisplayEdge.cs" />
+    <Compile Include="Presentation\SimpleToggleCommand.cs" />
     <Compile Include="Presentation\StatisticsReportContent.cs" />
     <Compile Include="Presentation\StatisticsReporter.cs" />
     <Compile Include="Presentation\ViewModelBase.cs" />
@@ -142,9 +144,12 @@
     <Compile Include="Text\MarkdownStyleTableFormatter.cs" />
     <Compile Include="Utilities\ArrayUtils.cs" />
     <Compile Include="Utilities\IdleTimer.cs" />
+    <Compile Include="Utilities\SetUtils.cs" />
     <Compile Include="Utilities\ThreadUtils.cs" />
     <Compile Include="Utilities\TimeUtils.cs" />
     <Compile Include="Views\Behaviours\MultiSelection.cs" />
+    <Compile Include="Views\Behaviours\PinCheckBoxBehaviour.cs" />
+    <Compile Include="Views\Behaviours\ToggleButtonExtensions.cs" />
     <Compile Include="Views\DependencyGraphLayout.cs" />
     <Compile Include="Views\GraphOptionsControl.xaml.cs">
       <DependentUpon>GraphOptionsControl.xaml</DependentUpon>
@@ -205,6 +210,10 @@
     <Page Include="Views\DependencyGraphToolWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Styles\CheckBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Styles\Button.xaml">
       <SubType>Designer</SubType>

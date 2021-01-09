@@ -21,13 +21,13 @@ namespace DependsOnThat.Extensions
 		/// Get subgraph ready for display.
 		/// </summary>
 		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IList<ITypeSymbol> rootSymbols)
-			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim());
+			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim(), SetUtils.GetEmpty<NodeKey>());
 
-		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> subgraphNodes)
+		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> subgraphNodes, ISet<NodeKey> pinnedNodes, object? parentContext = null)
 		{
 			var subgraphNodesSet = subgraphNodes.ToHashSet();
 			var graph = new BidirectionalGraph<DisplayNode, DisplayEdge>();
-			var displayNodes = subgraphNodesSet.ToDictionary(n => n, n => n.ToDisplayNode());
+			var displayNodes = subgraphNodesSet.ToDictionary(n => n, n => n.ToDisplayNode(pinnedNodes.Contains(n.Key), parentContext));
 			foreach (var kvp in displayNodes)
 			{
 				graph.AddVertex(kvp.Value);
@@ -130,8 +130,8 @@ namespace DependsOnThat.Extensions
 		/// </summary>
 		public static (IMutableBidirectionalGraph<CyclicCluster, CondensedEdge<DisplayNode, DisplayEdge, CyclicCluster>> Clustered, IBidirectionalGraph<DisplayNode, DisplayEdge> Simple) GetFullClusteredGraph(this NodeGraph nodeGraph)
 		{
-			var rootNodes = nodeGraph.Nodes.Values.OfType<TypeNode>();
-			var fullDisplayGraph = GetDisplaySubgraph(nodeGraph, rootNodes);
+			var rootNodes = nodeGraph.Nodes.Values;
+			var fullDisplayGraph = GetDisplaySubgraph(nodeGraph, rootNodes, SetUtils.GetEmpty<NodeKey>());
 			return (fullDisplayGraph.GetClusteredGraph(), fullDisplayGraph);
 		}
 	}

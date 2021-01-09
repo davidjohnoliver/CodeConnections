@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +12,12 @@ namespace DependsOnThat.Extensions
 {
 	public static class NodeExtensions
 	{
-		public static DisplayNode ToDisplayNode(this Node node) => new DisplayNode(
+		public static DisplayNode ToDisplayNode(this Node node, bool isPinned, object? parentContext) => new DisplayNode(
 			ToDisplayString(node),
-			(node as TypeNode)?.FilePath
+			node.Key,
+			(node as TypeNode)?.FilePath,
+			isPinned,
+			parentContext
 		);
 
 		public static string ToDisplayString(this Node node) => node switch

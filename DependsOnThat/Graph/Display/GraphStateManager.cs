@@ -54,6 +54,7 @@ namespace DependsOnThat.Graph.Display
 		private readonly HashSet<DocumentId> _invalidatedDocuments = new HashSet<DocumentId>();
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly Func<Solution> _getCurrentSolution;
+		private readonly object _nodeParentContext;
 		private bool _needsDisplayGraphUpdate;
 
 		private TaskCompletionSource<GraphStatistics?>? _statisticsTCS;
@@ -61,10 +62,11 @@ namespace DependsOnThat.Graph.Display
 		private Subgraph _includedNodes = new();
 		private readonly List<Subgraph.Operation> _pendingSubgraphOperations = new();
 
-		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution/*, Func<CancellationToken, Task<IList<ITypeSymbol>>> getCurrentRootSymbols*/)
+		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, object nodeParentContext)
 		{
 			_joinableTaskFactory = joinableTaskFactory;
 			_getCurrentSolution = getCurrentSolution ?? throw new ArgumentNullException(nameof(getCurrentSolution));
+			_nodeParentContext = nodeParentContext;
 		}
 
 		/// <summary>
@@ -189,6 +191,12 @@ namespace DependsOnThat.Graph.Display
 			});
 			return tcs.Task;
 		}
+
+		/// <summary>
+		/// Synchronously set <paramref name="node"/> to pinned or unpinned in the subgraph of included nodes. This will not trigger an 
+		/// asynchronous update, and won't do anything if the node isn't found in the subgraph.
+		/// </summary>
+		public void TogglePinnedInSubgraph(NodeKey node, bool setPinned) => _includedNodes.TogglePinned(node, setPinned);
 
 		/// <summary>
 		/// Synchronous entry point for the main update routine.
@@ -396,7 +404,7 @@ namespace DependsOnThat.Graph.Display
 			}
 			var result = await Task.Run(() =>
 			{
-				var graph = nodeGraph.GetDisplaySubgraph(includedNodes.AllNodes.Select(k => nodeGraph.Nodes[k]));
+				var graph = nodeGraph.GetDisplaySubgraph(includedNodes.AllNodes.Select(k => nodeGraph.Nodes[k]), includedNodes.PinnedNodes, parentContext: _nodeParentContext);
 				var stats = GraphStatistics.GetForSubgraph(graph);
 				return (graph, stats);
 			}, ct);

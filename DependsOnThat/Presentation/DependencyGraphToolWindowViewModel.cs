@@ -16,6 +16,7 @@ using DependsOnThat.Disposables;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
 using DependsOnThat.Graph.Display;
+using DependsOnThat.Input;
 using DependsOnThat.Roslyn;
 using DependsOnThat.Services;
 using DependsOnThat.Statistics;
@@ -109,6 +110,7 @@ namespace DependsOnThat.Presentation
 
 		public ICommand ClearRootsCommand { get; }
 		public ICommand LogStatsCommand { get; }
+		public IToggleCommand TogglePinnedCommand { get; }
 
 		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService)
 		{
@@ -127,8 +129,9 @@ namespace DependsOnThat.Presentation
 
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
 			LogStatsCommand = SimpleCommand.Create(LogStats);
+			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
-			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution());
+			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), this);
 			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 
 			UpdateProjects();
@@ -184,6 +187,14 @@ namespace DependsOnThat.Presentation
 				_outputService.FocusOutput();
 			});
 
+		}
+
+		private void TogglePinned(bool? toggleState, DisplayNode? displayNode)
+		{
+			if (displayNode != null)
+			{
+				_graphStateManager.TogglePinnedInSubgraph(displayNode.Key, toggleState ?? false);
+			}
 		}
 
 		private static StatisticsReporter GetStatsReporter(GraphStatistics stats)

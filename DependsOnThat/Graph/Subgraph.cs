@@ -34,13 +34,13 @@ namespace DependsOnThat.Graph
 		/// <summary>
 		/// Nodes that are considered 'pinned' to the subgraph.
 		/// </summary>
-		public IEnumerable<NodeKey> PinnedNodes => _pinnedNodes;
+		public ISet<NodeKey> PinnedNodes => _pinnedNodes;
 
 		private readonly HashSet<NodeKey> _additionalNodes = new HashSet<NodeKey>();
 		/// <summary>
 		/// Any other nodes included in the subgraph.
 		/// </summary>
-		public IEnumerable<NodeKey> AdditionalNodes => _additionalNodes;
+		public ISet<NodeKey> AdditionalNodes => _additionalNodes;
 
 		private bool AddPinnedNode(NodeKey nodeKey)
 		{
@@ -62,6 +62,20 @@ namespace DependsOnThat.Graph
 		}
 
 		private bool RemoveNode(NodeKey nodeKey) => _pinnedNodes.Remove(nodeKey) || _additionalNodes.Remove(nodeKey);
+
+		/// <summary>
+		/// Moves <paramref name="node"/> from <see cref="AdditionalNodes"/> to <see cref="PinnedNodes"/> or vice versa, depending 
+		/// on <paramref name="setPinned"/>. Will have no effect if node is not found in the source.
+		/// </summary>
+		public void TogglePinned(NodeKey node, bool setPinned)
+		{
+			(var source, var target) = setPinned ? (_additionalNodes, _pinnedNodes) : (_pinnedNodes, _additionalNodes);
+
+			if (source.Remove(node))
+			{
+				target.Add(node);
+			}
+		}
 
 		public bool Clear()
 		{

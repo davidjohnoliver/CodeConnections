@@ -6,9 +6,13 @@
 					xmlns:graphBehaviours="clr-namespace:GraphSharp.AttachedBehaviours;assembly=GraphSharp.Controls"
 					xmlns:graphConverters="clr-namespace:GraphSharp.Converters;assembly=GraphSharp.Controls"
 					xmlns:local="clr-namespace:DependsOnThat.Views"
+					xmlns:ext="clr-namespace:DependsOnThat.Views.Behaviours"
 					xmlns:converters="clr-namespace:DependsOnThat.Presentation.Converters"
 					xmlns:graphdisplay="clr-namespace:DependsOnThat.Graph.Display"
 					mc:Ignorable="d">
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="CheckBox.xaml" />
+	</ResourceDictionary.MergedDictionaries>
 
 	<!--TODO: should use editor colour scheme https://stackoverflow.com/questions/18913208/colors-in-visual-studio-extension-->
 	<converters:DisplayNodeBackgroundConverter x:Key="DisplayNodeBackgroundConverter"
@@ -16,9 +20,6 @@
 	<converters:DisplayEdgeStrokeDashArrayConverter x:Key="DisplayEdgeStrokeDashArrayConverter"
 													MultiStrokeDashArray="4 2" />
 	<converters:DisplayEdgeTooltipConverter x:Key="DisplayEdgeTooltipConverter" />
-	<DataTemplate DataType="{x:Type graphdisplay:DisplayNode}">
-		<TextBlock Text="{Binding DisplayString}" />
-	</DataTemplate>
 
 	<graphConverters:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
 	<converters:DebugConverter x:Key="DebugConverter" />
@@ -33,8 +34,32 @@
 							ToolTip="{TemplateBinding ToolTip}"
 							CornerRadius="5"
 							Padding="2,0,2,0">
-						<ContentPresenter Content="{TemplateBinding Vertex}" />
+						<StackPanel Orientation="Horizontal"
+									DataContext="{TemplateBinding Vertex}">
+							<TextBlock Text="{Binding DisplayString}"
+									   FontSize="16" />
+							<CheckBox x:Name="PinCheckBox"
+									  Style="{StaticResource PinCheckBoxStyle}"
+									  VerticalAlignment="Top"
+									  IsChecked="{Binding IsPinned}"
+									  ext:ToggleButtonExtensions.ToggleCommand="{Binding ParentContext.TogglePinnedCommand}"
+									  ext:ToggleButtonExtensions.ToggleCommandParameter="{Binding}" />
+						</StackPanel>
 					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver"
+								 Value="True">
+							<Setter TargetName="PinCheckBox"
+									Property="ext:PinCheckBoxBehaviour.ForceShow"
+									Value="True" />
+						</Trigger>
+						<Trigger Property="graphControls:GraphElementBehaviour.IsHighlighted"
+								 Value="True">
+							<Setter TargetName="PinCheckBox"
+									Property="ext:PinCheckBoxBehaviour.ForceShow"
+									Value="True" />
+						</Trigger>
+					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>

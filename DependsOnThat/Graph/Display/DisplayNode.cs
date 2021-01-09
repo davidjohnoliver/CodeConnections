@@ -14,13 +14,18 @@ namespace DependsOnThat.Graph.Display
 	public class DisplayNode
 	{
 		public string DisplayString { get; }
-
+		public NodeKey Key { get; }
 		public string? FilePath { get; }
+		public bool IsPinned { get; set; }
+		public object? ParentContext { get; }
 
-		public DisplayNode(string displayString, string? filePath)
+		public DisplayNode(string displayString, NodeKey key, string? filePath, bool isPinned, object? parentContext)
 		{
 			DisplayString = displayString;
+			Key = key;
 			FilePath = filePath;
+			IsPinned = isPinned;
+			ParentContext = parentContext;
 		}
 
 		public override bool Equals(object obj) => obj is DisplayNode otherNode && otherNode.DisplayString == DisplayString;
