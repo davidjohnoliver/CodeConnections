@@ -26,8 +26,6 @@ namespace DependsOnThat.Views
 			OverlapRemovalAlgorithmType = "FSA";
 			AsyncCompute = true;
 
-			LayoutAlgorithmType = "LinLog";
-
 			HighlightAlgorithmType = "Simple";
 		}
 
@@ -78,6 +76,16 @@ namespace DependsOnThat.Views
 				RenderTime = _stopwatch.Elapsed;
 			}
 		}
+
+		// Workaround for XamlParseException when binding directly to Graph property https://stackoverflow.com/questions/13007129/method-or-operation-not-implemented-error-on-binding
+		public string AlgorithmType
+		{
+			get { return (string)GetValue(AlgorithmTypeProperty); }
+			set { SetValue(AlgorithmTypeProperty, value); }
+		}
+
+		public static readonly DependencyProperty AlgorithmTypeProperty =
+			DependencyProperty.Register("AlgorithmType", typeof(string), typeof(DependencyGraphLayout), new PropertyMetadata("", (o, e) => ((DependencyGraphLayout)o).LayoutAlgorithmType = (string)e.NewValue));
 
 		public VertexControl? SelectedVertexControl
 		{

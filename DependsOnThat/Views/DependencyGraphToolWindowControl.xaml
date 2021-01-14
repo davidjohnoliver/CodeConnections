@@ -22,12 +22,14 @@
 												   OperationType="Rendering" />
 			<converters:OperationTimeTextConverter x:Key="GraphingTimeTextConverter"
 												   OperationType="Analyzing connections in background" />
+			<converters:GraphLayoutModeLayoutAlgorithmConverter x:Key="GraphLayoutModeLayoutAlgorithmConverter" />
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid>
 		<graphZoom:ZoomControl>
 			<local:DependencyGraphLayout x:Name="GraphLayout"
 										 DisplayGraph="{Binding Graph}"
+										 AlgorithmType="{Binding LayoutMode, Converter={StaticResource GraphLayoutModeLayoutAlgorithmConverter}}"
 										 SelectedVertex="{Binding SelectedNode, Mode=TwoWay}" />
 		</graphZoom:ZoomControl>
 		<local:GraphOptionsControl HorizontalAlignment="Right"

@@ -97,6 +97,9 @@
     <Compile Include="Presentation\Converters\DebugConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayNodeBackgroundConverter.cs" />
+    <Compile Include="Presentation\Converters\GraphLayoutModeLayoutAlgorithmConverter.cs" />
+    <Compile Include="Presentation\Converters\GraphLayoutModeTooltipConverter.cs" />
+    <Compile Include="Presentation\Converters\GraphLayoutModeMonikerConverter.cs" />
     <Compile Include="Presentation\Converters\OperationTimeTextConverter.cs" />
     <Compile Include="Presentation\Converters\ValueConverter.cs" />
     <Compile Include="Presentation\DependencyGraphToolWindowViewModel.cs" />
@@ -110,6 +113,7 @@
     <Compile Include="Presentation\StatisticsReportContent.cs" />
     <Compile Include="Presentation\StatisticsReporter.cs" />
     <Compile Include="Presentation\ViewModelBase.cs" />
+    <Compile Include="Presentation\GraphLayoutMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynInternal\FileNameUtilities.cs" />
     <Compile Include="RoslynInternal\GeneratedCodeUtilities.cs" />
@@ -143,6 +147,7 @@
     <Compile Include="Text\ICompactListFormatter.cs" />
     <Compile Include="Text\MarkdownStyleTableFormatter.cs" />
     <Compile Include="Utilities\ArrayUtils.cs" />
+    <Compile Include="Utilities\EnumUtils.cs" />
     <Compile Include="Utilities\IdleTimer.cs" />
     <Compile Include="Utilities\SetUtils.cs" />
     <Compile Include="Utilities\ThreadUtils.cs" />
@@ -210,6 +215,14 @@
     <Page Include="Views\DependencyGraphToolWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Styles\ListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Styles\ListBoxItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Styles\CheckBox.xaml">
       <Generator>MSBuild:Compile</Generator>

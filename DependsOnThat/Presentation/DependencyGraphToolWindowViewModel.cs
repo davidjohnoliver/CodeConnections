@@ -108,6 +108,10 @@ namespace DependsOnThat.Presentation
 
 		private void OnProjectsSelectionChanged() => _graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
 
+		private GraphLayoutMode _graphLayoutMode = GraphLayoutMode.Hierarchy; // TODO: saved setting
+		public GraphLayoutMode LayoutMode { get => _graphLayoutMode; set => OnValueSet(ref _graphLayoutMode, value); }
+		public GraphLayoutMode[] LayoutModes { get; } = EnumUtils.GetValues<GraphLayoutMode>();
+
 		public ICommand ClearRootsCommand { get; }
 		public ICommand LogStatsCommand { get; }
 		public IToggleCommand TogglePinnedCommand { get; }

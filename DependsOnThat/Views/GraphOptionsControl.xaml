@@ -8,56 +8,19 @@
 			 xmlns:ext="clr-namespace:DependsOnThat.Views.Behaviours"
 			 xmlns:vsimaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
 			 xmlns:vsimagecat="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+			 xmlns:vstheming="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
 			 mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Styles/Button.xaml" />
+				<ResourceDictionary Source="Styles/ListBox.xaml" />
+				<ResourceDictionary Source="Styles/ListBoxItem.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
-		<!--<Style x:Key="IconButtonStyle"
-			   TargetType="Button">
-			<Setter Property="Padding"
-					Value="2" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border x:Name="border"
-								BorderThickness="1"
-								BorderBrush="Transparent">
-							<ContentPresenter x:Name="contentPresenter"
-											  Focusable="False"
-											  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-											  Margin="{TemplateBinding Padding}"
-											  RecognizesAccessKey="True"
-											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver"
-									 Value="true">
-								<Setter Property="Background"
-										TargetName="border"
-										Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseOverBackgroundGradientKey}}" />
-								<Setter Property="BorderBrush"
-										TargetName="border"
-										Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarBorderKey}}" />
-							</Trigger>
-							<Trigger Property="IsPressed"
-									 Value="true">
-								<Setter Property="Background"
-										TargetName="border"
-										Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseDownBackgroundGradientKey}}" />
-								<Setter Property="BorderBrush"
-										TargetName="border"
-										Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarBorderKey}}" />
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>-->
 	</UserControl.Resources>
 	<Border Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
+			vstheming:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsshell:VsColors.CommandBarGradientMiddleKey}}"
 			BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBorderKey}}"
 			BorderThickness="0"
 			CornerRadius="3">
@@ -72,7 +35,9 @@
 									  Height="16"
 									  Moniker="{x:Static vsimagecat:KnownMonikers.Cancel}" />
 			</Button>
-			<ComboBox HorizontalAlignment="Left" Margin="3" IsEditable="True"
+			<ComboBox HorizontalAlignment="Left"
+					  Margin="3"
+					  IsEditable="True"
 					  IsReadOnly="True"
 					  Text="Mode..." />
 			<!--TODO - Mode-->
@@ -81,15 +46,23 @@
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
-					<CheckBox Margin="0,10,0,0"
+					<ListBox Grid.Row="0"
+							 Style="{StaticResource ListBoxSimpleHorizontalStyle}"
+							 Margin="10,8,5,8"
+							 ItemsSource="{Binding LayoutModes}"
+							 SelectedItem="{Binding LayoutMode, Mode=TwoWay}"
+							 ItemContainerStyle="{StaticResource ListBoxItemLayoutModeStyle}" />
+					<CheckBox Grid.Row="1"
+							  Margin="0,10,0,0"
 							  Content="Exclude generated types"
 							  IsChecked="{Binding ExcludePureGenerated, Mode=TwoWay}" />
-					<TextBlock Grid.Row="1"
+					<TextBlock Grid.Row="2"
 							   Text="Included projects:"
 							   Margin="0,12,0,3" />
-					<ListView Grid.Row="2"
+					<ListView Grid.Row="3"
 							  MaxHeight="300"
 							  ext:MultiSelection.ItemsSource="{Binding Projects}"
 							  DisplayMemberPath="ProjectName"
