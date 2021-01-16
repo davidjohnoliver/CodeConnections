@@ -49,6 +49,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Additions\IsExternalInit.cs" />
     <Compile Include="Additions\NullableAttributes.cs" />
     <Compile Include="Additions\Range.cs" />
     <Compile Include="Collections\ISelectionCollection.cs" />
