@@ -23,32 +23,28 @@ namespace DependsOnThat.Graph
 		/// If true, types that are only declared in generated code will be ignored (types with both authored and generated declarations 
 		/// will be treated normally).
 		/// </param>
-		private static async Task BuildGraph(NodeGraph graph, Solution solution, IEnumerable<Project> projects, CancellationToken ct)
+		private static async Task BuildGraph(NodeGraph graph, CompilationCache compilationCache, IEnumerable<ProjectIdentifier> projects, CancellationToken ct)
 		{
 			var knownNodes = new Dictionary<TypeIdentifier, TypeNode>();
 
-			//// Note: we run tasks serially here instead of trying to aggressively parallelize, on the grounds that (a) Roslyn is largely single-threaded 
-			//// anyway https://softwareengineering.stackexchange.com/a/330028/336780, and (b) the UX we want is a stable ordering of node links, which wouldn't 
-			//// be the case if we processed task results out of order.
 			foreach (var project in projects)
 			{
-				var compilation = await project.GetCompilationAsync(ct);
-				if (compilation == null)
-				{
-					continue;
-				}
-
+				var syntaxTrees = await compilationCache.GetSyntaxTreesForProject(project, ct);
 				// We use a hashset here because different SyntaxTrees may declare the same symbol (eg partial definitions)
 				// Note: it's safe to hash by ITypeSymbol because they're all coming from the same Compilation
 				var declaredSymbols = new HashSet<ITypeSymbol>();
-				foreach (var syntaxTree in compilation.SyntaxTrees)
+				foreach (var syntaxTree in syntaxTrees)
 				{
 					if (ct.IsCancellationRequested)
 					{
 						return;
 					}
 					var root = await syntaxTree.GetRootAsync(ct);
-					var semanticModel = compilation.GetSemanticModel(syntaxTree);
+					var semanticModel = await compilationCache.GetSemanticModel(syntaxTree, project, ct);
+					if (semanticModel == null)
+					{
+						continue;
+					}
 					declaredSymbols.UnionWith(graph.GetIncludedSymbolsFromSyntaxRoot(root, semanticModel));
 				}
 
@@ -61,7 +57,7 @@ namespace DependsOnThat.Graph
 
 					var node = GetFromKnownNodes(symbol);
 					// TODO: GetTypeDependencies calls GetSemanticModel() a second time, now that we're always considering all SyntaxTrees it'd be more efficient to refactor to only create it once (eg GetTypeDependenciesForDefinition)
-					await foreach (var dependency in symbol.GetTypeDependencies(compilation, includeExternalMetadata: false, ct))
+					await foreach (var dependency in symbol.GetTypeDependencies(compilationCache, project, includeExternalMetadata: false, ct))
 					{
 						if (graph.IsSymbolIncluded(dependency))
 						{

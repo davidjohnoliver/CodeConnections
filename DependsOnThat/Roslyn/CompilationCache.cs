@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DependsOnThat.Disposables;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
+using DependsOnThat.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Threading;
 
@@ -29,7 +30,7 @@ namespace DependsOnThat.Roslyn
 		private Solution? _solution;
 		private readonly Dictionary<Project, Compilation?> _cachedCompilations = new Dictionary<Project, Compilation?>();
 		private readonly Dictionary<SyntaxTree, SemanticModel?> _cachedSemanticModels = new Dictionary<SyntaxTree, SemanticModel?>();
-		private readonly Dictionary<TypeNode, (INamedTypeSymbol?, Compilation?)> _cachedTypeSymbols = new Dictionary<TypeNode, (INamedTypeSymbol?, Compilation?)>();
+		private readonly Dictionary<TypeNode, (INamedTypeSymbol?, ProjectIdentifier)> _cachedTypeSymbols = new();
 		private CancellationDisposable? _cancellationDisposable;
 
 		/// <summary>
@@ -88,25 +89,56 @@ namespace DependsOnThat.Roslyn
 			cd?.Dispose();
 		}
 
-		private async Task<Compilation?> GetCompilation(ProjectIdentifier projectIdentifier, CancellationToken ct)
+		/// <summary>
+		/// Gets the current solution.
+		/// </summary>
+		/// <returns>A <see cref="CancellationToken"/> that will be cancelled if the solution changes or <paramref name="ct"/> is cancelled.</returns>
+		private (Solution?, CancellationToken ct) GetSolution(CancellationToken ct)
 		{
-			Solution? solution = null;
+			Solution? solution;
 
 			lock (_gate)
 			{
 				if (!_isActive)
 				{
-					return null;
+					return (null, ct);
 				}
 				if (_solution == null)
 				{
 					throw new InvalidOperationException();
 				}
 				solution = _solution;
+
 				ct = GetCombined(ct);
 			}
 
-			var project = solution.GetProject(projectIdentifier.Id);
+			return (solution, ct);
+		}
+
+		private Solution? GetSolution()
+		{
+			var (solution, _) = GetSolution(default);
+			return solution;
+		}
+
+		private (Project?, CancellationToken) GetProject(ProjectIdentifier projectIdentifier, CancellationToken ct)
+		{
+			Solution? solution;
+			(solution, ct) = GetSolution(ct);
+			var project = solution?.GetProject(projectIdentifier.Id);
+			return (project, ct);
+		}
+
+		private Project? GetProject(ProjectIdentifier projectIdentifier)
+		{
+			var (project, _) = GetProject(projectIdentifier, default);
+			return project;
+		}
+
+		private async Task<Compilation?> GetCompilation(ProjectIdentifier projectIdentifier, CancellationToken ct)
+		{
+			Project? project;
+			(project, ct) = GetProject(projectIdentifier, ct);
 
 			if (project == null)
 			{
@@ -142,7 +174,7 @@ namespace DependsOnThat.Roslyn
 		public Task<SemanticModel?> GetSemanticModel(SyntaxNode syntaxRoot, ProjectIdentifier projectIdentifier, CancellationToken ct)
 			=> GetSemanticModel(syntaxRoot.SyntaxTree, projectIdentifier, ct);
 
-		private async Task<SemanticModel?> GetSemanticModel(SyntaxTree syntaxTree, ProjectIdentifier projectIdentifier, CancellationToken ct)
+		public async Task<SemanticModel?> GetSemanticModel(SyntaxTree syntaxTree, ProjectIdentifier projectIdentifier, CancellationToken ct)
 		{
 			lock (_gate)
 			{
@@ -185,10 +217,10 @@ namespace DependsOnThat.Roslyn
 		}
 
 		/// <summary>
-		/// Gets the type symbol corresponding to <paramref name="node"/>, as well as the compilation it belongs to. Returns null for both 
+		/// Gets the type symbol corresponding to <paramref name="node"/>, as well as the project it belongs to. Returns null for both 
 		/// if cache is inactive, and null for either if not found.
 		/// </summary>
-		public async Task<(INamedTypeSymbol? Symbol, Compilation? Compilation)> GetSymbolForNode(Node node, CancellationToken ct)
+		public async Task<(INamedTypeSymbol? Symbol, ProjectIdentifier ProjectIdentifier)> GetSymbolForNode(Node node, CancellationToken ct)
 		{
 			if (node is TypeNode typeNode)
 			{
@@ -214,7 +246,8 @@ namespace DependsOnThat.Roslyn
 					return default;
 				}
 
-				var compilation = await GetCompilation(project.ToIdentifier(), ct);
+				var projectIdentifier = project.ToIdentifier();
+				var compilation = await GetCompilation(projectIdentifier, ct);
 
 				if (compilation == null)
 				{
@@ -227,14 +260,29 @@ namespace DependsOnThat.Roslyn
 				{
 					if (_isActive)
 					{
-						_cachedTypeSymbols[typeNode] = (symbol, compilation);
+						_cachedTypeSymbols[typeNode] = (symbol, projectIdentifier);
 					}
 				}
 
-				return (symbol, compilation);
+				return (symbol, projectIdentifier);
 			}
 
 			return default;
+		}
+
+		/// <summary>
+		/// Get all syntax trees belonging to <paramref name="projectIdentifier"/>.
+		/// </summary>
+		public async Task<IEnumerable<SyntaxTree>> GetSyntaxTreesForProject(ProjectIdentifier projectIdentifier, CancellationToken ct)
+		{
+			var compilation = await GetCompilation(projectIdentifier, ct);
+
+			if (compilation == null)
+			{
+				return ArrayUtils.GetEmpty<SyntaxTree>();
+			}
+
+			return compilation.SyntaxTrees;
 		}
 
 		public Document? GetDocument(DocumentId? documentId)
@@ -244,22 +292,25 @@ namespace DependsOnThat.Roslyn
 				return null;
 			}
 
-			return _solution?.GetDocument(documentId);
+			return GetSolution()?.GetDocument(documentId);
 		}
 
 		private Project? GetContainingProject(TypeNode typeNode)
 		{
-			if (_solution == null)
+			var solution = GetSolution();
+			if (solution == null)
 			{
 				return null;
 			}
 
 			foreach (var file in typeNode.AssociatedFiles)
 			{
-				var docIds = _solution.GetDocumentIdsWithFilePath(file);
+				var docIds = solution.GetDocumentIdsWithFilePath(file);
 				foreach (var docId in docIds)
 				{
-					var project = _solution.GetDocument(docId)?.Project;
+					// Although we're two loops deep here, typically the first associated file will belong to a project, and it's not immediately
+					// clear why there would ever be multiple DocumentIds for a single file path
+					var project = solution.GetDocument(docId)?.Project;
 					if (project != null)
 					{
 						return project;
@@ -268,6 +319,19 @@ namespace DependsOnThat.Roslyn
 			}
 
 			return null;
+		}
+
+		public IEnumerable<ProjectIdentifier> GetAllProjects()
+		{
+			var solution = GetSolution();
+			return solution?.Projects.Select(p => p.ToIdentifier()) ?? ArrayUtils.GetEmpty<ProjectIdentifier>();
+		}
+
+		public string? GetAssemblyName(ProjectIdentifier projectIdentifier)
+		{
+			var project = GetProject(projectIdentifier);
+
+			return project?.AssemblyName;
 		}
 
 		/// <summary>

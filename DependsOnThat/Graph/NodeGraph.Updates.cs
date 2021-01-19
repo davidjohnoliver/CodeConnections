@@ -141,7 +141,7 @@ namespace DependsOnThat.Graph
 
 		private async Task<ICollection<Node>> UpdateNode(Node node, CompilationCache compilationCache, CancellationToken ct)
 		{
-			var (symbol, compilation) = await compilationCache.GetSymbolForNode(node, ct);
+			var (symbol, project) = await compilationCache.GetSymbolForNode(node, ct);
 
 			if (symbol == null)
 			{
@@ -184,7 +184,7 @@ namespace DependsOnThat.Graph
 				}
 			}
 
-			var dependencies = await symbol.GetTypeDependencies(compilation!, includeExternalMetadata: false, ct).Select(s => GetOrCreateNode(s)).ToListAsync();
+			var dependencies = await symbol.GetTypeDependencies(compilationCache, project, includeExternalMetadata: false, ct).Select(s => GetOrCreateNode(s)).ToListAsync();
 			if (ct.IsCancellationRequested)
 			{
 				return ArrayUtils.GetEmpty<Node>();

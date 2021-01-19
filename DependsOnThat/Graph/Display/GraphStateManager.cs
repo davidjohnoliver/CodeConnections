@@ -282,8 +282,9 @@ namespace DependsOnThat.Graph.Display
 					_currentUpdateState = UpdateState.RebuildingDisplayGraph;
 
 					var solution = _getCurrentSolution();
-					// TODO: rebuild should use compilation cache
-					var nodeGraph = await RebuildNodeGraph(solution, ct);
+					compilationCache = new CompilationCache();
+					compilationCache.SetSolution(solution);
+					var nodeGraph = await RebuildNodeGraph(compilationCache, ct);
 					if (!ct.IsCancellationRequested)
 					{
 						_nodeGraph = nodeGraph;
@@ -384,13 +385,13 @@ namespace DependsOnThat.Graph.Display
 			return (null, null); // In case we updated NodeGraph but display graph did not change
 		}
 
-		private async Task<NodeGraph?> RebuildNodeGraph(Solution solution, CancellationToken ct)
+		private async Task<NodeGraph?> RebuildNodeGraph(CompilationCache compilationCache, CancellationToken ct)
 		{
 			var includedProjects = _includedProjects;
 			var excludePureGenerated = ExcludePureGenerated;
 			var nodeGraph = await Task.Run(async () =>
 			{
-				return await NodeGraph.BuildGraph(solution, includedProjects, excludePureGenerated, ct);
+				return await NodeGraph.BuildGraph(compilationCache, includedProjects, excludePureGenerated, ct);
 			}, ct);
 			return nodeGraph;
 		}

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
+using DependsOnThat.Roslyn;
 using DependsOnThat.Tests.Utilities;
 using DependsOnThat.Utilities;
 using NUnit.Framework;
@@ -32,7 +33,7 @@ namespace DependsOnThat.Tests.GraphTests
 				var classSymbol = rootNode.GetAllDeclaredTypes(model).First();
 				Assert.AreEqual("SomeClass", classSymbol.Name);
 
-				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 				var root = graph.GetNodeForType(classSymbol);
 				Assert.AreEqual(classSymbol.ToIdentifier(), root.Identifier);
@@ -65,7 +66,7 @@ namespace DependsOnThat.Tests.GraphTests
 				var classSymbol = rootNode.GetAllDeclaredTypes(model).First();
 				Assert.AreEqual("SomeOtherClass", classSymbol.Name);
 
-				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 				var root = graph.GetNodeForType(classSymbol);
 				Assert.AreEqual(classSymbol.ToIdentifier(), root.Identifier);
@@ -92,7 +93,7 @@ namespace DependsOnThat.Tests.GraphTests
 				var classSymbol = rootNode.GetAllDeclaredTypes(model).First();
 				Assert.AreEqual("SomeOtherClass", classSymbol.Name);
 
-				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 				var root = graph.GetNodeForType(classSymbol);
 				Assert.AreEqual(classSymbol.ToIdentifier(), root.Identifier);
@@ -106,7 +107,7 @@ namespace DependsOnThat.Tests.GraphTests
 		{
 			using (var workspace = WorkspaceUtils.GetSubjectSolution())
 			{
-				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 				var someClassKey = TypeNodeKey.GetFromFullName("SubjectSolution.SomeClass");
 				var someClassNode = graph.Nodes[someClassKey];
@@ -126,12 +127,12 @@ namespace DependsOnThat.Tests.GraphTests
 		{
 			using (var workspace = WorkspaceUtils.GetSubjectSolution())
 			{
-				var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 				AssertEx.Contains(fullGraph.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomeClassCore");
 
 				var mainProject = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
 
-				var graphWithCoreExcluded = await NodeGraph.BuildGraph(workspace.CurrentSolution, new[] { mainProject.ToIdentifier() });
+				var graphWithCoreExcluded = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), new[] { mainProject.ToIdentifier() });
 
 				AssertEx.None(graphWithCoreExcluded.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomeClassCore");
 			}
@@ -142,11 +143,11 @@ namespace DependsOnThat.Tests.GraphTests
 		{
 			using (var workspace = WorkspaceUtils.GetSubjectSolution())
 			{
-				var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 				AssertEx.Contains(fullGraph.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomeGeneratedClass");
 				AssertEx.Contains(fullGraph.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomePartiallyGeneratedClass");
 
-				var graphWithGeneratedExcluded = await NodeGraph.BuildGraph(workspace.CurrentSolution, excludePureGenerated: true);
+				var graphWithGeneratedExcluded = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), excludePureGenerated: true);
 
 				AssertEx.None(graphWithGeneratedExcluded.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomeGeneratedClass");
 				AssertEx.Contains(graphWithGeneratedExcluded.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomePartiallyGeneratedClass");

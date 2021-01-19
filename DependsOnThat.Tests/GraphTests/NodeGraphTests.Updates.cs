@@ -22,7 +22,7 @@ namespace DependsOnThat.Tests.GraphTests
 
 			using var workspace = WorkspaceUtils.GetSubjectSolution();
 
-			var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+			var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 			var initialState = fullGraph.Nodes.ToDictionary(kvp => kvp.Key, kvp => (kvp.Value.BackLinks.ToList(), kvp.Value.ForwardLinks.ToList()));
 
@@ -47,7 +47,7 @@ namespace DependsOnThat.Tests.GraphTests
 		{
 			using var workspace = WorkspaceUtils.GetSubjectSolution();
 
-			var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+			var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 			var mutableClassKey = TypeNodeKey.GetFromFullName("SubjectSolution.Mutable.SomeMutableClass");
 			var mutableClassNode = (TypeNode)fullGraph.Nodes[mutableClassKey];
@@ -88,7 +88,7 @@ namespace DependsOnThat.Tests.GraphTests
 		{
 			using var workspace = WorkspaceUtils.GetSubjectSolution();
 
-			var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+			var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 			var mutableClassKey = TypeNodeKey.GetFromFullName("SubjectSolution.Mutable.SomeMutableClass");
 			var mutableClassNode = (TypeNode)fullGraph.Nodes[mutableClassKey];

@@ -69,15 +69,15 @@ namespace DependsOnThat.Graph
 
 		public TypeNode? GetNodeForType(ITypeSymbol type) => _nodes.GetOrDefault(type.ToNodeKey()) as TypeNode;
 
-		public static async Task<NodeGraph?> BuildGraph(Solution solution, IEnumerable<ProjectIdentifier>? includedProjects = null, bool excludePureGenerated = false, CancellationToken ct = default)
+		public static async Task<NodeGraph?> BuildGraph(CompilationCache compilationCache, IEnumerable<ProjectIdentifier>? includedProjects = null, bool excludePureGenerated = false, CancellationToken ct = default)
 		{
-			var projects = includedProjects?.Select(pi => solution.GetProject(pi.Id)).Trim() ?? solution.Projects;
+			var projects = includedProjects ?? compilationCache.GetAllProjects();
 
-			var includedAssemblies = projects.Select(p => p.AssemblyName);
+			var includedAssemblies = projects.Select(p => compilationCache.GetAssemblyName(p)).Trim();
 
 			var graph = new NodeGraph(excludePureGenerated, includedAssemblies);
 
-			await BuildGraph(graph, solution, projects, ct);
+			await BuildGraph(graph, compilationCache, projects, ct);
 			if (ct.IsCancellationRequested)
 			{
 				return null;

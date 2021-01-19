@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
 using DependsOnThat.Graph.Display;
+using DependsOnThat.Roslyn;
 using DependsOnThat.Tests.Utilities;
 using DependsOnThat.Utilities;
 using NUnit.Framework;
@@ -35,7 +36,7 @@ namespace DependsOnThat.Tests.PresentationTests
 					};
 
 
-				var fullGraph = await NodeGraph.BuildGraph(workspace.CurrentSolution,
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution),
 					ct: default);
 
 				var displayGraph = fullGraph.GetDisplaySubgraph(roots);
@@ -54,7 +55,7 @@ namespace DependsOnThat.Tests.PresentationTests
 			{
 				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
 
-				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 				var someClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClass")];
 				var deepClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClassDepth5")];

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
 using DependsOnThat.Graph;
+using DependsOnThat.Roslyn;
 using DependsOnThat.Tests.Utilities;
 using NUnit.Framework;
 
@@ -22,7 +23,7 @@ namespace DependsOnThat.Tests.GraphTests
 			{
 				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
 
-				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 				var someClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClass")];
 				var someCircularClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeCircularClass")];
@@ -48,7 +49,7 @@ namespace DependsOnThat.Tests.GraphTests
 			{
 				var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
 
-				var graph = await NodeGraph.BuildGraph(workspace.CurrentSolution, ct: default);
+				var graph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
 
 				var someClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClass")];
 				var deepClassNode = graph.Nodes[TypeNodeKey.GetFromFullName("SubjectSolution.SomeClassDepth5")];
