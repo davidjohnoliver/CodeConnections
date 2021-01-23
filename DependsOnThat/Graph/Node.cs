@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependsOnThat.Git;
 
 namespace DependsOnThat.Graph
 {
@@ -40,6 +41,8 @@ namespace DependsOnThat.Graph
 		/// A list of filepaths associated with this node.
 		/// </summary>
 		public IList<string> AssociatedFiles { get; } = new List<string>(1);
+
+		public GitStatus GitStatus { get; set; }
 
 		/// <summary>
 		/// Add <paramref name="forwardLink"/> as a new dependency of this node, setting this node as a dependent on <paramref name="forwardLink"/> 

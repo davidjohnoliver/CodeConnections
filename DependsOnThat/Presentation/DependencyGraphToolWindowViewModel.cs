@@ -85,6 +85,21 @@ namespace DependsOnThat.Presentation
 		private string? _graphingError;
 		public string? GraphingError { get => _graphingError; set => OnValueSet(ref _graphingError, value); }
 
+		private DisplayMode _displayMode;
+		public DisplayMode DisplayMode
+		{
+			get => _displayMode; 
+			set
+			{
+				if (OnValueSet(ref _displayMode, value))
+				{
+					_graphStateManager.IsGitModeEnabled = value == DisplayMode.Git;
+				}
+			}
+		}
+
+		public DisplayMode[] DisplayModes { get; } = EnumUtils.GetValues<DisplayMode>();
+
 		private SelectionList<ProjectIdentifier>? _projects;
 		public SelectionList<ProjectIdentifier>? Projects
 		{
@@ -135,7 +150,7 @@ namespace DependsOnThat.Presentation
 			LogStatsCommand = SimpleCommand.Create(LogStats);
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
-			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), this);
+			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, this);
 			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 
 			UpdateProjects();

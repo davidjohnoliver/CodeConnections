@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DependsOnThat.Disposables;
 using DependsOnThat.Extensions;
+using DependsOnThat.Git;
 using LibGit2Sharp;
 
 namespace DependsOnThat.Services
@@ -45,7 +46,7 @@ namespace DependsOnThat.Services
 			}
 		}
 
-		public async Task<ICollection<string>> GetAllModifiedAndNewFiles(CancellationToken ct)
+		public async Task<ICollection<GitInfo>> GetAllModifiedAndNewFiles(CancellationToken ct)
 		{
 #pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks - not a foreign Task
 			await _checkReady;
@@ -54,19 +55,19 @@ namespace DependsOnThat.Services
 			var path = _repositoryPath;
 			if (path.IsNullOrWhiteSpace())
 			{
-				return new string[0];
+				return new GitInfo[0];
 			}
 
 			return await Task.Run(() => GetAllModifiedAndNewFilesSync(path), ct);
 		}
 
-		private ICollection<string> GetAllModifiedAndNewFilesSync(string path)
+		private ICollection<GitInfo> GetAllModifiedAndNewFilesSync(string path)
 		{
 			using (var repo = new Repository(path))
 			{
 				var wdPath = repo.Info.WorkingDirectory;
 				var status = repo.RetrieveStatus(new StatusOptions { IncludeIgnored = false });
-				return status.Where(e => e.State.IsModifiedOrNew()).Select(e => Path.GetFullPath(Path.Combine(wdPath, e.FilePath))).ToList(); // Materialize eagerly because the Repository will be disposed after the method returns
+				return status.Where(e => e.State.IsModifiedOrNew()).Select(e => e.ToGitInfo(wdPath)).ToList(); // Materialize eagerly because the Repository will be disposed after the method returns
 			}
 		}
 

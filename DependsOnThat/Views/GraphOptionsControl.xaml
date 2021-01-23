@@ -39,8 +39,9 @@
 					  Margin="3"
 					  IsEditable="True"
 					  IsReadOnly="True"
-					  Text="Mode..." />
-			<!--TODO - Mode-->
+					  Text="Mode..."
+					  ItemsSource="{Binding DisplayModes}"
+					  SelectedItem="{Binding DisplayMode, Mode=TwoWay}" />
 			<Expander Header="Options">
 				<Grid>
 					<Grid.RowDefinitions>

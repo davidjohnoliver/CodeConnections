@@ -84,5 +84,18 @@ namespace DependsOnThat.Graph
 			}
 			return graph;
 		}
+
+		/// <summary>
+		/// Get all nodes in the graph associated with file <paramref name="filePath"/>
+		/// </summary>
+		public IEnumerable<Node> GetAssociatedNodes(string? filePath)
+		{
+			if (filePath == null)
+			{
+				return Enumerable.Empty<Node>();
+			}
+
+			return _nodesByDocument.GetOrDefault(filePath) ?? Enumerable.Empty<Node>();
+		}
 	}
 }

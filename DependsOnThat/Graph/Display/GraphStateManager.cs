@@ -15,6 +15,7 @@ using QuickGraph;
 using DependsOnThat.Extensions;
 using DependsOnThat.Utilities;
 using DependsOnThat.Statistics;
+using DependsOnThat.Git;
 
 namespace DependsOnThat.Graph.Display
 {
@@ -37,6 +38,45 @@ namespace DependsOnThat.Graph.Display
 			}
 		}
 
+		private bool _isGitModeEnabled;
+		/// <summary>
+		/// When in 'Git mode', Git info should be calculated and applied for nodes, and modified files should be inserted into the 
+		/// displayed subgraph.
+		/// </summary>
+		public bool IsGitModeEnabled
+		{
+			get => _isGitModeEnabled;
+			set
+			{
+				var previous = _isGitModeEnabled;
+				_isGitModeEnabled = value;
+
+				switch (previous, _isGitModeEnabled)
+				{
+					case (true, false):
+						_previousGitInfos = ArrayUtils.GetEmpty<GitInfo>();
+						break;
+					case (false, true):
+						TryRunUpdate();
+						break;
+				}
+
+				void TryRunUpdate()
+				{
+					if (_currentUpdateState == UpdateState.NotUpdating)
+					{
+						RunUpdate(waitForIdle: false);
+					}
+					else if (_currentUpdateState > UpdateState.UpdatingGitInfo)
+					{
+						// Finish what's afoot then rerun for Git phase
+						_needsRerun = true;
+					}
+					// else nothing to do - we're calculating Git info or about to do so
+				}
+			}
+		}
+
 		/// <summary>
 		/// Raised whenever a new copy of the display graph is created.
 		/// </summary>
@@ -54,18 +94,29 @@ namespace DependsOnThat.Graph.Display
 		private readonly HashSet<DocumentId> _invalidatedDocuments = new HashSet<DocumentId>();
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly Func<Solution> _getCurrentSolution;
+		private readonly Func<CancellationToken, Task<ICollection<GitInfo>>> _getGitInfo;
 		private readonly object _nodeParentContext;
 		private bool _needsDisplayGraphUpdate;
+		/// <summary>
+		/// When this flag is set, indicates that another update should be run immediately after the current one.
+		/// </summary>
+		private bool _needsRerun;
 
+		private ICollection<GitInfo> _previousGitInfos = ArrayUtils.GetEmpty<GitInfo>();
+
+		/// <summary>
+		/// Backing object for statistics task. This will only be non-null when the view model is awaiting graph statistics.
+		/// </summary>
 		private TaskCompletionSource<GraphStatistics?>? _statisticsTCS;
 
 		private Subgraph _includedNodes = new();
 		private readonly List<Subgraph.Operation> _pendingSubgraphOperations = new();
 
-		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, object nodeParentContext)
+		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, object nodeParentContext)
 		{
 			_joinableTaskFactory = joinableTaskFactory;
 			_getCurrentSolution = getCurrentSolution ?? throw new ArgumentNullException(nameof(getCurrentSolution));
+			_getGitInfo = getGitInfo ?? throw new ArgumentNullException(nameof(getGitInfo));
 			_nodeParentContext = nodeParentContext;
 		}
 
@@ -154,6 +205,7 @@ namespace DependsOnThat.Graph.Display
 			{
 				// Nothing to do. Either we haven't reached subgraph updates and it'll be considered then, or we've passed it and another update will 
 				// be queued up at the end of the current one.
+				return;
 			}
 
 			RunUpdate(waitForIdle: false);
@@ -204,6 +256,8 @@ namespace DependsOnThat.Graph.Display
 		/// <param name="waitForIdle">If true, the update should be delayed until after an idle state (no user input) is reached. If false, it should run immediately.</param>
 		private void RunUpdate(bool waitForIdle)
 		{
+			_needsRerun = false;
+
 			ThreadUtils.ThrowIfNotOnUIThread();
 
 			if (_currentUpdateState == UpdateState.WaitingForIdle)
@@ -236,20 +290,25 @@ namespace DependsOnThat.Graph.Display
 				{
 					return;
 				}
-				else if (_statisticsTCS != null) // This can happen if stats log was requested while building display graph
+				else if (NeedsRerunNow())
 				{
 					RunUpdate(waitForIdle: false);
 				}
-				else if (_pendingSubgraphOperations.Count > 0)
+				else if (NeedsRerunOnIdle())
 				{
-					// Run another update if we have uncommitted subgraph operations
-					RunUpdate(waitForIdle: false);
-				}
-				else if (_invalidatedDocuments.Count > 0)
-				{
-					// Run another update if we need incremental NodeGraph update
 					RunUpdate(waitForIdle: true);
 				}
+
+				bool NeedsRerunNow() =>
+					// Rerun was explicitly requested
+					_needsRerun ||
+					// This can happen if stats log was requested while building display graph
+					_statisticsTCS != null ||
+					// Run another update if we have uncommitted subgraph operations
+					_pendingSubgraphOperations.Count > 0;
+
+				// Run another update if we need incremental NodeGraph update
+				bool NeedsRerunOnIdle() => _invalidatedDocuments.Count > 0;
 			});
 		}
 
@@ -307,6 +366,17 @@ namespace DependsOnThat.Graph.Display
 					compilationCache.SetSolution(solution);
 					var alteredNodes = await _nodeGraph.Update(compilationCache, invalidatedDocuments, ct);
 					_needsDisplayGraphUpdate |= alteredNodes?.Count > 0;
+				}
+
+				if (ct.IsCancellationRequested)
+				{
+					return (null, null);
+				}
+
+				if (IsGitModeEnabled)
+				{
+					_currentUpdateState = UpdateState.UpdatingGitInfo;
+					await AnnotateGitInfo(ct);
 				}
 
 				if (ct.IsCancellationRequested)
@@ -396,6 +466,68 @@ namespace DependsOnThat.Graph.Display
 			return nodeGraph;
 		}
 
+		private async Task AnnotateGitInfo(CancellationToken ct)
+		{
+			if (_nodeGraph is { } nodeGraph)
+			{
+				var gitInfos = await _getGitInfo(ct);
+				if (ct.IsCancellationRequested)
+				{
+					return;
+				}
+
+				var (_, _, removed) = gitInfos.GetUnorderedDiff(_previousGitInfos);
+
+				// build dict of status by filename
+				var infoDict = GetDictionary(gitInfos);
+				var previousInfoDict = GetDictionary(_previousGitInfos);
+				foreach (var info in removed)
+				{
+					infoDict[info.FullPath] = GitStatus.Unchanged;
+				}
+
+				// for each filename, get node(s)
+				var affectedNodes = infoDict.Keys.SelectMany(fp => nodeGraph.GetAssociatedNodes(fp));
+
+				// for each node, get combined status from all files
+				// set status on node
+				// if status is changed, queue up node graph operation
+				foreach (var node in affectedNodes)
+				{
+					var nodeStatus = GetStatusFromInfos(infoDict, node);
+					var oldStatus = GetStatusFromInfos(previousInfoDict, node);
+
+					node.GitStatus = nodeStatus;
+					if (nodeStatus != oldStatus)
+					{
+						_needsDisplayGraphUpdate = true;
+						var op = nodeStatus == GitStatus.Unchanged ? Subgraph.Remove(node.Key) : Subgraph.AddPinned(node.Key);
+						ModifySubgraph(op);
+					}
+				}
+
+				_previousGitInfos = gitInfos;
+
+				static Dictionary<string, GitStatus> GetDictionary(ICollection<GitInfo>? gitInfos)
+				{
+					var infoDict = gitInfos.ToDictionary(gi => gi.FullPath, gi => gi.Status);
+					return infoDict;
+				}
+
+				static GitStatus GetStatusFromInfos(Dictionary<string, GitStatus> infoDict, Node node)
+				{
+					var infos = node.AssociatedFiles.Select(f => infoDict.GetOrDefault(f));
+					var nodeStatus = GitStatus.Unchanged;
+					foreach (var status in infos)
+					{
+						nodeStatus |= status;
+					}
+
+					return nodeStatus;
+				}
+			}
+		}
+
 		private async Task<(IBidirectionalGraph<DisplayNode, DisplayEdge>?, GraphStatistics?)> RebuildDisplayGraph(Subgraph includedNodes, CancellationToken ct)
 		{
 			var nodeGraph = _nodeGraph;
@@ -424,6 +556,7 @@ namespace DependsOnThat.Graph.Display
 			WaitingForIdle,
 			RebuildingNodeGraph,
 			UpdatingNodeGraph,
+			UpdatingGitInfo,
 			AnalyzingFullGraphStatistics,
 			UpdatingSubgraph,
 			RebuildingDisplayGraph,

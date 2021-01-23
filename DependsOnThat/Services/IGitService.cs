@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using DependsOnThat.Git;
 
 namespace DependsOnThat.Services
 {
@@ -11,6 +12,6 @@ namespace DependsOnThat.Services
 	/// </summary>
 	internal interface IGitService
 	{
-		Task<ICollection<string>> GetAllModifiedAndNewFiles(CancellationToken ct);
+		Task<ICollection<GitInfo>> GetAllModifiedAndNewFiles(CancellationToken ct);
 	}
 }

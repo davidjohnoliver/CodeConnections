@@ -97,7 +97,7 @@ namespace DependsOnThat.Graph
 			}
 
 			var filePath = document.FilePath;
-			var associatedExistingNodes = (_nodesByDocument!).GetOrDefault(filePath);
+			var associatedExistingNodes = GetAssociatedNodes(filePath);
 
 			var syntaxRoot = await document.GetSyntaxRootAsync(ct);
 			if (ct.IsCancellationRequested)
@@ -130,7 +130,7 @@ namespace DependsOnThat.Graph
 			}
 
 			// If any associatedExistingNode is no longer found in this document, invalidate it for reevaluation.
-			foreach (var node in associatedExistingNodes ?? Enumerable.Empty<Node>())
+			foreach (var node in associatedExistingNodes)
 			{
 				if (!declaredSymbolNodes.Contains(node))
 				{

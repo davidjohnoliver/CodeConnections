@@ -18,6 +18,11 @@ namespace DependsOnThat.Graph
 		public static Operation AddPinned(params NodeKey[] nodesToAdd) => new AddPinnedOperation(nodesToAdd);
 
 		/// <summary>
+		/// An operation to entirely remove <paramref name="nodesToRemove"/> from a subgraph.
+		/// </summary>
+		public static Operation Remove(params NodeKey[] nodesToRemove) => new RemoveNodeOperation(nodesToRemove);
+
+		/// <summary>
 		/// An operation to set a particular node as 'selected', adding it and its neighbours as <see cref="AdditionalNodes"/>.
 		/// </summary>
 		/// <param name="selected">Function to asynchronously resolve <see cref="NodeKey"/> for the 'selected' node.</param>
@@ -93,6 +98,27 @@ namespace DependsOnThat.Graph
 					{
 						modified |= subgraph.AddPinnedNode(node);
 					}
+				}
+
+				return Task.FromResult(modified);
+			}
+		}
+
+		private class RemoveNodeOperation : Operation
+		{
+			private readonly IList<NodeKey> _nodeKeys;
+
+			public RemoveNodeOperation(IList<NodeKey> nodeKeys)
+			{
+				_nodeKeys = nodeKeys;
+			}
+
+			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
+			{
+				var modified = false;
+				foreach (var node in _nodeKeys)
+				{
+					modified |= subgraph.RemoveNode(node);
 				}
 
 				return Task.FromResult(modified);
