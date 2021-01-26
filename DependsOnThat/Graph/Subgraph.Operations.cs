@@ -20,16 +20,19 @@ namespace DependsOnThat.Graph
 		/// <summary>
 		/// An operation to entirely remove <paramref name="nodesToRemove"/> from a subgraph.
 		/// </summary>
-		public static Operation Remove(params NodeKey[] nodesToRemove) => new RemoveNodeOperation(nodesToRemove);
+		/// <param name="dontRemoveSelected">
+		/// True: don't remove node if it's the selected node. False: remove selected node along with other nodes.
+		/// </param>
+		public static Operation Remove(bool dontRemoveSelected, params NodeKey[] nodesToRemove) => new RemoveNodeOperation(nodesToRemove, dontRemoveSelected);
 
 		/// <summary>
 		/// An operation to set a particular node as 'selected', adding it and its neighbours as <see cref="AdditionalNodes"/>.
 		/// </summary>
-		/// <param name="selected">Function to asynchronously resolve <see cref="NodeKey"/> for the 'selected' node.</param>
+		/// <param name="getSelected">Function to asynchronously resolve <see cref="NodeKey"/> for the 'selected' node.</param>
 		/// <param name="maxLinks">The maximum number of links to be included. If there are more neighbours than this, they will be omitted.</param>
-		public static Operation SetSelected(Func<CancellationToken, Task<NodeKey?>> selected, int maxLinks) => GetCompositeOperation(
+		public static Operation SetSelected(Func<CancellationToken, Task<NodeKey?>> getSelected, int maxLinks) => GetCompositeOperation(
 			new ClearAdditionalsOperation(),
-			new AddAdditionalFromRootOperation(selected, maxLinks)
+			new AddAdditionalFromSelectedOperation(getSelected, maxLinks)
 		);
 
 		/// <summary>
@@ -107,10 +110,12 @@ namespace DependsOnThat.Graph
 		private class RemoveNodeOperation : Operation
 		{
 			private readonly IList<NodeKey> _nodeKeys;
+			private readonly bool _dontRemoveSelected;
 
-			public RemoveNodeOperation(IList<NodeKey> nodeKeys)
+			public RemoveNodeOperation(IList<NodeKey> nodeKeys, bool dontRemoveSelected)
 			{
 				_nodeKeys = nodeKeys;
+				_dontRemoveSelected = dontRemoveSelected;
 			}
 
 			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
@@ -118,7 +123,7 @@ namespace DependsOnThat.Graph
 				var modified = false;
 				foreach (var node in _nodeKeys)
 				{
-					modified |= subgraph.RemoveNode(node);
+					modified |= subgraph.RemoveNode(node, _dontRemoveSelected);
 				}
 
 				return Task.FromResult(modified);
@@ -130,20 +135,20 @@ namespace DependsOnThat.Graph
 			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct) => Task.FromResult(subgraph.ClearAdditional());
 		}
 
-		private class AddAdditionalFromRootOperation : Operation
+		private class AddAdditionalFromSelectedOperation : Operation
 		{
-			private readonly Func<CancellationToken, Task<NodeKey?>> _getRoot;
+			private readonly Func<CancellationToken, Task<NodeKey?>> _getSelected;
 			private readonly int _maxLinks;
 
-			public AddAdditionalFromRootOperation(Func<CancellationToken, Task<NodeKey?>> getRoot, int maxLinks)
+			public AddAdditionalFromSelectedOperation(Func<CancellationToken, Task<NodeKey?>> getSelected, int maxLinks)
 			{
-				_getRoot = getRoot ?? throw new ArgumentNullException(nameof(getRoot));
+				_getSelected = getSelected ?? throw new ArgumentNullException(nameof(getSelected));
 				_maxLinks = maxLinks;
 			}
 
 			public override async Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
 			{
-				var root = await _getRoot(ct);
+				var root = await _getSelected(ct);
 				var nodes = fullGraph.Nodes;
 				if (ct.IsCancellationRequested || root == null || !nodes.ContainsKey(root))
 				{
@@ -152,6 +157,7 @@ namespace DependsOnThat.Graph
 
 				var modified = false;
 				modified |= subgraph.AddAdditionalNode(root);
+				subgraph._selectedNode = root;
 
 				var rootNode = nodes[root];
 				if (rootNode.LinkCount <= _maxLinks)

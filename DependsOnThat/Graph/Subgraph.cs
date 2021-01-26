@@ -42,6 +42,11 @@ namespace DependsOnThat.Graph
 		/// </summary>
 		public ISet<NodeKey> AdditionalNodes => _additionalNodes;
 
+		/// <summary>
+		/// The current selected node, if any.
+		/// </summary>
+		private NodeKey? _selectedNode;
+
 		private bool AddPinnedNode(NodeKey nodeKey)
 		{
 			// Remove node from additional nodes, if it was there
@@ -61,7 +66,22 @@ namespace DependsOnThat.Graph
 			return _additionalNodes.Add(nodeKey);
 		}
 
-		private bool RemoveNode(NodeKey nodeKey) => _pinnedNodes.Remove(nodeKey) || _additionalNodes.Remove(nodeKey);
+		private bool RemoveNode(NodeKey nodeKey, bool dontRemoveSelected = false)
+		{
+			if (Equals(_selectedNode, nodeKey))
+			{
+				if (dontRemoveSelected)
+				{
+					return false;
+				}
+				else
+				{
+					_selectedNode = null;
+				}
+			}
+
+			return _pinnedNodes.Remove(nodeKey) || _additionalNodes.Remove(nodeKey);
+		}
 
 		/// <summary>
 		/// Moves <paramref name="node"/> from <see cref="AdditionalNodes"/> to <see cref="PinnedNodes"/> or vice versa, depending 
@@ -86,6 +106,7 @@ namespace DependsOnThat.Graph
 
 			_pinnedNodes.Clear();
 			_additionalNodes.Clear();
+			_selectedNode = null;
 
 			return true;
 		}

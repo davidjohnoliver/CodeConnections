@@ -501,7 +501,7 @@ namespace DependsOnThat.Graph.Display
 					if (nodeStatus != oldStatus)
 					{
 						_needsDisplayGraphUpdate = true;
-						var op = nodeStatus == GitStatus.Unchanged ? Subgraph.Remove(node.Key) : Subgraph.AddPinned(node.Key);
+						var op = nodeStatus == GitStatus.Unchanged ? Subgraph.Remove(dontRemoveSelected: true, node.Key) : Subgraph.AddPinned(node.Key);
 						ModifySubgraph(op);
 					}
 				}
