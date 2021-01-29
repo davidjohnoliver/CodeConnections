@@ -55,10 +55,33 @@ namespace DependsOnThat.Views
 			StartTimer();
 			SelectedVertexControl = null;
 			// Workaround for XamlParseException when binding directly to Graph property https://stackoverflow.com/questions/13007129/method-or-operation-not-implemented-error-on-binding
-			Graph = newValue as IBidirectionalGraph<DisplayNode, DisplayEdge>;
+			var newGraph = newValue as IBidirectionalGraph<DisplayNode, DisplayEdge>;
+			ApplyLightUpdate(newGraph);
+
+			Graph = newGraph;
 #pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs - measuring low-level timing information
 			Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)CompleteTimer);
 #pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
+		}
+
+		/// <summary>
+		/// Update mutable values on vertices currently in use, to preempt costly layout updates when not needed.
+		/// </summary>
+		/// <param name="graph">The new graph about to be applied.</param>
+		private void ApplyLightUpdate(IBidirectionalGraph<DisplayNode, DisplayEdge>? graph)
+		{
+			if (graph != null && Graph != null)
+			{
+				var dict = graph.Vertices.ToDictionary(v => v.Key);
+
+				foreach (var displayNode in VertexControls.Keys)
+				{
+					if (dict.GetOrDefault(displayNode.Key) is { } newNode)
+					{
+						displayNode.UpdateNode(newNode);
+					}
+				}
+			}
 		}
 
 		private void StartTimer()
