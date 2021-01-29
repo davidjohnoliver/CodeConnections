@@ -104,6 +104,7 @@
     <Compile Include="Presentation\Converters\GraphLayoutModeLayoutAlgorithmConverter.cs" />
     <Compile Include="Presentation\Converters\GraphLayoutModeTooltipConverter.cs" />
     <Compile Include="Presentation\Converters\GraphLayoutModeMonikerConverter.cs" />
+    <Compile Include="Presentation\Converters\MultiValueConverter.cs" />
     <Compile Include="Presentation\Converters\OperationTimeTextConverter.cs" />
     <Compile Include="Presentation\Converters\ValueConverter.cs" />
     <Compile Include="Presentation\DependencyGraphToolWindowViewModel.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Utilities\SetUtils.cs" />
     <Compile Include="Utilities\ThreadUtils.cs" />
     <Compile Include="Utilities\TimeUtils.cs" />
+    <Compile Include="Utilities\TypeUtils.cs" />
     <Compile Include="Views\Behaviours\MultiSelection.cs" />
     <Compile Include="Views\Behaviours\PinCheckBoxBehaviour.cs" />
     <Compile Include="Views\Behaviours\ToggleButtonExtensions.cs" />
