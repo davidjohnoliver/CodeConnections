@@ -20,9 +20,10 @@
 	<converters:DisplayEdgeStrokeDashArrayConverter x:Key="DisplayEdgeStrokeDashArrayConverter"
 													MultiStrokeDashArray="4 2" />
 	<converters:DisplayEdgeTooltipConverter x:Key="DisplayEdgeTooltipConverter" />
-
+	<converters:DisplayNodeGitIndicatorVisibilityConverter x:Key="DisplayNodeGitIndicatorVisibilityConverter" />
 	<graphConverters:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
 	<converters:DebugConverter x:Key="DebugConverter" />
+	<converters:GitStatusTooltipConverter x:Key="GitStatusTooltipConverter" />
 
 	<Style TargetType="{x:Type graphControls:VertexControl}">
 		<Setter Property="Template">
@@ -44,6 +45,26 @@
 									  IsChecked="{Binding IsPinned}"
 									  ext:ToggleButtonExtensions.ToggleCommand="{Binding ParentContext.TogglePinnedCommand}"
 									  ext:ToggleButtonExtensions.ToggleCommandParameter="{Binding}" />
+							<Grid Margin="0,-8,-5,0"
+								  HorizontalAlignment="Right"
+								  VerticalAlignment="Top"
+								  ToolTip="{Binding GitStatus, Converter={StaticResource GitStatusTooltipConverter}}">
+								<Grid.Visibility>
+									<MultiBinding Converter="{StaticResource DisplayNodeGitIndicatorVisibilityConverter}">
+										<Binding Path="GitStatus" />
+										<Binding Path="ParentContext.DisplayMode" />
+									</MultiBinding>
+								</Grid.Visibility>
+								<Ellipse Width="20"
+										 Height="20"
+										 Fill="White"
+										 StrokeThickness="1"
+										 Stroke="Black" />
+								<Path HorizontalAlignment="Center"
+									  VerticalAlignment="Center"
+									  Fill="#f05133"
+									  Data="M 12.695312 5.925781 L 7.046875 0.253906 C 6.722656 -0.0703125 6.195312 -0.0703125 5.871094 0.253906 L 4.695312 1.433594 L 6.183594 2.925781 C 6.53125 2.808594 6.925781 2.886719 7.203125 3.164062 C 7.480469 3.445312 7.558594 3.84375 7.4375 4.195312 L 8.871094 5.632812 C 9.21875 5.511719 9.617188 5.589844 9.894531 5.871094 C 10.28125 6.257812 10.28125 6.886719 9.894531 7.277344 C 9.507812 7.667969 8.878906 7.667969 8.492188 7.277344 C 8.203125 6.984375 8.128906 6.554688 8.277344 6.195312 L 6.941406 4.851562 L 6.941406 8.386719 C 7.035156 8.433594 7.125 8.496094 7.203125 8.574219 C 7.589844 8.960938 7.589844 9.59375 7.203125 9.980469 C 6.816406 10.371094 6.1875 10.371094 5.800781 9.980469 C 5.414062 9.59375 5.414062 8.960938 5.800781 8.574219 C 5.894531 8.476562 6.007812 8.40625 6.125 8.355469 L 6.125 4.789062 C 6.007812 4.742188 5.894531 4.667969 5.800781 4.574219 C 5.507812 4.277344 5.4375 3.847656 5.585938 3.484375 L 4.121094 2.011719 L 0.246094 5.902344 C -0.078125 6.226562 -0.078125 6.757812 0.246094 7.082031 L 5.894531 12.753906 C 6.222656 13.082031 6.75 13.082031 7.074219 12.753906 L 12.695312 7.109375 C 13.019531 6.785156 13.019531 6.253906 12.695312 5.925781 " />
+							</Grid>
 						</StackPanel>
 					</Border>
 					<ControlTemplate.Triggers>
