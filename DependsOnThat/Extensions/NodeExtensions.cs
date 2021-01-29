@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DependsOnThat.Git;
 using DependsOnThat.Graph;
 using DependsOnThat.Graph.Display;
 
@@ -17,6 +18,7 @@ namespace DependsOnThat.Extensions
 			node.Key,
 			(node as TypeNode)?.FilePath,
 			isPinned,
+			node.GitStatus,
 			parentContext
 		);
 
