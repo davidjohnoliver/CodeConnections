@@ -21,7 +21,7 @@ namespace DependsOnThat.Graph
 		/// An operation to entirely remove <paramref name="nodesToRemove"/> from a subgraph.
 		/// </summary>
 		/// <param name="dontRemoveSelected">
-		/// True: don't remove node if it's the selected node. False: remove selected node along with other nodes.
+		/// True: don't remove node if it's the selected node, just unpin it if pinned. False: remove selected node along with other nodes.
 		/// </param>
 		public static Operation Remove(bool dontRemoveSelected, params NodeKey[] nodesToRemove) => new RemoveNodeOperation(nodesToRemove, dontRemoveSelected);
 
@@ -123,7 +123,14 @@ namespace DependsOnThat.Graph
 				var modified = false;
 				foreach (var node in _nodeKeys)
 				{
-					modified |= subgraph.RemoveNode(node, _dontRemoveSelected);
+					if (_dontRemoveSelected && Equals(subgraph._selectedNode, node))
+					{
+						modified |= subgraph.TogglePinned(node, setPinned: false);
+					}
+					else
+					{
+						modified |= subgraph.RemoveNode(node); 
+					}
 				}
 
 				return Task.FromResult(modified);

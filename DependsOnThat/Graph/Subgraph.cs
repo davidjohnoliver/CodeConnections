@@ -66,18 +66,11 @@ namespace DependsOnThat.Graph
 			return _additionalNodes.Add(nodeKey);
 		}
 
-		private bool RemoveNode(NodeKey nodeKey, bool dontRemoveSelected = false)
+		private bool RemoveNode(NodeKey nodeKey)
 		{
 			if (Equals(_selectedNode, nodeKey))
 			{
-				if (dontRemoveSelected)
-				{
-					return false;
-				}
-				else
-				{
-					_selectedNode = null;
-				}
+				_selectedNode = null;
 			}
 
 			return _pinnedNodes.Remove(nodeKey) || _additionalNodes.Remove(nodeKey);
@@ -87,14 +80,16 @@ namespace DependsOnThat.Graph
 		/// Moves <paramref name="node"/> from <see cref="AdditionalNodes"/> to <see cref="PinnedNodes"/> or vice versa, depending 
 		/// on <paramref name="setPinned"/>. Will have no effect if node is not found in the source.
 		/// </summary>
-		public void TogglePinned(NodeKey node, bool setPinned)
+		public bool TogglePinned(NodeKey node, bool setPinned)
 		{
 			(var source, var target) = setPinned ? (_additionalNodes, _pinnedNodes) : (_pinnedNodes, _additionalNodes);
 
 			if (source.Remove(node))
 			{
-				target.Add(node);
+				return target.Add(node);
 			}
+
+			return false;
 		}
 
 		public bool Clear()
