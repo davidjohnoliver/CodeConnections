@@ -12,11 +12,11 @@ using DependsOnThat.Graph.Display;
 
 namespace DependsOnThat.Presentation.Converters
 {
-	public class DisplayNodeGitIndicatorVisibilityConverter : MultiValueConverter<GitStatus, DisplayMode, Visibility>
+	public class DisplayNodeGitIndicatorVisibilityConverter : MultiValueConverter<GitStatus, bool, Visibility>
 	{
-		protected override Visibility ConvertInner(GitStatus value1, DisplayMode value2, object parameter, CultureInfo culture)
+		protected override Visibility ConvertInner(GitStatus value1, bool value2, object parameter, CultureInfo culture)
 		{
-			if (value1 != GitStatus.Unchanged && value2 == DisplayMode.Git)
+			if (value1 != GitStatus.Unchanged && value2)
 			{
 				return Visibility.Visible;
 			}

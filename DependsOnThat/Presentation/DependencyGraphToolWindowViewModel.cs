@@ -85,20 +85,11 @@ namespace DependsOnThat.Presentation
 		private string? _graphingError;
 		public string? GraphingError { get => _graphingError; set => OnValueSet(ref _graphingError, value); }
 
-		private DisplayMode _displayMode;
-		public DisplayMode DisplayMode
+		public bool IsGitModeEnabled
 		{
-			get => _displayMode; 
-			set
-			{
-				if (OnValueSet(ref _displayMode, value))
-				{
-					_graphStateManager.IsGitModeEnabled = value == DisplayMode.Git;
-				}
-			}
+			get => _graphStateManager.IsGitModeEnabled;
+			set => OnValueSet(_graphStateManager.IsGitModeEnabled, v => _graphStateManager.IsGitModeEnabled = v, value);
 		}
-
-		public DisplayMode[] DisplayModes { get; } = EnumUtils.GetValues<DisplayMode>();
 
 		private SelectionList<ProjectIdentifier>? _projects;
 		public SelectionList<ProjectIdentifier>? Projects

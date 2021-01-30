@@ -14,6 +14,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Styles/Button.xaml" />
+				<ResourceDictionary Source="Styles/CheckBox.xaml" />
 				<ResourceDictionary Source="Styles/ListBox.xaml" />
 				<ResourceDictionary Source="Styles/ListBoxItem.xaml" />
 			</ResourceDictionary.MergedDictionaries>
@@ -35,13 +36,15 @@
 									  Height="16"
 									  Moniker="{x:Static vsimagecat:KnownMonikers.Cancel}" />
 			</Button>
-			<ComboBox HorizontalAlignment="Left"
+			<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
+					  HorizontalAlignment="Left"
 					  Margin="3"
-					  IsEditable="True"
-					  IsReadOnly="True"
-					  Text="Mode..."
-					  ItemsSource="{Binding DisplayModes}"
-					  SelectedItem="{Binding DisplayMode, Mode=TwoWay}" />
+					  ToolTip="Git Mode"
+					  IsChecked="{Binding IsGitModeEnabled}">
+				<vsimaging:CrispImage Width="16"
+									  Height="16"
+									  Moniker="{x:Static vsimagecat:KnownMonikers.Git}" />
+			</CheckBox>
 			<Expander Header="Options">
 				<Grid>
 					<Grid.RowDefinitions>

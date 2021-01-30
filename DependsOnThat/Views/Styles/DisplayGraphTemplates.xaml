@@ -52,7 +52,7 @@
 								<Grid.Visibility>
 									<MultiBinding Converter="{StaticResource DisplayNodeGitIndicatorVisibilityConverter}">
 										<Binding Path="GitStatus" />
-										<Binding Path="ParentContext.DisplayMode" />
+										<Binding Path="ParentContext.IsGitModeEnabled" />
 									</MultiBinding>
 								</Grid.Visibility>
 								<Ellipse Width="20"

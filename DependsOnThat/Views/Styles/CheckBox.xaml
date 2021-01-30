@@ -4,6 +4,7 @@
 					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 					xmlns:ext="clr-namespace:DependsOnThat.Views.Behaviours"
 					xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+					xmlns:vstheming="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
 					mc:Ignorable="d">
 
 	<Style x:Key="PinCheckBoxStyle"
@@ -44,6 +45,63 @@
 							<Setter TargetName="PinCheckBoxPath"
 									Property="Opacity"
 									Value="1" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="HighlightCheckBoxStyle"
+		   TargetType="CheckBox">
+		<Setter Property="Padding"
+				Value="2" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="CheckBox">
+					<Border x:Name="border"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Background="Transparent"
+							BorderThickness="1">
+						<ContentPresenter Margin="{TemplateBinding Padding}"
+										  Focusable="False" />
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsChecked"
+								 Value="True">
+							<Setter Property="Background"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarSelectedKey}}" />
+							<Setter Property="vstheming:ImageThemingUtilities.ImageBackgroundColor"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsColors.CommandBarSelectedKey}}" />
+							<Setter Property="BorderBrush"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarSelectedBorderKey}}" />
+						</Trigger>
+						<Trigger Property="IsMouseOver"
+								 Value="true">
+							<Setter Property="Background"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseOverBackgroundGradientKey}}" />
+							<Setter Property="vstheming:ImageThemingUtilities.ImageBackgroundColor"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsColors.CommandBarMouseOverBackgroundMiddle1Key}}" />
+							<Setter Property="BorderBrush"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarBorderKey}}" />
+						</Trigger>
+						<Trigger Property="IsPressed"
+								 Value="true">
+							<Setter Property="Background"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseDownBackgroundGradientKey}}" />
+							<Setter Property="vstheming:ImageThemingUtilities.ImageBackgroundColor"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsColors.CommandBarMouseDownBackgroundMiddleKey}}" />
+							<Setter Property="BorderBrush"
+									TargetName="border"
+									Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarBorderKey}}" />
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
