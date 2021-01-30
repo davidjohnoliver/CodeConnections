@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="DependsOnThat.4af0cec0-ea71-4add-b06a-975b18ba7aed" Version="0.11" Language="en-US" Publisher="David Oliver" />
+        <Identity Id="DependsOnThat.4af0cec0-ea71-4add-b06a-975b18ba7aed" Version="|%CurrentProject%;GetBuildVersion|" Language="en-US" Publisher="David Oliver" />
         <DisplayName>DependsOnThat</DisplayName>
         <Description xml:space="preserve">DependsOnThat visualizes class dependencies within your solution.</Description>
         <MoreInfo>https://github.com/davidjohnoliver/DependsOnThat</MoreInfo>

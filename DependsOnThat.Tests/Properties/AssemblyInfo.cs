@@ -15,6 +15,4 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("5f23b68c-36a5-49f9-8294-16a9f45be3a2")]
 
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+// [assembly: AssemblyVersion("1.0.*")] // Automatically versioned by NB.GV
