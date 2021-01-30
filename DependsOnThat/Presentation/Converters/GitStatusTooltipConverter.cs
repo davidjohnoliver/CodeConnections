@@ -14,8 +14,8 @@ namespace DependsOnThat.Presentation.Converters
 	{
 		protected override string? ConvertInner(GitStatus value, object parameter, CultureInfo culture) => value switch
 		{
-			GitStatus.Modified => "Modified file",
-			GitStatus.New => "New file",
+			GitStatus.Modified => "Modified File",
+			GitStatus.New => "New File",
 			_ => null
 		};
 

@@ -15,8 +15,8 @@ namespace DependsOnThat.Presentation.Converters
 	{
 		protected override string? ConvertInner(GraphLayoutMode value, object parameter, CultureInfo culture) => value switch
 		{
-			GraphLayoutMode.Hierarchy => "Arrange nodes in a vertical dependency hierarchy",
-			GraphLayoutMode.Blob => "Arrange nodes in a space-efficient packing",
+			GraphLayoutMode.Hierarchy => "Vertical Dependency Hierarchy",
+			GraphLayoutMode.Blob => "Space-efficient Packing",
 			_ => default
 		};
 

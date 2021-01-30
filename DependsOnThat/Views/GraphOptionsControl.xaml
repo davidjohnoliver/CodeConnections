@@ -30,7 +30,7 @@
 					HorizontalAlignment="Left"
 					VerticalAlignment="Top"
 					Margin="3"
-					ToolTip="Clear pinned graph nodes"
+					ToolTip="Clear Graph"
 					Command="{Binding ClearRootsCommand}">
 				<vsimaging:CrispImage Width="16"
 									  Height="16"
