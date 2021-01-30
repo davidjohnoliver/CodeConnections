@@ -24,6 +24,8 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1000 # Needed for NB.GV - https://github.com/dotnet/Nerdbank.GitVersioning/issues/423
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
