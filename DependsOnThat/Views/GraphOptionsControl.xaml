@@ -20,32 +20,35 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Border Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
+	<Border Padding="5"
+		Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
 			vstheming:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsshell:VsColors.CommandBarGradientMiddleKey}}"
 			BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBorderKey}}"
 			BorderThickness="0"
-			CornerRadius="3">
+			CornerRadius="5">
 		<StackPanel>
-			<Button Style="{StaticResource IconButtonStyle}"
-					HorizontalAlignment="Left"
-					VerticalAlignment="Top"
-					Margin="3"
-					ToolTip="Clear Graph"
-					Command="{Binding ClearRootsCommand}">
-				<vsimaging:CrispImage Width="16"
-									  Height="16"
-									  Moniker="{x:Static vsimagecat:KnownMonikers.Cancel}" />
-			</Button>
-			<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
-					  HorizontalAlignment="Left"
-					  Margin="3"
-					  ToolTip="Git Mode"
-					  IsChecked="{Binding IsGitModeEnabled}">
-				<vsimaging:CrispImage Width="16"
-									  Height="16"
-									  Moniker="{x:Static vsimagecat:KnownMonikers.Git}" />
-			</CheckBox>
-			<Expander Header="Options">
+			<WrapPanel>
+				<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
+						  HorizontalAlignment="Left"
+						  Margin="3"
+						  ToolTip="Git Mode"
+						  IsChecked="{Binding IsGitModeEnabled}">
+					<vsimaging:CrispImage Width="16"
+										  Height="16"
+										  Moniker="{x:Static vsimagecat:KnownMonikers.Git}" />
+				</CheckBox>
+				<Button Style="{StaticResource IconButtonStyle}"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Top"
+						Margin="3"
+						ToolTip="Clear Graph"
+						Command="{Binding ClearRootsCommand}">
+					<vsimaging:CrispImage Width="16"
+										  Height="16"
+										  Moniker="{x:Static vsimagecat:KnownMonikers.Cancel}" />
+				</Button>
+			</WrapPanel>
+			<Expander Header="More options...">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
