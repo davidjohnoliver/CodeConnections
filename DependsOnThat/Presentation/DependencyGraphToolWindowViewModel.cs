@@ -91,6 +91,16 @@ namespace DependsOnThat.Presentation
 			set => OnValueSet(_graphStateManager.IsGitModeEnabled, v => _graphStateManager.IsGitModeEnabled = v, value);
 		}
 
+		private bool _isActiveAlwaysIncluded = true; // TODO: persist setting
+		/// <summary>
+		/// Should the active document (and its connections) automatically be included in the graph?
+		/// </summary>
+		public bool IsActiveAlwaysIncluded
+		{
+			get => _isActiveAlwaysIncluded;
+			set => OnValueSet(ref _isActiveAlwaysIncluded, value);
+		}
+
 		private SelectionList<ProjectIdentifier>? _projects;
 		public SelectionList<ProjectIdentifier>? Projects
 		{
@@ -228,7 +238,7 @@ namespace DependsOnThat.Presentation
 		{
 			SetActiveDocumentAsSelected();
 			var activeDocument = _documentsService.GetActiveDocument();
-			if (activeDocument != null)
+			if (activeDocument != null && IsActiveAlwaysIncluded)
 			{
 				var solution = _roslynService.GetCurrentSolution();
 				const int maxLinks = 30;
