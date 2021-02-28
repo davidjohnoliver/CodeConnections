@@ -174,7 +174,7 @@ namespace DependsOnThat.Graph.Display
 
 			_needsDisplayGraphUpdate = true;
 
-			if (_currentUpdateState is > UpdateState.NotUpdating and < UpdateState.RebuildingDisplayGraph)
+			if (_currentUpdateState is > UpdateState.WaitingForIdle and < UpdateState.RebuildingDisplayGraph)
 			{
 				// Nothing to do, the display graph update will take place with up-to-date parameters after node graph is updated
 				return;
@@ -201,7 +201,7 @@ namespace DependsOnThat.Graph.Display
 
 			_pendingSubgraphOperations.Add(operation);
 
-			if (_currentUpdateState != UpdateState.NotUpdating)
+			if (_currentUpdateState > UpdateState.WaitingForIdle)
 			{
 				// Nothing to do. Either we haven't reached subgraph updates and it'll be considered then, or we've passed it and another update will 
 				// be queued up at the end of the current one.
