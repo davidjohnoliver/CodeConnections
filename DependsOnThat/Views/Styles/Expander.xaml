@@ -339,7 +339,8 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ToggleButton}">
-					<Border Padding="{TemplateBinding Padding}">
+					<Border Padding="{TemplateBinding Padding}"
+							ToolTip="More options...">
 						<Grid Background="Transparent"
 							  SnapsToDevicePixels="False">
 							<Grid.ColumnDefinitions>

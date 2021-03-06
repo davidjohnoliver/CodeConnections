@@ -15,6 +15,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Styles/Button.xaml" />
 				<ResourceDictionary Source="Styles/CheckBox.xaml" />
+				<ResourceDictionary Source="Styles/Expander.xaml" />
 				<ResourceDictionary Source="Styles/ListBox.xaml" />
 				<ResourceDictionary Source="Styles/ListBoxItem.xaml" />
 			</ResourceDictionary.MergedDictionaries>
@@ -38,7 +39,7 @@
 			BorderThickness="0"
 			CornerRadius="5">
 		<StackPanel>
-			<WrapPanel Margin="0,0,0,10">
+			<WrapPanel Margin="0,0,0,15">
 				<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
 						  HorizontalAlignment="Left"
 						  Margin="3"
@@ -69,7 +70,14 @@
 										  Moniker="{x:Static vsimagecat:KnownMonikers.Cancel}" />
 				</Button>
 			</WrapPanel>
-			<Expander Header="More options...">
+			<Expander Style="{StaticResource OptionsExpanderStyle}">
+				<Expander.Header>
+					<vsimaging:CrispImage Grid.Column="1"
+										  Width="16"
+										  Height="16"
+										  Margin="2,2,3,2"
+										  Moniker="{x:Static vsimagecat:KnownMonikers.Settings}" />
+				</Expander.Header>
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
