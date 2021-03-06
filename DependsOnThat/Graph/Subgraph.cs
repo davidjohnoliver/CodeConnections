@@ -116,5 +116,12 @@ namespace DependsOnThat.Graph
 			_additionalNodes.Clear();
 			return true;
 		}
+
+		private bool SetSelected(NodeKey? selected)
+		{
+			var result = !Equals(_selectedNode, selected);
+			_selectedNode = selected;
+			return result;
+		}
 	}
 }

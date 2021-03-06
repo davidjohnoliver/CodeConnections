@@ -77,6 +77,21 @@ namespace DependsOnThat.Graph.Display
 			}
 		}
 
+		private bool _isActiveAlwaysIncluded = true; // TODO: persist setting
+		public bool IsActiveAlwaysIncluded
+		{
+			get => _isActiveAlwaysIncluded;
+			set
+			{
+				var didChangeToTrue = value && !_isActiveAlwaysIncluded;
+				_isActiveAlwaysIncluded = value;
+				if (didChangeToTrue)
+				{
+					InvalidateActiveDocument();
+				}
+			}
+		}
+
 		/// <summary>
 		/// Raised whenever a new copy of the display graph is created.
 		/// </summary>
@@ -95,6 +110,7 @@ namespace DependsOnThat.Graph.Display
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly Func<Solution> _getCurrentSolution;
 		private readonly Func<CancellationToken, Task<ICollection<GitInfo>>> _getGitInfo;
+		private readonly Func<string?> _getActiveDocument;
 		private readonly object _nodeParentContext;
 		private bool _needsDisplayGraphUpdate;
 		/// <summary>
@@ -112,11 +128,12 @@ namespace DependsOnThat.Graph.Display
 		private Subgraph _includedNodes = new();
 		private readonly List<Subgraph.Operation> _pendingSubgraphOperations = new();
 
-		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, object nodeParentContext)
+		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, Func<string?> getActiveDocument, object nodeParentContext)
 		{
 			_joinableTaskFactory = joinableTaskFactory;
 			_getCurrentSolution = getCurrentSolution ?? throw new ArgumentNullException(nameof(getCurrentSolution));
 			_getGitInfo = getGitInfo ?? throw new ArgumentNullException(nameof(getGitInfo));
+			_getActiveDocument = getActiveDocument;
 			_nodeParentContext = nodeParentContext;
 		}
 
@@ -221,6 +238,8 @@ namespace DependsOnThat.Graph.Display
 			}
 		}
 
+		public void InvalidateActiveDocument() => EnsureStepReruns(UpdateState.IncludeActive);
+
 		/// <summary>
 		/// Returns a <see cref="GraphStatistics"/> object describing the full <see cref="NodeGraph"/>.
 		/// </summary>
@@ -249,6 +268,29 @@ namespace DependsOnThat.Graph.Display
 		/// asynchronous update, and won't do anything if the node isn't found in the subgraph.
 		/// </summary>
 		public void TogglePinnedInSubgraph(NodeKey node, bool setPinned) => _includedNodes.TogglePinned(node, setPinned);
+
+		/// <summary>
+		/// Ensure that the <paramref name="stepToRerun"/> update step runs ASAP. If an update is active and <paramref name="stepToRerun"/> is 
+		/// running or has run, allow the update to complete and then run a new one.
+		/// </summary>
+		/// <param name="stepToRerun"></param>
+		private void EnsureStepReruns(UpdateState stepToRerun)
+		{
+			if (_currentUpdateState <= UpdateState.WaitingForIdle)
+			{
+				// No update running, run one
+				RunUpdate(waitForIdle: false);
+				return;
+			}
+
+			if (_currentUpdateState >= stepToRerun)
+			{
+				// Step is already running or been passed - ensure a new update runs so the step can run with up-to-date values
+				_needsRerun = true;
+			}
+
+			// Wait for step to be reached or rerun to launch
+		}
 
 		/// <summary>
 		/// Synchronous entry point for the main update routine.
@@ -328,6 +370,14 @@ namespace DependsOnThat.Graph.Display
 			ThreadUtils.ThrowIfNotOnUIThread();
 
 			CompilationCache? compilationCache = null;
+			CompilationCache EnsureCompilationCache()
+			{
+				var cache = compilationCache ?? new CompilationCache();
+				var solution = _getCurrentSolution();
+				cache.SetSolution(solution);
+				return cache;
+			}
+
 			try
 			{
 				if (waitForIdle)
@@ -340,9 +390,7 @@ namespace DependsOnThat.Graph.Display
 				{
 					_currentUpdateState = UpdateState.RebuildingDisplayGraph;
 
-					var solution = _getCurrentSolution();
-					compilationCache = new CompilationCache();
-					compilationCache.SetSolution(solution);
+					compilationCache = EnsureCompilationCache();
 					var nodeGraph = await RebuildNodeGraph(compilationCache, ct);
 					if (!ct.IsCancellationRequested)
 					{
@@ -361,9 +409,7 @@ namespace DependsOnThat.Graph.Display
 					_currentUpdateState = UpdateState.UpdatingNodeGraph;
 					var invalidatedDocuments = _invalidatedDocuments.ToList();
 					_invalidatedDocuments.Clear();
-					var solution = _getCurrentSolution();
-					compilationCache ??= new CompilationCache();
-					compilationCache.SetSolution(solution);
+					compilationCache = EnsureCompilationCache();
 					var alteredNodes = await _nodeGraph.Update(compilationCache, invalidatedDocuments, ct);
 					_needsDisplayGraphUpdate |= alteredNodes?.Count > 0;
 				}
@@ -399,6 +445,23 @@ namespace DependsOnThat.Graph.Display
 					}
 
 					_statisticsTCS = null;
+				}
+
+				if (IsActiveAlwaysIncluded && _nodeGraph != null)
+				{
+					_currentUpdateState = UpdateState.IncludeActive;
+					var activeDocument = _getActiveDocument();
+					compilationCache = EnsureCompilationCache();
+					if (activeDocument != null)
+					{
+						var activeSymbols = await compilationCache.GetDeclaredSymbolsFromFilePath(activeDocument, ct);
+						var activeNodeKey = activeSymbols.FirstOrDefault()?.ToNodeKey();
+						const int maxLinks = 30; // TODO: this, properly
+						if (activeNodeKey != null)
+						{
+							ModifySubgraph(Subgraph.SetSelected(activeNodeKey, maxLinks));
+						}
+					}
 				}
 
 				if (_pendingSubgraphOperations.Count > 0 && _nodeGraph != null)
@@ -552,13 +615,23 @@ namespace DependsOnThat.Graph.Display
 
 		private enum UpdateState
 		{
+			// Inactive states
 			NotUpdating,
 			WaitingForIdle,
+
+			// NodeGraph modifications
 			RebuildingNodeGraph,
 			UpdatingNodeGraph,
+
+			// Metadata and analyses
 			UpdatingGitInfo,
 			AnalyzingFullGraphStatistics,
+
+			// Update subgraph model
+			IncludeActive,
 			UpdatingSubgraph,
+
+			// Build final display graph
 			RebuildingDisplayGraph,
 		}
 	}

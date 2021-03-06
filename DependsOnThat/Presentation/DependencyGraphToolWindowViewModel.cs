@@ -91,14 +91,13 @@ namespace DependsOnThat.Presentation
 			set => OnValueSet(_graphStateManager.IsGitModeEnabled, v => _graphStateManager.IsGitModeEnabled = v, value);
 		}
 
-		private bool _isActiveAlwaysIncluded = true; // TODO: persist setting
 		/// <summary>
 		/// Should the active document (and its connections) automatically be included in the graph?
 		/// </summary>
 		public bool IsActiveAlwaysIncluded
 		{
-			get => _isActiveAlwaysIncluded;
-			set => OnValueSet(ref _isActiveAlwaysIncluded, value);
+			get => _graphStateManager.IsActiveAlwaysIncluded;
+			set => OnValueSet(_graphStateManager.IsActiveAlwaysIncluded, v => _graphStateManager.IsActiveAlwaysIncluded = v, value);
 		}
 
 		private SelectionList<ProjectIdentifier>? _projects;
@@ -151,7 +150,7 @@ namespace DependsOnThat.Presentation
 			LogStatsCommand = SimpleCommand.Create(LogStats);
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
-			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, this);
+			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, getActiveDocument: _documentsService.GetActiveDocument, this);
 			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 
 			UpdateProjects();
@@ -237,18 +236,9 @@ namespace DependsOnThat.Presentation
 		private void OnActiveDocumentChanged()
 		{
 			SetActiveDocumentAsSelected();
-			var activeDocument = _documentsService.GetActiveDocument();
-			if (activeDocument != null && IsActiveAlwaysIncluded)
+			if (IsActiveAlwaysIncluded)
 			{
-				var solution = _roslynService.GetCurrentSolution();
-				const int maxLinks = 30;
-				_graphStateManager.ModifySubgraph(Subgraph.SetSelected(GetNodeKey, maxLinks));
-
-				async Task<NodeKey?> GetNodeKey(CancellationToken ct)
-				{
-					var symbols = await solution.GetDeclaredSymbolsFromFilePath(activeDocument, ct);
-					return symbols.FirstOrDefault()?.ToNodeKey();
-				}
+				_graphStateManager.InvalidateActiveDocument();
 			}
 		}
 

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DependsOnThat.Extensions;
+using DependsOnThat.Utilities;
 
 namespace DependsOnThat.Graph
 {
@@ -28,12 +29,9 @@ namespace DependsOnThat.Graph
 		/// <summary>
 		/// An operation to set a particular node as 'selected', adding it and its neighbours as <see cref="AdditionalNodes"/>.
 		/// </summary>
-		/// <param name="getSelected">Function to asynchronously resolve <see cref="NodeKey"/> for the 'selected' node.</param>
+
 		/// <param name="maxLinks">The maximum number of links to be included. If there are more neighbours than this, they will be omitted.</param>
-		public static Operation SetSelected(Func<CancellationToken, Task<NodeKey?>> getSelected, int maxLinks) => GetCompositeOperation(
-			new ClearAdditionalsOperation(),
-			new AddAdditionalFromSelectedOperation(getSelected, maxLinks)
-		);
+		public static Operation SetSelected(NodeKey selected, int maxLinks) => new UpdateSelectedOperation(selected, maxLinks);
 
 		/// <summary>
 		/// An operation to 'sanitize' the subgraph by removing any nodes that aren't found in the full <see cref="NodeGraph"/>.
@@ -58,7 +56,7 @@ namespace DependsOnThat.Graph
 			/// <param name="fullGraph">The full <see cref="NodeGraph"/> set.</param>
 			/// <returns>True if <paramref name="subgraph"/> was modified by the operation, false otherwise.</returns>
 
-			public abstract Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct);
+			public abstract Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct); // TODO: there's no longer a compelling reason for this to be asynchronous
 		}
 
 		private class CompositeOperation : Operation
@@ -129,7 +127,7 @@ namespace DependsOnThat.Graph
 					}
 					else
 					{
-						modified |= subgraph.RemoveNode(node); 
+						modified |= subgraph.RemoveNode(node);
 					}
 				}
 
@@ -137,45 +135,44 @@ namespace DependsOnThat.Graph
 			}
 		}
 
-		private class ClearAdditionalsOperation : Operation
+		private class UpdateSelectedOperation : Operation
 		{
-			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct) => Task.FromResult(subgraph.ClearAdditional());
-		}
+			private readonly NodeKey _selected;
 
-		private class AddAdditionalFromSelectedOperation : Operation
-		{
-			private readonly Func<CancellationToken, Task<NodeKey?>> _getSelected;
 			private readonly int _maxLinks;
 
-			public AddAdditionalFromSelectedOperation(Func<CancellationToken, Task<NodeKey?>> getSelected, int maxLinks)
+			public UpdateSelectedOperation(NodeKey selected, int maxLinks)
 			{
-				_getSelected = getSelected ?? throw new ArgumentNullException(nameof(getSelected));
+				_selected = selected ?? throw new ArgumentNullException(nameof(selected));
 				_maxLinks = maxLinks;
 			}
 
-			public override async Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
+			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
 			{
-				var root = await _getSelected(ct);
+				var currentAdditionals = subgraph.AdditionalNodes;
 				var nodes = fullGraph.Nodes;
-				if (ct.IsCancellationRequested || root == null || !nodes.ContainsKey(root))
-				{
-					return false;
-				}
+				var newAdditionals = nodes.ContainsKey(_selected) ?
+					nodes[_selected].AllLinkKeys(includeThis: true) :
+					ArrayUtils.GetEmpty<NodeKey>();
+
+				var (isDifferent, addedNodes, removedNodes) = newAdditionals.GetUnorderedDiff(currentAdditionals);
 
 				var modified = false;
-				modified |= subgraph.AddAdditionalNode(root);
-				subgraph._selectedNode = root;
-
-				var rootNode = nodes[root];
-				if (rootNode.LinkCount <= _maxLinks)
+				if (isDifferent)
 				{
-					foreach (var link in rootNode.AllLinks())
+					foreach (var removed in removedNodes)
 					{
-						modified |= subgraph.AddAdditionalNode(link.Key);
+						modified |= subgraph.RemoveNode(removed);
+					}
+					foreach (var added in addedNodes)
+					{
+						modified |= subgraph.AddAdditionalNode(added);
 					}
 				}
 
-				return modified;
+				modified |= subgraph.SetSelected(_selected);
+
+				return Task.FromResult(modified);
 			}
 		}
 

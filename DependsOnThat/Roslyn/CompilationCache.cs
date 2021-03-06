@@ -285,6 +285,45 @@ namespace DependsOnThat.Roslyn
 			return compilation.SyntaxTrees;
 		}
 
+		/// <summary>
+		/// Get symbols of all types declared within the file at the supplied <paramref name="filePath"/>.
+		/// </summary>
+		public async Task<IEnumerable<ITypeSymbol>> GetDeclaredSymbolsFromFilePath(string filePath, CancellationToken ct)
+		{
+			Solution? solution;
+			(solution, ct) = GetSolution(ct);
+			var id = solution?.GetDocumentIdsWithFilePath(filePath).FirstOrDefault();
+			var document = solution?.GetDocument(id);
+
+			if (document == null)
+			{
+				return Default();
+			}
+
+			var syntaxRoot = await document.GetSyntaxRootAsync(ct);
+			if (ct.IsCancellationRequested)
+			{
+				return Default();
+			}
+
+			if (syntaxRoot == null)
+			{
+				return Default();
+			}
+
+			var semanticModel = await GetSemanticModel(syntaxRoot, document.Project.ToIdentifier(), ct);
+
+			if (syntaxRoot == null || semanticModel == null)
+			{
+				return Default();
+			}
+
+			var declaredSymbols = syntaxRoot.GetAllDeclaredTypes(semanticModel);
+			return declaredSymbols;
+
+			ITypeSymbol[] Default() => ArrayUtils.GetEmpty<ITypeSymbol>();
+		}
+
 		public Document? GetDocument(DocumentId? documentId)
 		{
 			if (!_isActive)
