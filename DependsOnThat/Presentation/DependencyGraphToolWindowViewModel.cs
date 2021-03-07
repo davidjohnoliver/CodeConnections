@@ -48,10 +48,10 @@ namespace DependsOnThat.Presentation
 		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
 		private static IBidirectionalGraph<DisplayNode, DisplayEdge> Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
 
-		public bool ExcludePureGenerated
+		public bool IncludePureGenerated
 		{
-			get => _graphStateManager.ExcludePureGenerated;
-			set => OnValueSet(_graphStateManager.ExcludePureGenerated, v => _graphStateManager.ExcludePureGenerated = v, value);
+			get => _graphStateManager.IncludePureGenerated;
+			set => OnValueSet(_graphStateManager.IncludePureGenerated, v => _graphStateManager.IncludePureGenerated = v, value);
 		}
 
 		private DisplayNode? _selectedNode;

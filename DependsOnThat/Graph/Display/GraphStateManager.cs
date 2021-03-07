@@ -24,16 +24,16 @@ namespace DependsOnThat.Graph.Display
 	/// </summary>
 	public sealed class GraphStateManager : IDisposable
 	{
-		private bool _excludePureGenerated;
+		private bool _includePureGenerated;
 		/// <summary>
-		/// Should types defined exclusively in generated code be excluded?
+		/// Should types defined exclusively in generated code be included?
 		/// </summary>
-		public bool ExcludePureGenerated
+		public bool IncludePureGenerated
 		{
-			get => _excludePureGenerated;
+			get => _includePureGenerated;
 			set
 			{
-				_excludePureGenerated = value;
+				_includePureGenerated = value;
 				InvalidateNodeGraph();
 			}
 		}
@@ -521,7 +521,7 @@ namespace DependsOnThat.Graph.Display
 		private async Task<NodeGraph?> RebuildNodeGraph(CompilationCache compilationCache, CancellationToken ct)
 		{
 			var includedProjects = _includedProjects;
-			var excludePureGenerated = ExcludePureGenerated;
+			var excludePureGenerated = !IncludePureGenerated;
 			var nodeGraph = await Task.Run(async () =>
 			{
 				return await NodeGraph.BuildGraph(compilationCache, includedProjects, excludePureGenerated, ct);

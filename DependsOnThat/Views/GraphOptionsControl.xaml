@@ -93,8 +93,9 @@
 							 ItemContainerStyle="{StaticResource ListBoxItemLayoutModeStyle}" />
 					<CheckBox Grid.Row="1"
 							  Margin="0,10,0,0"
-							  Content="Exclude generated types"
-							  IsChecked="{Binding ExcludePureGenerated, Mode=TwoWay}" />
+							  Content="Include generated"
+							  ToolTip="Include types defined exclusively in generated code?"
+							  IsChecked="{Binding IncludePureGenerated, Mode=TwoWay}" />
 					<TextBlock Grid.Row="2"
 							   Text="Included projects:"
 							   Margin="0,12,0,3" />
