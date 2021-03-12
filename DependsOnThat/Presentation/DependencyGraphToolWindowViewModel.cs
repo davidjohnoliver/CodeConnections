@@ -118,12 +118,18 @@ namespace DependsOnThat.Presentation
 					{
 						value.SelectionChanged += OnProjectsSelectionChanged;
 					}
-					OnProjectsSelectionChanged();
+					_graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
 				}
 			}
 		}
 
-		private void OnProjectsSelectionChanged() => _graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
+		private string[]? _excludedProjects;
+
+		private void OnProjectsSelectionChanged()
+		{
+			_excludedProjects = GetExcludedProjects();
+			_graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
+		}
 
 		private GraphLayoutMode _graphLayoutMode = GraphLayoutMode.Hierarchy; // TODO: saved setting
 		public GraphLayoutMode LayoutMode { get => _graphLayoutMode; set => OnValueSet(ref _graphLayoutMode, value); }
@@ -204,20 +210,21 @@ namespace DependsOnThat.Presentation
 				IsGitModeEnabled = settings.IsGitModeEnabled;
 				IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
 			}
-			UpdateProjects(settings?.ExcludedProjects);
+			_excludedProjects = settings?.ExcludedProjects;
+			UpdateProjects();
 		}
 
 		private string[]? GetExcludedProjects() => Projects?.UnselectedItems().Select(pi => pi.ProjectName).ToArray();
 
 		private void OnSolutionSettingsSaving()
 		{
-			_settingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, GetExcludedProjects(), IsActiveAlwaysIncluded));
+			_settingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, _excludedProjects, IsActiveAlwaysIncluded));
 		}
 
 		private void OnSolutionChanged()
 		{
 			ResetNodeGraph();
-			UpdateProjects(GetExcludedProjects());
+			UpdateProjects();
 		}
 
 
@@ -255,7 +262,7 @@ namespace DependsOnThat.Presentation
 		private static StatisticsReporter GetStatsReporter(GraphStatistics stats)
 			=> new StatisticsReporter(stats, new ConsoleHeaderFormatter(), new MarkdownStyleTableFormatter(), CompactListFormatter.OpenCommaSeparated, CompactListFormatter.CurlyCommaSeparated, showTopXDeps: (20, 30), showTopXClusters: (10, 20));
 
-		private void UpdateProjects(string[]? excludedProjects)
+		private void UpdateProjects()
 		{
 			var ct = _projectUpdatesRegistration.GetNewToken();
 			var solutionPath = _solutionService.GetSolutionPath();
@@ -268,9 +275,9 @@ namespace DependsOnThat.Presentation
 				}
 				solutionPath?.ToString();
 				Projects = new SelectionList<ProjectIdentifier>(projects);
-				if (excludedProjects != null)
+				if (_excludedProjects != null)
 				{
-					foreach (var projectName in excludedProjects)
+					foreach (var projectName in _excludedProjects)
 					{
 						if (Projects.FirstOrDefault(pi => pi.ProjectName == projectName) is { } project)
 						{
