@@ -29,7 +29,15 @@ namespace DependsOnThat.Services
 		public string? GetActiveDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			return _dte.ActiveDocument?.FullName;
+			try
+			{
+				return _dte.ActiveDocument?.FullName;
+			}
+			catch (Exception) // VS doesn't seem to like ActiveDocument being called when eg project settings are open
+			{
+				// TODO: log
+				return null;
+			}
 		}
 
 		public void OpenFileAsPreview(string fileName)
