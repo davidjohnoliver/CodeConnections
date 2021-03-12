@@ -76,6 +76,7 @@
     <Compile Include="Extensions\NodePathExtensions.cs" />
     <Compile Include="Extensions\OutputServiceExtensions.cs" />
     <Compile Include="Extensions\ProjectExtensions.cs" />
+    <Compile Include="Extensions\SelectionListExtensions.cs" />
     <Compile Include="Extensions\SolutionExtensions.cs" />
     <Compile Include="Extensions\StatusEntryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Presentation\Converters\DisplayEdgeStrokeDashArrayConverter.cs" />
     <Compile Include="Graph\Display\DisplayNode.cs" />
     <Compile Include="Graph\Display\MultiDependencyDisplayEdge.cs" />
+    <Compile Include="Presentation\PersistedSolutionSettings.cs" />
     <Compile Include="Presentation\SimpleCommand.cs" />
     <Compile Include="Graph\Display\SimpleDisplayEdge.cs" />
     <Compile Include="Presentation\SimpleToggleCommand.cs" />
@@ -141,9 +143,11 @@
     <Compile Include="Services\IModificationsService.cs" />
     <Compile Include="Services\IOutputService.cs" />
     <Compile Include="Services\IRoslynService.cs" />
+    <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Services\ISolutionService.cs" />
     <Compile Include="Services\OutputWindowOutputService.cs" />
     <Compile Include="Services\RoslynService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\SolutionService.cs" />
     <Compile Include="Statistics\DiscreteStatisticsResult.cs" />
     <Compile Include="Statistics\DisplayNodeAndEdges.cs" />
@@ -161,6 +165,7 @@
     <Compile Include="Utilities\ThreadUtils.cs" />
     <Compile Include="Utilities\TimeUtils.cs" />
     <Compile Include="Utilities\TypeUtils.cs" />
+    <Compile Include="Utilities\VSStreamWrapper.cs" />
     <Compile Include="Views\Behaviours\MultiSelection.cs" />
     <Compile Include="Views\Behaviours\PinCheckBoxBehaviour.cs" />
     <Compile Include="Views\Behaviours\ToggleButtonExtensions.cs" />

@@ -15,7 +15,8 @@ namespace DependsOnThat.Services
 	{
 		private readonly DTE _dte;
 
-		public event Action? SolutionChanged;
+		public event Action? SolutionOpened;
+		public event Action? SolutionClosed;
 
 		public SolutionService(EnvDTE.DTE dte)
 		{
@@ -43,7 +44,7 @@ namespace DependsOnThat.Services
 
 		public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
 		{
-			SolutionChanged?.Invoke();
+			SolutionOpened?.Invoke();
 			return VSConstants.S_OK;
 		}
 
@@ -53,7 +54,7 @@ namespace DependsOnThat.Services
 
 		public int OnAfterCloseSolution(object pUnkReserved)
 		{
-			SolutionChanged?.Invoke();
+			SolutionClosed?.Invoke();
 			return VSConstants.S_OK;
 		}
 

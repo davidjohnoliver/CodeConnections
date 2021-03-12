@@ -79,9 +79,12 @@ namespace DependsOnThat.VSIX
 
 			var gitService = new GitService(solutionService).DisposeWith(_disposables);
 
+			var solutionPersistence = (IVsSolutionPersistence)GetService(typeof(SVsSolutionPersistence));
+			var settingsService = new SettingsService(solutionPersistence);
+
 			if (Content is DependencyGraphToolWindowControl content)
 			{
-				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService, roslynService)
+				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService, roslynService, settingsService)
 					.DisposeWith(_disposables);
 			}
 		}

@@ -17,6 +17,7 @@ namespace DependsOnThat.Collections
 	{
 		private readonly IList<T> _inner;
 
+		// TODO: maintain the selection independently of the bound backing view
 		/// <summary>
 		/// The items in the list which are currently selected.
 		/// </summary>
@@ -31,6 +32,10 @@ namespace DependsOnThat.Collections
 		{
 			_inner = new List<T>(collection);
 		}
+
+		public bool SelectItem(T item) => base.SelectItem(item);
+
+		public bool DeselectItem(T item) => base.DeselectItem(item);
 
 		#region IList<T>
 		public T this[int index] { get => _inner[index]; set => _inner[index] = value; }

@@ -25,10 +25,10 @@ namespace DependsOnThat.Services
 		{
 			_solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
 			_checkReady = UpdateRepositoryPath();
-			_solutionService.SolutionChanged += OnSolutionChanged;
+			_solutionService.SolutionOpened += OnSolutionOpened;
 		}
 
-		private void OnSolutionChanged()
+		private void OnSolutionOpened()
 		{
 			_checkReady = UpdateRepositoryPath();
 		}
@@ -73,7 +73,7 @@ namespace DependsOnThat.Services
 
 		public void Dispose()
 		{
-			_solutionService.SolutionChanged -= OnSolutionChanged;
+			_solutionService.SolutionOpened -= OnSolutionOpened;
 		}
 	}
 }

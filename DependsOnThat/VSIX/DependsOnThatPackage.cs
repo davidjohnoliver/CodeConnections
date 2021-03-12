@@ -3,7 +3,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
 namespace DependsOnThat.VSIX
@@ -29,12 +32,14 @@ namespace DependsOnThat.VSIX
 	[Guid(DependsOnThatPackage.PackageGuidString)]
 	[ProvideMenuResource("Menus.ctmenu", 1)]
 	[ProvideToolWindow(typeof(DependsOnThat.VSIX.DependencyGraphToolWindow))]
-	public sealed class DependsOnThatPackage : AsyncPackage
+	public sealed class DependsOnThatPackage : AsyncPackage, IVsPersistSolutionOpts
 	{
 		/// <summary>
 		/// DependsOnThatPackage GUID string.
 		/// </summary>
 		public const string PackageGuidString = "a2b91160-b751-4d85-967c-136fed47e2b2";
+
+		internal static event Action? SaveUserOptions;
 
 		#region Package Members
 
@@ -55,5 +60,19 @@ namespace DependsOnThat.VSIX
 		}
 
 		#endregion
+
+
+
+		int IVsPersistSolutionOpts.SaveUserOptions(IVsSolutionPersistence pPersistence)
+		{
+			SaveUserOptions?.Invoke();
+			return VSConstants.S_OK;
+		}
+
+		int IVsPersistSolutionOpts.LoadUserOptions(IVsSolutionPersistence pPersistence, uint grfLoadOpts) => VSConstants.S_OK;
+
+		int IVsPersistSolutionOpts.WriteUserOptions(IStream pOptionsStream, string pszKey) => VSConstants.S_OK;
+
+		int IVsPersistSolutionOpts.ReadUserOptions(IStream pOptionsStream, string pszKey) => VSConstants.S_OK;
 	}
 }

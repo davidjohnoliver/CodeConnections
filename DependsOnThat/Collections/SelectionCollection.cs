@@ -24,5 +24,27 @@ namespace DependsOnThat.Collections
 		void ISelectionCollection.RaiseSelectionChanged() => SelectionChanged?.Invoke();
 
 		void ISelectionCollection.SetSelectedItemsBackingCollection(IList? backingCollection) => SelectedItemsBacking = backingCollection;
+
+		protected bool SelectItem(object? item)
+		{
+			if (SelectedItemsBacking != null && !SelectedItemsBacking.Contains(item))
+			{
+				SelectedItemsBacking.Add(item);
+				return true;
+			}
+
+			return false;
+		}
+
+		protected bool DeselectItem(object? item)
+		{
+			if (SelectedItemsBacking?.Contains(item) ?? false)
+			{
+				SelectedItemsBacking.Remove(item);
+				return true;
+			}
+
+			return false;
+		}
 	}
 }

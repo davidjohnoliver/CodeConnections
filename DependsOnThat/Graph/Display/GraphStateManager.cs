@@ -147,6 +147,7 @@ namespace DependsOnThat.Graph.Display
 			_invalidatedDocuments.Clear();
 			_nodeGraph = null;
 			ClearSubgraphAndPendingOperations();
+			_previousGitInfos = ArrayUtils.GetEmpty<GitInfo>(); // Ensure Git nodes are re-added if needed
 			RunUpdate(waitForIdle: false);
 		}
 

@@ -36,6 +36,7 @@ namespace DependsOnThat.Presentation
 		private readonly ISolutionService _solutionService;
 		private readonly IOutputService _outputService;
 		private readonly IModificationsService _modificationsService;
+		private readonly ISettingsService _settingsService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 
 		private readonly GraphStateManager _graphStateManager;
@@ -117,6 +118,7 @@ namespace DependsOnThat.Presentation
 					{
 						value.SelectionChanged += OnProjectsSelectionChanged;
 					}
+					OnProjectsSelectionChanged();
 				}
 			}
 		}
@@ -131,7 +133,7 @@ namespace DependsOnThat.Presentation
 		public ICommand LogStatsCommand { get; }
 		public IToggleCommand TogglePinnedCommand { get; }
 
-		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService)
+		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService, ISettingsService settingsService)
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));
@@ -140,9 +142,11 @@ namespace DependsOnThat.Presentation
 			_solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
 			_outputService = outputService ?? throw new ArgumentNullException(nameof(outputService));
 			_modificationsService = modificationsService ?? throw new ArgumentNullException(nameof(modificationsService));
-
+			_settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 			_documentsService.ActiveDocumentChanged += OnActiveDocumentChanged;
-			_solutionService.SolutionChanged += OnSolutionChanged;
+			_solutionService.SolutionOpened += OnSolutionOpened;
+			_solutionService.SolutionClosed += OnSolutionClosed;
+			_settingsService.SolutionSettingsSaving += OnSolutionSettingsSaving;
 			_modificationsService.DocumentInvalidated += OnDocumentInvalidated;
 			_modificationsService.SolutionInvalidated += OnSolutionChanged;
 
@@ -153,7 +157,7 @@ namespace DependsOnThat.Presentation
 			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, getActiveDocument: _documentsService.GetActiveDocument, this);
 			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 
-			UpdateProjects();
+			ApplySettings();
 		}
 
 		private void OnDisplayGraphChanged(IBidirectionalGraph<DisplayNode, DisplayEdge> newGraph, GraphStatistics statistics)
@@ -178,10 +182,42 @@ namespace DependsOnThat.Presentation
 			_graphStateManager.InvalidateNodeGraph();
 		}
 
+		private void OnSolutionOpened()
+		{
+			ResetNodeGraph();
+			ApplySettings();
+		}
+
+		private void OnSolutionClosed()
+		{
+			_projectUpdatesRegistration.Cancel();
+			Projects = new SelectionList<ProjectIdentifier>();
+			ResetNodeGraph();
+		}
+
+		private void ApplySettings()
+		{
+			var settings = _settingsService.LoadSolutionSettings();
+			if (settings != null)
+			{
+				IncludePureGenerated = settings.IncludeGeneratedTypes;
+				IsGitModeEnabled = settings.IsGitModeEnabled;
+				IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
+			}
+			UpdateProjects(settings?.ExcludedProjects);
+		}
+
+		private string[]? GetExcludedProjects() => Projects?.UnselectedItems().Select(pi => pi.ProjectName).ToArray();
+
+		private void OnSolutionSettingsSaving()
+		{
+			_settingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, GetExcludedProjects(), IsActiveAlwaysIncluded));
+		}
+
 		private void OnSolutionChanged()
 		{
 			ResetNodeGraph();
-			UpdateProjects();
+			UpdateProjects(GetExcludedProjects());
 		}
 
 
@@ -219,9 +255,10 @@ namespace DependsOnThat.Presentation
 		private static StatisticsReporter GetStatsReporter(GraphStatistics stats)
 			=> new StatisticsReporter(stats, new ConsoleHeaderFormatter(), new MarkdownStyleTableFormatter(), CompactListFormatter.OpenCommaSeparated, CompactListFormatter.CurlyCommaSeparated, showTopXDeps: (20, 30), showTopXClusters: (10, 20));
 
-		private void UpdateProjects()
+		private void UpdateProjects(string[]? excludedProjects)
 		{
 			var ct = _projectUpdatesRegistration.GetNewToken();
+			var solutionPath = _solutionService.GetSolutionPath();
 			_joinableTaskFactory.RunAsync(async () =>
 			{
 				var projects = await Task.Run(() => _roslynService.GetSortedProjects(), ct);
@@ -229,7 +266,18 @@ namespace DependsOnThat.Presentation
 				{
 					return;
 				}
+				solutionPath?.ToString();
 				Projects = new SelectionList<ProjectIdentifier>(projects);
+				if (excludedProjects != null)
+				{
+					foreach (var projectName in excludedProjects)
+					{
+						if (Projects.FirstOrDefault(pi => pi.ProjectName == projectName) is { } project)
+						{
+							Projects.DeselectItem(project);
+						}
+					}
+				}
 			});
 		}
 
@@ -264,7 +312,9 @@ namespace DependsOnThat.Presentation
 			_statsRetrievalRegistration.Dispose();
 
 			_documentsService.ActiveDocumentChanged -= OnActiveDocumentChanged;
-			_solutionService.SolutionChanged -= OnSolutionChanged;
+			_solutionService.SolutionOpened -= OnSolutionOpened;
+			_solutionService.SolutionClosed -= OnSolutionClosed;
+			_settingsService.SolutionSettingsSaving -= OnSolutionSettingsSaving;
 			_modificationsService.DocumentInvalidated -= OnDocumentInvalidated;
 			_modificationsService.SolutionInvalidated -= OnSolutionChanged;
 			if (Projects != null)

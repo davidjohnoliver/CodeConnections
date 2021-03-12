@@ -10,9 +10,14 @@ namespace DependsOnThat.Services
 	internal interface ISolutionService
 	{
 		/// <summary>
-		/// Raised whenever a solution is open or closed.
+		/// Raised whenever a solution is opened.
 		/// </summary>
-		event Action SolutionChanged;
+		event Action SolutionOpened;
+
+		/// <summary>
+		/// Raised whenever a solution is closed.
+		/// </summary>
+		event Action SolutionClosed;
 
 		/// <summary>
 		/// Gets the full path to the current solution.
