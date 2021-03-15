@@ -33,7 +33,7 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Border Padding="5"
-		Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
+			Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
 			vstheming:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsshell:VsColors.CommandBarGradientMiddleKey}}"
 			BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBorderKey}}"
 			BorderThickness="0"
@@ -93,10 +93,12 @@
 							 ItemContainerStyle="{StaticResource ListBoxItemLayoutModeStyle}" />
 					<CheckBox Grid.Row="1"
 							  Margin="0,10,0,0"
+							  Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"
 							  Content="Include generated"
 							  ToolTip="Include types defined exclusively in generated code?"
 							  IsChecked="{Binding IncludePureGenerated, Mode=TwoWay}" />
 					<TextBlock Grid.Row="2"
+							   Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"
 							   Text="Included projects:"
 							   Margin="0,12,0,3" />
 					<ListView Grid.Row="3"

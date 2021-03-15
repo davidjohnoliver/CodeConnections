@@ -26,7 +26,7 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid>
-		<graphZoom:ZoomControl>
+		<graphZoom:ZoomControl Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}">
 			<local:DependencyGraphLayout x:Name="GraphLayout"
 										 DisplayGraph="{Binding Graph}"
 										 AlgorithmType="{Binding LayoutMode, Converter={StaticResource GraphLayoutModeLayoutAlgorithmConverter}}"

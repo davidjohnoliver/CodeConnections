@@ -101,7 +101,6 @@
     <Compile Include="Input\IToggleCommand.cs" />
     <Compile Include="Presentation\Converters\DebugConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
-    <Compile Include="Presentation\Converters\DisplayNodeBackgroundConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayNodeGitIndicatorVisibilityConverter.cs" />
     <Compile Include="Presentation\Converters\GitStatusPathConverter.cs" />
     <Compile Include="Presentation\Converters\GitStatusTooltipConverter.cs" />

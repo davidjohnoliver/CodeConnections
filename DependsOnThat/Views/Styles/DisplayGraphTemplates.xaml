@@ -9,14 +9,13 @@
 					xmlns:ext="clr-namespace:DependsOnThat.Views.Behaviours"
 					xmlns:converters="clr-namespace:DependsOnThat.Presentation.Converters"
 					xmlns:graphdisplay="clr-namespace:DependsOnThat.Graph.Display"
+					xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+					xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
 					mc:Ignorable="d">
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="CheckBox.xaml" />
 	</ResourceDictionary.MergedDictionaries>
-
-	<!--TODO: should use editor colour scheme https://stackoverflow.com/questions/18913208/colors-in-visual-studio-extension-->
-	<converters:DisplayNodeBackgroundConverter x:Key="DisplayNodeBackgroundConverter"
-											   DefaultBrush="LightGray" />
+	
 	<converters:DisplayEdgeStrokeDashArrayConverter x:Key="DisplayEdgeStrokeDashArrayConverter"
 													MultiStrokeDashArray="4 2" />
 	<converters:DisplayEdgeTooltipConverter x:Key="DisplayEdgeTooltipConverter" />
@@ -34,16 +33,17 @@
 				<ControlTemplate TargetType="{x:Type graphControls:VertexControl}">
 					<Border BorderBrush="{TemplateBinding BorderBrush}"
 							BorderThickness="{TemplateBinding BorderThickness}"
-							Background="{TemplateBinding Vertex, Converter={StaticResource DisplayNodeBackgroundConverter}}"
+							Background="{TemplateBinding Background}"
 							ToolTip="{TemplateBinding ToolTip}"
-							CornerRadius="5"
-							Padding="2,0,2,0">
+							CornerRadius="4"
+							Padding="4,6,4,6">
 						<StackPanel Orientation="Horizontal"
 									DataContext="{TemplateBinding Vertex}">
 							<TextBlock Text="{Binding DisplayString}"
 									   FontSize="16" />
 							<CheckBox x:Name="PinCheckBox"
 									  Style="{StaticResource PinCheckBoxStyle}"
+									  Foreground="{TemplateBinding Foreground}"
 									  VerticalAlignment="Top"
 									  IsChecked="{Binding IsPinned}"
 									  ext:ToggleButtonExtensions.ToggleCommand="{Binding ParentContext.TogglePinnedCommand}"
@@ -58,12 +58,14 @@
 										<Binding Path="ParentContext.IsGitModeEnabled" />
 									</MultiBinding>
 								</Grid.Visibility>
+								<!--Git indicator - inverted colouring relative to rest of the node-->
 								<Ellipse Width="20"
 										 Height="20"
-										 Fill="Beige" />
+										 Fill="{TemplateBinding Foreground}" />
 								<Path HorizontalAlignment="Center"
 									  VerticalAlignment="Center"
-									  Fill="Black"
+									  Opacity="0.7"
+									  Fill="{TemplateBinding Background}"
 									  Data="{Binding GitStatus, Converter={StaticResource GitStatusPathConverter}}" />
 							</Grid>
 						</StackPanel>
@@ -93,22 +95,25 @@
 				Value="{Binding RelativeSource={RelativeSource Self},Path=(graphControls:GraphCanvas.X),Mode=TwoWay}" />
 		<Setter Property="graphBehaviours:DragBehaviour.Y"
 				Value="{Binding RelativeSource={RelativeSource Self},Path=(graphControls:GraphCanvas.Y),Mode=TwoWay}" />
+		<Setter Property="Background"
+				Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarHoverKey}}" />
+		<Setter Property="Foreground"
+				Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
 		<Setter Property="BorderThickness"
-				Value="1" />
-		<Setter Property="BorderBrush"
-				Value="Silver" />
+				Value="0" />
 		<Style.Triggers>
 			<Trigger Property="graphControls:GraphElementBehaviour.IsHighlighted"
 					 Value="True">
-				<Setter Property="BorderBrush"
-						Value="Black" />
-				<Setter Property="BorderThickness"
-						Value="2" />
+				<Setter Property="Background"
+						Value="{DynamicResource {x:Static vsui:EnvironmentColors.TitleBarActiveBorderBrushKey}}" />
+
+				<Setter Property="Foreground"
+						Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarTextMouseDownBrushKey}}" />
 			</Trigger>
 			<Trigger Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
 					 Value="True">
 				<Setter Property="BorderBrush"
-						Value="Black" />
+						Value="{DynamicResource {x:Static vsui:EnvironmentColors.TitleBarActiveBorderBrushKey}}" />
 				<Setter Property="BorderThickness"
 						Value="1" />
 			</Trigger>
@@ -165,22 +170,20 @@
 				Value="1" />
 		<Setter Property="MinHeight"
 				Value="1" />
-		<Setter Property="Background"
-				Value="Red" />
 		<Setter Property="Foreground"
-				Value="Silver" />
+				Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
 		<Setter Property="Opacity"
 				Value="0.5" />
 		<Style.Triggers>
 			<Trigger Property="graphControls:GraphElementBehaviour.IsHighlighted"
 					 Value="True">
 				<Setter Property="Foreground"
-						Value="Black" />
+						Value="{DynamicResource {x:Static vsui:EnvironmentColors.TitleBarActiveBorderBrushKey}}" />
 			</Trigger>
 			<Trigger Property="graphControls:GraphElementBehaviour.IsSemiHighlighted"
 					 Value="True">
 				<Setter Property="Foreground"
-						Value="Black" />
+						Value="{DynamicResource {x:Static vsui:EnvironmentColors.TitleBarActiveBorderBrushKey}}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
