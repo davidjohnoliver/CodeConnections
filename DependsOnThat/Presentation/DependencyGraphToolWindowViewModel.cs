@@ -235,7 +235,11 @@ namespace DependsOnThat.Presentation
 		}
 
 
-		private void ClearRoots() => _graphStateManager.ClearSubgraph();
+		private void ClearRoots()
+		{
+			IsGitModeEnabled = false;
+			_graphStateManager.ClearSubgraph();
+		}
 
 		private void LogStats()
 		{
