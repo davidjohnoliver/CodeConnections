@@ -96,14 +96,36 @@ namespace DependsOnThat.Extensions
 		/// </summary>
 		public static string GetFullMetadataName(this ITypeSymbol typeSymbol)
 		{
-			var fullName = typeSymbol.ToDisplayString();
-			var i = fullName.LastIndexOf('.');
-			if (i < 0)
+			// Taken from https://stackoverflow.com/a/27106959/1902058
+			ISymbol s = typeSymbol;
+			if (s == null || IsRootNamespace(s))
 			{
-				return typeSymbol.MetadataName;
+				return string.Empty;
 			}
 
-			return $"{fullName.Substring(0, i + 1)}{typeSymbol.MetadataName}";
+			var sb = new StringBuilder(s.MetadataName);
+			var last = s;
+
+			s = s.ContainingSymbol;
+
+			while (!IsRootNamespace(s))
+			{
+				if (s is ITypeSymbol && last is ITypeSymbol)
+				{
+					sb.Insert(0, '+');
+				}
+				else
+				{
+					sb.Insert(0, '.');
+				}
+
+				sb.Insert(0, s.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
+				s = s.ContainingSymbol;
+			}
+
+			return sb.ToString();
 		}
+
+		private static bool IsRootNamespace(ISymbol symbol) => (symbol is INamespaceSymbol s) && s.IsGlobalNamespace;
 	}
 }

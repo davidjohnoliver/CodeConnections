@@ -19,7 +19,6 @@ namespace DependsOnThat.Tests.GraphTests
 		[Test]
 		public async Task When_Updated_Invariant()
 		{
-
 			using var workspace = WorkspaceUtils.GetSubjectSolution();
 
 			var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
