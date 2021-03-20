@@ -13,7 +13,8 @@ namespace DependsOnThat.Presentation
 		bool IncludeGeneratedTypes,
 		bool IsGitModeEnabled,
 		string[]? ExcludedProjects,
-		bool IsActiveAlwaysIncluded // TODO: this should go in per-user settings
+		bool IsActiveAlwaysIncluded, // TODO: this should go in per-user settings
+		bool IncludeNestedTypes
 	)
 	{
 	}

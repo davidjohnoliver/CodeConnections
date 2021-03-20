@@ -45,11 +45,6 @@ namespace DependsOnThat.Graph
 		/// </summary>
 		public abstract class Operation
 		{
-			protected Operation()
-			{
-
-			}
-
 			/// <summary>
 			/// Applies this operation to <paramref name="subgraph"/>.
 			/// </summary>
@@ -97,7 +92,7 @@ namespace DependsOnThat.Graph
 				{
 					if (fullGraph.Nodes.ContainsKey(node))
 					{
-						modified |= subgraph.AddPinnedNode(node);
+						modified |= subgraph.AddPinnedNode(node, fullGraph);
 					}
 				}
 
@@ -166,7 +161,7 @@ namespace DependsOnThat.Graph
 					}
 					foreach (var added in addedNodes)
 					{
-						modified |= subgraph.AddAdditionalNode(added);
+						modified |= subgraph.AddAdditionalNode(added, fullGraph);
 					}
 				}
 

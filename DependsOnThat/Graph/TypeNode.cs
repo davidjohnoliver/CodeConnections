@@ -24,11 +24,14 @@ namespace DependsOnThat.Graph
 
 		public string FullMetadataName { get; }
 
-		public TypeNode(TypeNodeKey key, string? filePath, IEnumerable<string> associatedFiles, string fullMetadataName)
+		public bool IsNestedType { get; }
+
+		public TypeNode(TypeNodeKey key, string? filePath, IEnumerable<string> associatedFiles, string fullMetadataName, bool isNestedType)
 		{
 			Identifier = key.Identifier;
 			FilePath = filePath;
 			FullMetadataName = fullMetadataName;
+			IsNestedType = isNestedType;
 			AssociatedFiles.AddRange(associatedFiles);
 			Key = key;
 		}

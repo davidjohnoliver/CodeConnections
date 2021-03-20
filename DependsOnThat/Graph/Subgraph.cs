@@ -37,6 +37,9 @@ namespace DependsOnThat.Graph
 		public ISet<NodeKey> PinnedNodes => _pinnedNodes;
 
 		private readonly HashSet<NodeKey> _additionalNodes = new HashSet<NodeKey>();
+
+		private readonly Func<NodeKey, NodeGraph, bool> _shouldIncludeNode;
+
 		/// <summary>
 		/// Any other nodes included in the subgraph.
 		/// </summary>
@@ -47,16 +50,31 @@ namespace DependsOnThat.Graph
 		/// </summary>
 		private NodeKey? _selectedNode;
 
-		private bool AddPinnedNode(NodeKey nodeKey)
+		public Subgraph(Func<NodeKey, NodeGraph, bool> shouldIncludeNode)
 		{
+			_shouldIncludeNode = shouldIncludeNode;
+		}
+
+		private bool AddPinnedNode(NodeKey nodeKey, NodeGraph nodeGraph)
+		{
+			if (!_shouldIncludeNode(nodeKey, nodeGraph))
+			{
+				return false;
+			}
+
 			// Remove node from additional nodes, if it was there
 			_additionalNodes.Remove(nodeKey);
 
 			return _pinnedNodes.Add(nodeKey);
 		}
 
-		private bool AddAdditionalNode(NodeKey nodeKey)
+		private bool AddAdditionalNode(NodeKey nodeKey, NodeGraph nodeGraph)
 		{
+			if (!_shouldIncludeNode(nodeKey, nodeGraph))
+			{
+				return false;
+			}
+
 			if (_pinnedNodes.Contains(nodeKey))
 			{
 				// If node is already pinned, leave it pinned and don't do anything

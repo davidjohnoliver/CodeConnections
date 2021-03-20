@@ -55,6 +55,12 @@ namespace DependsOnThat.Presentation
 			set => OnValueSet(_graphStateManager.IncludePureGenerated, v => _graphStateManager.IncludePureGenerated = v, value);
 		}
 
+		public bool IncludeNestedTypes
+		{
+			get => _graphStateManager.IncludeNestedTypes;
+			set => OnValueSet(_graphStateManager.IncludeNestedTypes, v => _graphStateManager.IncludeNestedTypes = v, value);
+		}
+
 		private DisplayNode? _selectedNode;
 		public DisplayNode? SelectedNode
 		{
@@ -209,6 +215,7 @@ namespace DependsOnThat.Presentation
 				IncludePureGenerated = settings.IncludeGeneratedTypes;
 				IsGitModeEnabled = settings.IsGitModeEnabled;
 				IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
+				IncludeNestedTypes = settings.IncludeNestedTypes;
 			}
 			_excludedProjects = settings?.ExcludedProjects;
 			UpdateProjects();
@@ -218,7 +225,7 @@ namespace DependsOnThat.Presentation
 
 		private void OnSolutionSettingsSaving()
 		{
-			_settingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, _excludedProjects, IsActiveAlwaysIncluded));
+			_settingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, _excludedProjects, IsActiveAlwaysIncluded, IncludeNestedTypes));
 		}
 
 		private void OnSolutionChanged()

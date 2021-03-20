@@ -23,6 +23,17 @@ namespace DependsOnThat.Extensions
 			return default;
 		}
 
+		[return: MaybeNull]
+		public static TValue GetOrDefaultFromReadOnly<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key)
+		{
+			if (dictionary.TryGetValue(key, out var value))
+			{
+				return value;
+			}
+
+			return default;
+		}
+
 		public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> initializer)
 		{
 			if (initializer is null)

@@ -56,7 +56,6 @@ namespace DependsOnThat.Graph
 					}
 
 					var node = GetFromKnownNodes(symbol);
-					// TODO: GetTypeDependencies calls GetSemanticModel() a second time, now that we're always considering all SyntaxTrees it'd be more efficient to refactor to only create it once (eg GetTypeDependenciesForDefinition)
 					await foreach (var dependency in symbol.GetTypeDependencies(compilationCache, project, includeExternalMetadata: false, ct))
 					{
 						if (graph.IsSymbolIncluded(dependency))
@@ -88,7 +87,7 @@ namespace DependsOnThat.Graph
 		}
 
 		private static TypeNode CreateTypeNodeForSymbol(ITypeSymbol symbol, TypeNodeKey key)
-			=> new TypeNode(key, symbol.GetPreferredDeclaration(), GetAssociatedFiles(symbol), symbol.GetFullMetadataName());
+			=> new TypeNode(key, symbol.GetPreferredDeclaration(), GetAssociatedFiles(symbol), symbol.GetFullMetadataName(), isNestedType: symbol.ContainingType != null);
 
 		private static IEnumerable<string> GetAssociatedFiles(ITypeSymbol symbol)
 			=> symbol.DeclaringSyntaxReferences.Select(sr => sr.SyntaxTree.FilePath).ToHashSet();

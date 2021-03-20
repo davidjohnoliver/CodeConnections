@@ -16,6 +16,7 @@ using DependsOnThat.Extensions;
 using DependsOnThat.Utilities;
 using DependsOnThat.Statistics;
 using DependsOnThat.Git;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DependsOnThat.Graph.Display
 {
@@ -35,6 +36,21 @@ namespace DependsOnThat.Graph.Display
 			{
 				_includePureGenerated = value;
 				InvalidateNodeGraph();
+			}
+		}
+
+		private bool _includeNestedTypes = true;
+		public bool IncludeNestedTypes
+		{
+			get => _includeNestedTypes;
+			set
+			{
+				var hasChanged = value != _includeNestedTypes;
+				_includeNestedTypes = value;
+				if (hasChanged)
+				{
+					InvalidateSubgraph();
+				}
 			}
 		}
 
@@ -77,7 +93,7 @@ namespace DependsOnThat.Graph.Display
 			}
 		}
 
-		private bool _isActiveAlwaysIncluded = true; // TODO: persist setting
+		private bool _isActiveAlwaysIncluded = true;
 		public bool IsActiveAlwaysIncluded
 		{
 			get => _isActiveAlwaysIncluded;
@@ -125,7 +141,7 @@ namespace DependsOnThat.Graph.Display
 		/// </summary>
 		private TaskCompletionSource<GraphStatistics?>? _statisticsTCS;
 
-		private Subgraph _includedNodes = new();
+		private Subgraph _includedNodes;
 		private readonly List<Subgraph.Operation> _pendingSubgraphOperations = new();
 
 		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, Func<string?> getActiveDocument, object nodeParentContext)
@@ -135,6 +151,7 @@ namespace DependsOnThat.Graph.Display
 			_getGitInfo = getGitInfo ?? throw new ArgumentNullException(nameof(getGitInfo));
 			_getActiveDocument = getActiveDocument;
 			_nodeParentContext = nodeParentContext;
+			ClearSubgraphAndPendingOperations();
 		}
 
 		/// <summary>
@@ -147,7 +164,6 @@ namespace DependsOnThat.Graph.Display
 			_invalidatedDocuments.Clear();
 			_nodeGraph = null;
 			ClearSubgraphAndPendingOperations();
-			_previousGitInfos = ArrayUtils.GetEmpty<GitInfo>(); // Ensure Git nodes are re-added if needed
 			RunUpdate(waitForIdle: false);
 		}
 
@@ -155,12 +171,25 @@ namespace DependsOnThat.Graph.Display
 		/// Clear included nodes and any pending operations.
 		/// </summary>
 		/// <returns>True if there were previously included nodes, false otherwise. </returns>
+		[MemberNotNull(nameof(_includedNodes))]
 		private bool ClearSubgraphAndPendingOperations()
 		{
 			_pendingSubgraphOperations.Clear();
-			var hadNodes = _includedNodes.Count > 0;
-			_includedNodes = new();
+			var hadNodes = _includedNodes?.Count > 0;
+			_includedNodes = new(ShouldIncludeNodeInSubgraph);
+			_previousGitInfos = ArrayUtils.GetEmpty<GitInfo>(); // Ensure Git nodes are re-added if needed
 			return hadNodes;
+		}
+
+		private bool ShouldIncludeNodeInSubgraph(NodeKey nodeKey, NodeGraph nodeGraph)
+		{
+			var node = nodeGraph.Nodes.GetOrDefaultFromReadOnly(nodeKey);
+			if (!IncludeNestedTypes && ((node as TypeNode)?.IsNestedType ?? false))
+			{
+				return false;
+			}
+
+			return true;
 		}
 
 		/// <summary>
@@ -186,7 +215,7 @@ namespace DependsOnThat.Graph.Display
 		/// <summary>
 		/// Invalidate the display graph, causing it to be rebuilt.
 		/// </summary>
-		public void InvalidateDisplayGraph()
+		private void InvalidateDisplayGraph()
 		{
 			ThreadUtils.ThrowIfNotOnUIThread();
 
@@ -205,6 +234,24 @@ namespace DependsOnThat.Graph.Display
 		}
 
 		/// <summary>
+		/// Fully rebuild the subgraph.
+		/// </summary>
+		private void InvalidateSubgraph()
+		{
+			ClearSubgraph();
+			if (_currentUpdateState is > UpdateState.WaitingForIdle and < UpdateState.UpdatingSubgraph)
+			{
+				// Nothing to do, the subgraph update will take place with up-to-date parameters after node graph is updated
+				return;
+			}
+			else
+			{
+				// If we're not updating, we launch an update. If we were updating subgraph, we cancel it and start over.
+				RunUpdate(waitForIdle: false);
+			}
+		}
+
+		/// <summary>
 		/// Set the projects in the solution that should be included in the graph. If null, all projects will be included.
 		/// </summary>
 		public void SetIncludedProjects(IEnumerable<ProjectIdentifier>? includedProjects)
@@ -213,7 +260,7 @@ namespace DependsOnThat.Graph.Display
 			InvalidateNodeGraph();
 		}
 
-		public void ModifySubgraph(Subgraph.Operation operation)
+		private void ModifySubgraph(Subgraph.Operation operation)
 		{
 			ThreadUtils.ThrowIfNotOnUIThread();
 
@@ -271,7 +318,7 @@ namespace DependsOnThat.Graph.Display
 		public void TogglePinnedInSubgraph(NodeKey node, bool setPinned) => _includedNodes.TogglePinned(node, setPinned);
 
 		/// <summary>
-		/// Ensure that the <paramref name="stepToRerun"/> update step runs ASAP. If an update is active and <paramref name="stepToRerun"/> is 
+		/// Ensure that the <paramref name="stepToRerun"/> update step runs. If an update is active and <paramref name="stepToRerun"/> is 
 		/// running or has run, allow the update to complete and then run a new one.
 		/// </summary>
 		/// <param name="stepToRerun"></param>
@@ -450,6 +497,7 @@ namespace DependsOnThat.Graph.Display
 
 				if (IsActiveAlwaysIncluded && _nodeGraph != null)
 				{
+					// Include active document ( == selected node)
 					_currentUpdateState = UpdateState.IncludeActive;
 					var activeDocument = _getActiveDocument();
 					compilationCache = EnsureCompilationCache();
