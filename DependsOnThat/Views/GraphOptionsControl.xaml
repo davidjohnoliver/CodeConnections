@@ -43,7 +43,7 @@
 				<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
 						  HorizontalAlignment="Left"
 						  Margin="3"
-						  ToolTip="Always include active document in graph"
+						  ToolTip="Always include active document and its connections in graph"
 						  IsChecked="{Binding IsActiveAlwaysIncluded}">
 					<vsimaging:CrispImage Width="16"
 										  Height="16"
