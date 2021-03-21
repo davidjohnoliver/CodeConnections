@@ -2,7 +2,7 @@
 
 using System;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	/// <summary>
 	/// Exposes methods for querying and interacting with current documents.

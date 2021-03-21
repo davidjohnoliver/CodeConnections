@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace DependsOnThat.Presentation
+namespace CodeConnections.Presentation
 {
 	/// <summary>
 	/// Simple <see cref="ICommand"/> implementation which takes a synchronous type-checked delegate and exposes a boolean flag for CanExecute.

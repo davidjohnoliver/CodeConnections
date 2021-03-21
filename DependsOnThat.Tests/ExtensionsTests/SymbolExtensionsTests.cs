@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Extensions;
-using DependsOnThat.Tests.Extensions;
-using DependsOnThat.Tests.Utilities;
+using CodeConnections.Extensions;
+using CodeConnections.Tests.Extensions;
+using CodeConnections.Tests.Utilities;
 using NUnit.Framework;
 
-namespace DependsOnThat.Tests.ExtensionsTests
+namespace CodeConnections.Tests.ExtensionsTests
 {
 	[TestFixture]
 	public class SymbolExtensionsTests

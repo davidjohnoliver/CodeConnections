@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using DependsOnThat.Input;
+using CodeConnections.Input;
 
-namespace DependsOnThat.Views.Behaviours
+namespace CodeConnections.Views.Behaviours
 {
 	public static class ToggleButtonExtensions
 	{

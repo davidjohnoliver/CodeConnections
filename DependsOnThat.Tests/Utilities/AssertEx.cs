@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Utilities;
+using CodeConnections.Utilities;
 using NUnit.Framework;
 
-namespace DependsOnThat.Tests.Utilities
+namespace CodeConnections.Tests.Utilities
 {
 	public static class AssertEx
 	{

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Utilities
+namespace CodeConnections.Utilities
 {
 	/// <summary>
 	/// Simple protection from freezing in while loops. Will throw an exception if the loop gets stuck.

@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using DependsOnThat.Extensions;
+using CodeConnections.Extensions;
 
-namespace DependsOnThat.Tests.Extensions
+namespace CodeConnections.Tests.Extensions
 {
 	public static class SolutionExtensions
 	{

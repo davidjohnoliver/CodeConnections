@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Utilities;
+using CodeConnections.Utilities;
 using static System.Math;
 
-namespace DependsOnThat.Text
+namespace CodeConnections.Text
 {
 	/// <summary>
 	/// Formats dictionary as a GitHub-flavoured Markdown table, with nicely-padded columns.

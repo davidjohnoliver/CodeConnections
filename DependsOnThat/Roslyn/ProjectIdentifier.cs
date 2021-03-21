@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
-namespace DependsOnThat.Roslyn
+namespace CodeConnections.Roslyn
 {
 	/// <summary>
 	/// A lightweight identifier for a <see cref="Project"/>.

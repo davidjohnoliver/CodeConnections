@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Extensions;
-using DependsOnThat.Graph;
-using DependsOnThat.Graph.Display;
+using CodeConnections.Extensions;
+using CodeConnections.Graph;
+using CodeConnections.Graph.Display;
 using QuickGraph;
 using QuickGraph.Algorithms.Condensation;
 
-namespace DependsOnThat.Statistics
+namespace CodeConnections.Statistics
 {
 	/// <summary>
 	/// Calculates and holds various statistical characteristics of a <see cref="NodeGraph"/> or subgraph.

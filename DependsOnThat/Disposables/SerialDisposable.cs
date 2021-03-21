@@ -18,7 +18,7 @@
 
 using System;
 
-namespace DependsOnThat.Disposables
+namespace CodeConnections.Disposables
 {
     /// <summary>
     /// Represents a disposable resource whose underlying disposable resource can be replaced by another disposable resource, causing automatic disposal of the previous underlying disposable resource.
@@ -30,7 +30,7 @@ namespace DependsOnThat.Disposables
         private bool _disposed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DependsOnThat.Disposables.SerialDisposable"/> class.
+        /// Initializes a new instance of the <see cref="SerialDisposable"/> class.
         /// </summary>
         public SerialDisposable()
         {

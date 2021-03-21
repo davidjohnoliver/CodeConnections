@@ -6,14 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Presentation;
-using DependsOnThat.Utilities;
+using CodeConnections.Presentation;
+using CodeConnections.Utilities;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell.Interop;
 using Newtonsoft.Json;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	internal class SettingsService : IVsPersistSolutionOpts, ISettingsService
 	{
@@ -27,11 +27,11 @@ namespace DependsOnThat.Services
 		{
 			add
 			{
-				DependsOnThat.VSIX.DependsOnThatPackage.SaveUserOptions += value;
+				CodeConnections.VSIX.DependsOnThatPackage.SaveUserOptions += value;
 			}
 			remove
 			{
-				DependsOnThat.VSIX.DependsOnThatPackage.SaveUserOptions -= value;
+				CodeConnections.VSIX.DependsOnThatPackage.SaveUserOptions -= value;
 			}
 		}
 

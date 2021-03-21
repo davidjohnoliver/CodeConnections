@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DependsOnThat.Views
+namespace CodeConnections.Views
 {
 	/// <summary>
 	/// Interaction logic for GraphOptionsControl.xaml

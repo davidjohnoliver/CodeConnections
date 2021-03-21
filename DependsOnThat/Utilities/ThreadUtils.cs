@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 using Task = System.Threading.Tasks.Task;
 
-namespace DependsOnThat.Utilities
+namespace CodeConnections.Utilities
 {
 	public static class ThreadUtils
 	{

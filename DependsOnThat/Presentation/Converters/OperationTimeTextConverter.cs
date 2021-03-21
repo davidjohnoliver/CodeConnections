@@ -6,9 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Utilities;
+using CodeConnections.Utilities;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	public class OperationTimeTextConverter : ValueConverter<TimeSpan?, string>
 	{

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Graph
+namespace CodeConnections.Graph
 {
 	public class SearchEntry
 	{

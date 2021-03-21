@@ -9,7 +9,7 @@ using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	internal class SolutionService : IVsSolutionEvents3, ISolutionService
 	{

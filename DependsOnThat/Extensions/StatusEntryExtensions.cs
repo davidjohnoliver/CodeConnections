@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Git;
+using CodeConnections.Git;
 using LibGit2Sharp;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class StatusEntryExtensions
 	{

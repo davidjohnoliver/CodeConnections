@@ -1,7 +1,7 @@
 ﻿#nullable disable
 
-using DependsOnThat.Extensions;
-using DependsOnThat.Tests.Utilities;
+using CodeConnections.Extensions;
+using CodeConnections.Tests.Utilities;
 using Microsoft.CodeAnalysis;
 using NUnit.Framework;
 using System;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Tests.ExtensionsTests
+namespace CodeConnections.Tests.ExtensionsTests
 {
 	[TestFixture]
 	public class SyntaxNodeExtensionsTests

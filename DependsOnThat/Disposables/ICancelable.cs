@@ -16,7 +16,7 @@
 // ******************************************************************
 using System;
 
-namespace DependsOnThat.Disposables
+namespace CodeConnections.Disposables
 {
     /// <summary>
     /// Disposable resource with dipsosal state tracking.

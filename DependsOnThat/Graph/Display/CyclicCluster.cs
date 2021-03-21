@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using QuickGraph;
 
-namespace DependsOnThat.Graph.Display
+namespace CodeConnections.Graph.Display
 {
 	/// <summary>
 	/// Represents a cluster of <see cref="DisplayNode"/>s linked by mutual dependency cycles, ie any node in the cluster depends on every 

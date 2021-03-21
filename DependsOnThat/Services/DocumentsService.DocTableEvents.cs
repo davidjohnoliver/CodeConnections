@@ -7,7 +7,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	partial class DocumentsService : IVsRunningDocTableEvents
 	{

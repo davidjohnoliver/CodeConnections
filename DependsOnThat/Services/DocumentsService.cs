@@ -10,7 +10,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	internal partial class DocumentsService : IDocumentsService
 	{

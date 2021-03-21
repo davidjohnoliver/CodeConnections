@@ -6,19 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DependsOnThat.Disposables;
-using DependsOnThat.Roslyn;
+using CodeConnections.Disposables;
+using CodeConnections.Roslyn;
 using Microsoft.CodeAnalysis;
 using ThreadHelper = Microsoft.VisualStudio.Shell.ThreadHelper;
 using Microsoft.VisualStudio.Threading;
 using QuickGraph;
-using DependsOnThat.Extensions;
-using DependsOnThat.Utilities;
-using DependsOnThat.Statistics;
-using DependsOnThat.Git;
+using CodeConnections.Extensions;
+using CodeConnections.Utilities;
+using CodeConnections.Statistics;
+using CodeConnections.Git;
 using System.Diagnostics.CodeAnalysis;
 
-namespace DependsOnThat.Graph.Display
+namespace CodeConnections.Graph.Display
 {
 	/// <summary>
 	/// Manages invalidation and asynchronous updating of <see cref="NodeGraph"/> and display graph state.

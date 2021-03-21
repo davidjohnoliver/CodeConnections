@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Graph;
-using DependsOnThat.Graph.Display;
-using DependsOnThat.Presentation;
-using DependsOnThat.Utilities;
+using CodeConnections.Graph;
+using CodeConnections.Graph.Display;
+using CodeConnections.Presentation;
+using CodeConnections.Utilities;
 using Microsoft.CodeAnalysis;
 using QuickGraph;
 using QuickGraph.Algorithms.Condensation;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class NodeGraphExtensions
 	{

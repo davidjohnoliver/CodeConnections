@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Statistics;
+using CodeConnections.Statistics;
 using static System.Math;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class DiscreteStatisticsResultExtensions
 	{

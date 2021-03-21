@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Text
+namespace CodeConnections.Text
 {
 	/// <summary>
 	/// Formats a dictionary of key-value pairs as a sequence of strings.

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	public class GraphLayoutModeTooltipConverter : ValueConverter<GraphLayoutMode, string?>
 	{

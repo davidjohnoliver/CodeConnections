@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class NamedTypeSymbolExtensions
 	{

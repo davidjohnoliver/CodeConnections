@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Utilities
+namespace CodeConnections.Utilities
 {
 	/// <summary>
 	/// Exposes an awaitable which completes after an 'idle' state has been reached, ie after no 'activity' has occurred (where activity is 

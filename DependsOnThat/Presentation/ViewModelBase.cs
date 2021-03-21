@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Presentation
+namespace CodeConnections.Presentation
 {
 	public abstract class ViewModelBase : INotifyPropertyChanged
 	{

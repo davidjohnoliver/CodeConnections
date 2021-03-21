@@ -6,9 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Graph.Display;
+using CodeConnections.Graph.Display;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	public class DisplayEdgeTooltipConverter : ValueConverter<DisplayEdge, string?>
 	{

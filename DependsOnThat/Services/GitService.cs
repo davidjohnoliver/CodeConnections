@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DependsOnThat.Disposables;
-using DependsOnThat.Extensions;
-using DependsOnThat.Git;
+using CodeConnections.Disposables;
+using CodeConnections.Extensions;
+using CodeConnections.Git;
 using LibGit2Sharp;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	internal class GitService : IGitService, IDisposable
 	{

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class ImmutableArrayExtensions
 	{

@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Tests.Utilities
+namespace CodeConnections.Tests.Utilities
 {
 	public static partial class WorkspaceUtils
 	{

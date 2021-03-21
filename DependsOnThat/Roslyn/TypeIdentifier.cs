@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Roslyn
+namespace CodeConnections.Roslyn
 {
 	/// <summary>
 	/// A lightweight identifier for a type that considers only the fully-qualified name.

@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DependsOnThat.Disposables
+namespace CodeConnections.Disposables
 {
     /// <summary>
     /// Represents a group of disposable resources that are disposed together.
@@ -36,7 +36,7 @@ namespace DependsOnThat.Disposables
         private const int SHRINK_THRESHOLD = 64;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DependsOnThat.Disposables.CompositeDisposable"/> class with no disposables contained by it initially.
+        /// Initializes a new instance of the <see cref="CompositeDisposable"/> class with no disposables contained by it initially.
         /// </summary>
         public CompositeDisposable()
         {
@@ -44,7 +44,7 @@ namespace DependsOnThat.Disposables
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DependsOnThat.Disposables.CompositeDisposable"/> class with the specified number of disposables.
+        /// Initializes a new instance of the <see cref="CompositeDisposable"/> class with the specified number of disposables.
         /// </summary>
         /// <param name="capacity">The number of disposables that the new CompositeDisposable can initially store.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is less than zero.</exception>
@@ -57,7 +57,7 @@ namespace DependsOnThat.Disposables
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DependsOnThat.Disposables.CompositeDisposable"/> class from a group of disposables.
+        /// Initializes a new instance of the <see cref="CompositeDisposable"/> class from a group of disposables.
         /// </summary>
         /// <param name="disposables">Disposables that will be disposed together.</param>
         /// <exception cref="ArgumentNullException"><paramref name="disposables"/> is null.</exception>
@@ -71,7 +71,7 @@ namespace DependsOnThat.Disposables
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DependsOnThat.Disposables.CompositeDisposable"/> class from a group of disposables.
+        /// Initializes a new instance of the <see cref="CompositeDisposable"/> class from a group of disposables.
         /// </summary>
         /// <param name="disposables">Disposables that will be disposed together.</param>
         /// <exception cref="ArgumentNullException"><paramref name="disposables"/> is null.</exception>

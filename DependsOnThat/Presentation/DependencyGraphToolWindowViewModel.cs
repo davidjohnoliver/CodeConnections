@@ -11,22 +11,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using DependsOnThat.Collections;
-using DependsOnThat.Disposables;
-using DependsOnThat.Extensions;
-using DependsOnThat.Graph;
-using DependsOnThat.Graph.Display;
-using DependsOnThat.Input;
-using DependsOnThat.Roslyn;
-using DependsOnThat.Services;
-using DependsOnThat.Statistics;
-using DependsOnThat.Text;
-using DependsOnThat.Utilities;
+using CodeConnections.Collections;
+using CodeConnections.Disposables;
+using CodeConnections.Extensions;
+using CodeConnections.Graph;
+using CodeConnections.Graph.Display;
+using CodeConnections.Input;
+using CodeConnections.Roslyn;
+using CodeConnections.Services;
+using CodeConnections.Statistics;
+using CodeConnections.Text;
+using CodeConnections.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Threading;
 using QuickGraph;
 
-namespace DependsOnThat.Presentation
+namespace CodeConnections.Presentation
 {
 	internal sealed class DependencyGraphToolWindowViewModel : ViewModelBase, IDisposable
 	{

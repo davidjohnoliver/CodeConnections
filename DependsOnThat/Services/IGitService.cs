@@ -3,9 +3,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using DependsOnThat.Git;
+using CodeConnections.Git;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	/// <summary>
 	/// Exposes methods for extracting information about the active Git repository.

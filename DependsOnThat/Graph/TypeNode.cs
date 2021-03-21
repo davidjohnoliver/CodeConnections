@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Extensions;
-using DependsOnThat.Roslyn;
+using CodeConnections.Extensions;
+using CodeConnections.Roslyn;
 using Microsoft.CodeAnalysis;
 
-namespace DependsOnThat.Graph
+namespace CodeConnections.Graph
 {
 	/// <summary>
 	/// A node that is associated with a particular defined type.

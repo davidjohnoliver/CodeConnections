@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Graph.Display
+namespace CodeConnections.Graph.Display
 {
 	/// <summary>
 	/// 

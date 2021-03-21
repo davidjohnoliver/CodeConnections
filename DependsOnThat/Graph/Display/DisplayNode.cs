@@ -6,10 +6,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Git;
-using DependsOnThat.Presentation;
+using CodeConnections.Git;
+using CodeConnections.Presentation;
 
-namespace DependsOnThat.Graph.Display
+namespace CodeConnections.Graph.Display
 {
 	/// <summary>
 	/// A node in the displayable subgraph.

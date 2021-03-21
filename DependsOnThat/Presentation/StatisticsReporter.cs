@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Extensions;
-using DependsOnThat.Statistics;
-using DependsOnThat.Text;
-using static DependsOnThat.Presentation.StatisticsReportContent;
+using CodeConnections.Extensions;
+using CodeConnections.Statistics;
+using CodeConnections.Text;
+using static CodeConnections.Presentation.StatisticsReportContent;
 
-namespace DependsOnThat.Presentation
+namespace CodeConnections.Presentation
 {
 	/// <summary>
 	/// Generates formatted output from a set of <see cref="GraphStatistics"/>.

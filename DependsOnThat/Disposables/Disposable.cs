@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Disposables
+namespace CodeConnections.Disposables
 {
 	public static class Disposable
 	{

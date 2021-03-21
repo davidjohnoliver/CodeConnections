@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	internal class DebugConverter : IValueConverter
 	{

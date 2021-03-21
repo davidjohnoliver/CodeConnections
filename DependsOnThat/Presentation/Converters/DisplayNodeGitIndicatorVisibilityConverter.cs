@@ -7,10 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using DependsOnThat.Git;
-using DependsOnThat.Graph.Display;
+using CodeConnections.Git;
+using CodeConnections.Graph.Display;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	public class DisplayNodeGitIndicatorVisibilityConverter : MultiValueConverter<GitStatus, bool, Visibility>
 	{

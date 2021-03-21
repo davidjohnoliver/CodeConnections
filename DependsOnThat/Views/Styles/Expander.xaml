@@ -5,7 +5,7 @@
 					xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
 					xmlns:vsimaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
 					xmlns:vsimagecat="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
-					xmlns:converters="clr-namespace:DependsOnThat.Presentation.Converters"
+					xmlns:converters="clr-namespace:CodeConnections.Presentation.Converters"
 					mc:Ignorable="d">
 	<SolidColorBrush x:Key="Expander.MouseOver.Circle.Stroke"
 					 Color="#FF5593FF" />

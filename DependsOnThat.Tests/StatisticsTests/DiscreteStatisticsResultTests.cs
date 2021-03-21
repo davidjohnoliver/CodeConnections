@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Statistics;
+using CodeConnections.Statistics;
 using NUnit.Framework;
 
-namespace DependsOnThat.Tests.StatisticsTests
+namespace CodeConnections.Tests.StatisticsTests
 {
 	[TestFixture]
 	public class DiscreteStatisticsResultTests

@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Graph;
-using DependsOnThat.Roslyn;
+using CodeConnections.Graph;
+using CodeConnections.Roslyn;
 using Microsoft.CodeAnalysis;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class TypeSymbolExtensions
 	{

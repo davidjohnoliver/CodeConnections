@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using DependsOnThat.Roslyn;
+using CodeConnections.Roslyn;
 using Microsoft.CodeAnalysis;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	/// <summary>
 	/// Exposes methods for extracting information via the Roslyn compiler API.

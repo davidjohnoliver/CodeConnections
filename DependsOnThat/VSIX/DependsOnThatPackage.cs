@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
-namespace DependsOnThat.VSIX
+namespace CodeConnections.VSIX
 {
 	/// <summary>
 	/// This is the class that implements the package exposed by this assembly.
@@ -31,7 +31,7 @@ namespace DependsOnThat.VSIX
 	[PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 	[Guid(DependsOnThatPackage.PackageGuidString)]
 	[ProvideMenuResource("Menus.ctmenu", 1)]
-	[ProvideToolWindow(typeof(DependsOnThat.VSIX.DependencyGraphToolWindow))]
+	[ProvideToolWindow(typeof(CodeConnections.VSIX.DependencyGraphToolWindow))]
 	public sealed class DependsOnThatPackage : AsyncPackage, IVsPersistSolutionOpts
 	{
 		/// <summary>

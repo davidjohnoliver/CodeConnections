@@ -3,18 +3,18 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using DependsOnThat.Disposables;
-using DependsOnThat.Extensions;
-using DependsOnThat.Presentation;
-using DependsOnThat.Services;
-using DependsOnThat.Views;
+using CodeConnections.Disposables;
+using CodeConnections.Extensions;
+using CodeConnections.Presentation;
+using CodeConnections.Services;
+using CodeConnections.Views;
 using Microsoft;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.LanguageServices;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace DependsOnThat.VSIX
+namespace CodeConnections.VSIX
 {
 	/// <summary>
 	/// This class implements the tool window exposed by this package and hosts a user control.

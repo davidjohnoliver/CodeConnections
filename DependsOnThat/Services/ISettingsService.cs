@@ -1,9 +1,9 @@
 ﻿#nullable enable
 
 using System;
-using DependsOnThat.Presentation;
+using CodeConnections.Presentation;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	/// <summary>
 	/// Save and load persisted settings.

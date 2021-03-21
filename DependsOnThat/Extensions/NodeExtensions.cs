@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Git;
-using DependsOnThat.Graph;
-using DependsOnThat.Graph.Display;
+using CodeConnections.Git;
+using CodeConnections.Graph;
+using CodeConnections.Graph.Display;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class NodeExtensions
 	{

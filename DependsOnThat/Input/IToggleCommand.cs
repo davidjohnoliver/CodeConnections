@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Input
+namespace CodeConnections.Input
 {
 	/// <summary>
 	/// Defines a command associated with a toggleable element.

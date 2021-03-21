@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DependsOnThat.Disposables;
-using DependsOnThat.Extensions;
-using DependsOnThat.Graph;
-using DependsOnThat.Utilities;
+using CodeConnections.Disposables;
+using CodeConnections.Extensions;
+using CodeConnections.Graph;
+using CodeConnections.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Threading;
 
-namespace DependsOnThat.Roslyn
+namespace CodeConnections.Roslyn
 {
 	/// <summary>
 	/// Caches <see cref="SemanticModel"/>s and other Roslyn compilation data for reuse within a specific time window.

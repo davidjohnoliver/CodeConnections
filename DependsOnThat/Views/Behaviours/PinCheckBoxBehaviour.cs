@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace DependsOnThat.Views.Behaviours
+namespace CodeConnections.Views.Behaviours
 {
 	public static class PinCheckBoxBehaviour
 	{

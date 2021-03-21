@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Graph
+namespace CodeConnections.Graph
 {
 	/// <summary>
 	/// Describes a path by which <see cref="Target"/> dependency can be reached from <see cref="Source"/>.

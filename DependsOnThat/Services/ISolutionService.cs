@@ -2,7 +2,7 @@
 
 using System;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	/// <summary>
 	/// Information and callbacks for the open solution.

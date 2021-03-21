@@ -7,14 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using DependsOnThat.Extensions;
-using DependsOnThat.Graph.Display;
+using CodeConnections.Extensions;
+using CodeConnections.Graph.Display;
 using GraphSharp.Algorithms.OverlapRemoval;
 using GraphSharp.AttachedBehaviours;
 using GraphSharp.Controls;
 using QuickGraph;
 
-namespace DependsOnThat.Views
+namespace CodeConnections.Views
 {
 	public class DependencyGraphLayout : GraphLayout<DisplayNode, DisplayEdge, IBidirectionalGraph<DisplayNode, DisplayEdge>?>
 	{

@@ -17,7 +17,7 @@
 using System;
 using System.Threading;
 
-namespace DependsOnThat.Disposables
+namespace CodeConnections.Disposables
 {
     /// <summary>
     /// Represents a disposable resource that has an associated <seealso cref="T:System.Threading.CancellationToken"/> that will be set to the cancellation requested state upon disposal.
@@ -27,7 +27,7 @@ namespace DependsOnThat.Disposables
         private readonly CancellationTokenSource _cts;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DependsOnThat.Disposables.CancellationDisposable"/> class that uses an existing <seealso cref="T:System.Threading.CancellationTokenSource"/>.
+        /// Initializes a new instance of the <see cref="CancellationDisposable"/> class that uses an existing <seealso cref="System.Threading.CancellationTokenSource"/>.
         /// </summary>
         /// <param name="cts"><seealso cref="T:System.Threading.CancellationTokenSource"/> used for cancellation.</param>
         /// <exception cref="ArgumentNullException"><paramref name="cts"/> is null.</exception>
@@ -40,7 +40,7 @@ namespace DependsOnThat.Disposables
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:DependsOnThat.Disposables.CancellationDisposable"/> class that uses a new <seealso cref="T:System.Threading.CancellationTokenSource"/>.
+        /// Initializes a new instance of the <see cref="CancellationDisposable"/> class that uses a new <seealso cref="System.Threading.CancellationTokenSource"/>.
         /// </summary>
         public CancellationDisposable()
             : this(new CancellationTokenSource())

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Collections
+namespace CodeConnections.Collections
 {
 	/// <summary>
 	/// Base class for a selection-aware collection.

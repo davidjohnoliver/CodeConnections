@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 using Task = System.Threading.Tasks.Task;
 
-namespace DependsOnThat.VSIX
+namespace CodeConnections.VSIX
 {
 	/// <summary>
 	/// Command handler

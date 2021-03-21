@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Graph
+namespace CodeConnections.Graph
 {
 	/// <summary>
 	/// A subset of nodes from a <see cref="NodeGraph"/>.

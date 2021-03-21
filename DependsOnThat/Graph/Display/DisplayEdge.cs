@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using QuickGraph;
 
-namespace DependsOnThat.Graph.Display
+namespace CodeConnections.Graph.Display
 {
 	/// <summary>
 	/// An edge in the displayable subgraph.

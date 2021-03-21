@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Extensions;
+using CodeConnections.Extensions;
 using QuickGraph.Algorithms;
 
-namespace DependsOnThat.Statistics
+namespace CodeConnections.Statistics
 {
 	/// <summary>
 	/// Contains statistical information about a discrete distribution.

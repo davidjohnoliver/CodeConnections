@@ -2,7 +2,7 @@
 
 using System.Collections;
 
-namespace DependsOnThat.Collections
+namespace CodeConnections.Collections
 {
 	/// <summary>
 	/// View-facing methods for a selection-aware collection.

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Git;
+using CodeConnections.Git;
 
-namespace DependsOnThat.Graph
+namespace CodeConnections.Graph
 {
 	/// <summary>
 	/// A node in the dependency graph.

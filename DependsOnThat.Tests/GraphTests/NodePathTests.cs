@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Extensions;
-using DependsOnThat.Graph;
-using DependsOnThat.Roslyn;
-using DependsOnThat.Tests.Utilities;
+using CodeConnections.Extensions;
+using CodeConnections.Graph;
+using CodeConnections.Roslyn;
+using CodeConnections.Tests.Utilities;
 using NUnit.Framework;
 
-namespace DependsOnThat.Tests.GraphTests
+namespace CodeConnections.Tests.GraphTests
 {
 	[TestFixture]
 	public class NodePathTests

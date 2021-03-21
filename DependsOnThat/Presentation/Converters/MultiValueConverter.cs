@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using DependsOnThat.Utilities;
+using CodeConnections.Utilities;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	/// <summary>
 	/// An <see cref="IMultiValueConverter"/> with type-hinting, that expects two bound values

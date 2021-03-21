@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using GraphSharp.Controls.Zoom;
 using Xceed.Wpf.Toolkit;
 
-namespace DependsOnThat.Views
+namespace CodeConnections.Views
 {
 	public partial class DependencyGraphToolWindowControl : UserControl
 	{

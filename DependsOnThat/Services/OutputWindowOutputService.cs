@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	internal class OutputWindowOutputService : IOutputService
 	{

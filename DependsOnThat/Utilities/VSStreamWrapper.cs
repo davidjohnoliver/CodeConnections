@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.OLE.Interop;
 
-namespace DependsOnThat.Utilities
+namespace CodeConnections.Utilities
 {
 	/// <summary>
 	/// Wraps a VS stream object as a .NET <see cref="Stream"/>, so as not to have to deal with a VS stream object.

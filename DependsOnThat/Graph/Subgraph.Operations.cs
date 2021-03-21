@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DependsOnThat.Extensions;
-using DependsOnThat.Utilities;
+using CodeConnections.Extensions;
+using CodeConnections.Utilities;
 
-namespace DependsOnThat.Graph
+namespace CodeConnections.Graph
 {
 	public partial class Subgraph
 	{

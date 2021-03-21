@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
-namespace DependsOnThat.Tests.Utilities
+namespace CodeConnections.Tests.Utilities
 {
 	partial class WorkspaceUtils
 	{

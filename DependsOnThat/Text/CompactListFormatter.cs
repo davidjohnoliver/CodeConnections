@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Text
+namespace CodeConnections.Text
 {
 	public class CompactListFormatter : ICompactListFormatter
 	{

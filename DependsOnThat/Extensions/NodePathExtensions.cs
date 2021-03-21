@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Graph;
-using DependsOnThat.Graph.Display;
+using CodeConnections.Graph;
+using CodeConnections.Graph.Display;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class NodePathExtensions
 	{

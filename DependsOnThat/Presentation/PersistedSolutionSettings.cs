@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Roslyn;
+using CodeConnections.Roslyn;
 
-namespace DependsOnThat.Presentation
+namespace CodeConnections.Presentation
 {
 	public record PersistedSolutionSettings(
 		bool IncludeGeneratedTypes,

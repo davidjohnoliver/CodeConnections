@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Git
+namespace CodeConnections.Git
 {
 	[Flags]
 	public enum GitStatus

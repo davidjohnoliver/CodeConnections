@@ -7,10 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using DependsOnThat.Git;
-using static DependsOnThat.Git.GitStatus;
+using CodeConnections.Git;
+using static CodeConnections.Git.GitStatus;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	public class GitStatusPathConverter : ValueConverter<GitStatus, Geometry?>
 	{

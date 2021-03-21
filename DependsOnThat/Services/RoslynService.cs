@@ -8,13 +8,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DependsOnThat.Extensions;
-using DependsOnThat.Roslyn;
+using CodeConnections.Extensions;
+using CodeConnections.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.LanguageServices;
 using static Microsoft.CodeAnalysis.WorkspaceChangeKind;
 
-namespace DependsOnThat.Services
+namespace CodeConnections.Services
 {
 	internal class RoslynService : IRoslynService, IModificationsService, IDisposable
 	{

@@ -8,10 +8,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DependsOnThat.Roslyn;
+using CodeConnections.Roslyn;
 using Microsoft.CodeAnalysis;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class SymbolExtensions
 	{

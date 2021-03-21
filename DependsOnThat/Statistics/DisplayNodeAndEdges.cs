@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Graph.Display;
+using CodeConnections.Graph.Display;
 using QuickGraph;
 
-namespace DependsOnThat.Statistics
+namespace CodeConnections.Statistics
 {
 	/// <summary>
 	/// Wrapper for <see cref="DisplayNode"/> which permits its edges to be retrieved from containing graph.

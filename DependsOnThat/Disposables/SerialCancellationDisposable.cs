@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Disposables
+namespace CodeConnections.Disposables
 {
 	/// <summary>
 	/// A combination of a <see cref="SerialDisposable"/> and a <see cref="CancellationDisposable"/>.

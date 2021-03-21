@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Presentation
+namespace CodeConnections.Presentation
 {
 	/// <summary>
 	/// Different user-facing options for graph layout algorithm.

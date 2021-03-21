@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using DependsOnThat.Collections;
+using CodeConnections.Collections;
 
-namespace DependsOnThat.Views.Behaviours
+namespace CodeConnections.Views.Behaviours
 {
 	/// <summary>
 	/// Supports setting a selection-aware collection (<see cref="SelectionCollection"/>) as the ItemsSource of a <see cref="ListBox"/>.

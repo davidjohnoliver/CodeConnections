@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	public class GraphLayoutModeLayoutAlgorithmConverter : ValueConverter<GraphLayoutMode, string?>
 	{

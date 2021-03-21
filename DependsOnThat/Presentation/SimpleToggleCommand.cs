@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Input;
+using CodeConnections.Input;
 
-namespace DependsOnThat.Presentation
+namespace CodeConnections.Presentation
 {
 	public class SimpleToggleCommand<T> : IToggleCommand where T : class
 	{

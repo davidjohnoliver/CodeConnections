@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Graph.Display;
+using CodeConnections.Graph.Display;
 using QuickGraph;
 using QuickGraph.Algorithms;
 using QuickGraph.Algorithms.Condensation;
 
-namespace DependsOnThat.Extensions
+namespace CodeConnections.Extensions
 {
 	public static class DisplayGraphExtensions
 	{

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DependsOnThat.Utilities
+namespace CodeConnections.Utilities
 {
 	public static class SetUtils
 	{

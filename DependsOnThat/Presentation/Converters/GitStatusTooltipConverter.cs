@@ -6,9 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DependsOnThat.Git;
+using CodeConnections.Git;
 
-namespace DependsOnThat.Presentation.Converters
+namespace CodeConnections.Presentation.Converters
 {
 	public class GitStatusTooltipConverter : ValueConverter<GitStatus, string?>
 	{
