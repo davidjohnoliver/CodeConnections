@@ -38,7 +38,7 @@ namespace CodeConnections.VSIX
 		/// </summary>
 		public DependencyGraphToolWindow() : base(null)
 		{
-			this.Caption = "DependsOnThat Graph";
+			this.Caption = "Code Connections Graph";
 
 			// This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
 			// we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
@@ -75,7 +75,7 @@ namespace CodeConnections.VSIX
 			var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
 			AssumePresent(outputWindow);
 
-			var outputService = new OutputWindowOutputService(ConsolePaneId, outputWindow, "DependsOnThat");
+			var outputService = new OutputWindowOutputService(ConsolePaneId, outputWindow, "Code Connections");
 
 			var gitService = new GitService(solutionService).DisposeWith(_disposables);
 

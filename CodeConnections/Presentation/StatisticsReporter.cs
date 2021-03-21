@@ -40,7 +40,7 @@ namespace CodeConnections.Presentation
 		{
 			if (statisticsReportContent.HasFlag(General))
 			{
-				yield return _headerFormatter.FormatHeader("DependsOnThat statistics", headerLevel: 1);
+				yield return _headerFormatter.FormatHeader("Code Connections statistics", headerLevel: 1);
 
 				yield return _headerFormatter.FormatHeader("Types by dependencies and dependents", headerLevel: 2);
 

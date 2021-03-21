@@ -22,7 +22,7 @@
 
   <!--The Commands section is where commands, menus, and menu groups are defined.
       This section uses a Guid to identify the package that provides the command defined inside it. -->
-  <Commands package="guidDependsOnThatPackage">
+  <Commands package="guidCodeConnectionsPackage">
     <!-- Inside this section we have different sub-sections: one for the menus, another
     for the menu groups, one for the buttons (the actual commands), one for the combos
     and the last one for the bitmaps used. Each element is identified by a command id that
@@ -42,11 +42,11 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
-      <Button guid="guidDependsOnThatPackageCmdSet" id="DependencyGraphToolWindowCommandId" priority="0x0100" type="Button">
+      <Button guid="guidCodeConnectionsPackageCmdSet" id="DependencyGraphToolWindowCommandId" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Icon guid="guidImages" id="bmpPic1" />
         <Strings>
-          <ButtonText>DependsOnThat Graph</ButtonText>
+          <ButtonText>Code Connections Graph</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -64,10 +64,10 @@
 
   <Symbols>
     <!-- This is the package guid. -->
-    <GuidSymbol name="guidDependsOnThatPackage" value="{a2b91160-b751-4d85-967c-136fed47e2b2}" />
+    <GuidSymbol name="guidCodeConnectionsPackage" value="{a2b91160-b751-4d85-967c-136fed47e2b2}" />
 
     <!-- This is the guid used to group the menu commands together -->
-    <GuidSymbol name="guidDependsOnThatPackageCmdSet" value="{457e67ce-4bad-41e5-b06f-aa298a6e5599}">
+    <GuidSymbol name="guidCodeConnectionsPackageCmdSet" value="{457e67ce-4bad-41e5-b06f-aa298a6e5599}">
       <IDSymbol name="DependencyGraphToolWindowCommandId" value="0x0100" />
     </GuidSymbol>
 

@@ -14,8 +14,8 @@
     <ProjectGuid>{D070D5A9-196E-40B6-B85B-B8E43A60DF51}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DependsOnThat</RootNamespace>
-    <AssemblyName>DependsOnThat</AssemblyName>
+    <RootNamespace>CodeConnections</RootNamespace>
+    <AssemblyName>CodeConnections</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <UseCodebase>true</UseCodebase>
@@ -172,7 +172,7 @@
     <Compile Include="Views\GraphOptionsControl.xaml.cs">
       <DependentUpon>GraphOptionsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VSIX\DependsOnThatPackage.cs" />
+    <Compile Include="VSIX\CodeConnectionsPackage.cs" />
     <Compile Include="Utilities\LoopProtection.cs" />
     <Compile Include="VSIX\DependencyGraphToolWindow.cs" />
     <Compile Include="VSIX\DependencyGraphToolWindowCommand.cs" />
@@ -259,7 +259,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <VSCTCompile Include="VSIX\DependsOnThatPackage.vsct">
+    <VSCTCompile Include="VSIX\CodeConnectionsPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
     <Content Include="lib\win32\x64\git2-106a5f2.dll">

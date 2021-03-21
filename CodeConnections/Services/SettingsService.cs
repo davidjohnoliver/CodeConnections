@@ -17,7 +17,7 @@ namespace CodeConnections.Services
 {
 	internal class SettingsService : IVsPersistSolutionOpts, ISettingsService
 	{
-		private const string SolutionSettingsString = "DependsOnThat.Settings";
+		private const string SolutionSettingsString = "CodeConnections.Settings";
 		private readonly IVsSolutionPersistence _vsSolutionPersistence;
 
 		private PersistedSolutionSettings? _solutionSettingsToSave;
@@ -27,11 +27,11 @@ namespace CodeConnections.Services
 		{
 			add
 			{
-				CodeConnections.VSIX.DependsOnThatPackage.SaveUserOptions += value;
+				CodeConnections.VSIX.CodeConnectionsPackage.SaveUserOptions += value;
 			}
 			remove
 			{
-				CodeConnections.VSIX.DependsOnThatPackage.SaveUserOptions -= value;
+				CodeConnections.VSIX.CodeConnectionsPackage.SaveUserOptions -= value;
 			}
 		}
 

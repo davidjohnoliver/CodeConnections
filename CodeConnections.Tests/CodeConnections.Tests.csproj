@@ -7,8 +7,8 @@
     <ProjectGuid>{5F23B68C-36A5-49F9-8294-16A9F45BE3A2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DependsOnThat.Tests</RootNamespace>
-    <AssemblyName>DependsOnThat.Tests</AssemblyName>
+    <RootNamespace>CodeConnections.Tests</RootNamespace>
+    <AssemblyName>CodeConnections.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -78,9 +78,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DependsOnThat\DependsOnThat.csproj">
+    <ProjectReference Include="..\CodeConnections\CodeConnections.csproj">
       <Project>{d070d5a9-196e-40b6-b85b-b8e43a60df51}</Project>
-      <Name>DependsOnThat</Name>
+      <Name>CodeConnections</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

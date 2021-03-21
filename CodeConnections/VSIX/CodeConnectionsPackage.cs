@@ -29,13 +29,13 @@ namespace CodeConnections.VSIX
 	/// </para>
 	/// </remarks>
 	[PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-	[Guid(DependsOnThatPackage.PackageGuidString)]
+	[Guid(CodeConnectionsPackage.PackageGuidString)]
 	[ProvideMenuResource("Menus.ctmenu", 1)]
 	[ProvideToolWindow(typeof(CodeConnections.VSIX.DependencyGraphToolWindow))]
-	public sealed class DependsOnThatPackage : AsyncPackage, IVsPersistSolutionOpts
+	public sealed class CodeConnectionsPackage : AsyncPackage, IVsPersistSolutionOpts
 	{
 		/// <summary>
-		/// DependsOnThatPackage GUID string.
+		/// CodeConnectionsPackage GUID string.
 		/// </summary>
 		public const string PackageGuidString = "a2b91160-b751-4d85-967c-136fed47e2b2";
 
