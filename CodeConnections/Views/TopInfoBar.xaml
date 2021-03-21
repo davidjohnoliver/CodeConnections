@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="CodeConnections.Views.TopInfoBar"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+			 xmlns:local="using:CodeConnections.Views"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vsimaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+			 xmlns:vsimagecat="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+			 xmlns:vstheming="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
+			 mc:Ignorable="d"
+			 d:DesignHeight="300"
+			 d:DesignWidth="400">
+	<d:UserControl.DataContext>
+		<DependencyGraphToolWindowViewModel xmlns="clr-namespace:CodeConnections.Presentation" />
+	</d:UserControl.DataContext>
+
+	<Border MinHeight="40"
+			VerticalAlignment="Stretch"
+			Background="{DynamicResource {x:Static vsshell:VsBrushes.InfoBackgroundKey}}"
+			vstheming:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsshell:VsColors.InfoBackgroundKey}}">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<vsimaging:CrispImage Grid.Column="0"
+								  Margin="5"
+								  Width="16"
+								  Height="16"
+								  VerticalAlignment="Top"
+								  Moniker="{x:Static vsimagecat:KnownMonikers.StatusAlert}" />
+			<TextBlock Grid.Column="1"
+					   Margin="0,6,5,5"
+					   Text="Not all graph elements were shown. Loading a large number of elements might slow down Visual Studio."
+					   Foreground="{DynamicResource {x:Static vsshell:VsBrushes.InfoTextKey}}" />
+			<Button Grid.Column="2"
+					Margin="30,5,5,5"
+					Padding="3,0,3,0"
+					Command="{Binding ShowAllNodesCommand}"
+					MinWidth="72"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top">
+				<TextBlock>Show <Run Text="{Binding UnloadedNodesCount}" /> elements</TextBlock>
+			</Button>
+		</Grid>
+	</Border>
+</UserControl>

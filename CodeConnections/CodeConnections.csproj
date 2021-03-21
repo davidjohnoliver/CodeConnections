@@ -172,6 +172,9 @@
     <Compile Include="Views\GraphOptionsControl.xaml.cs">
       <DependentUpon>GraphOptionsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TopInfoBar.xaml.cs">
+      <DependentUpon>TopInfoBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VSIX\CodeConnectionsPackage.cs" />
     <Compile Include="Utilities\LoopProtection.cs" />
     <Compile Include="VSIX\DependencyGraphToolWindow.cs" />
@@ -254,6 +257,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\GraphOptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TopInfoBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

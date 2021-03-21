@@ -25,6 +25,7 @@ using CodeConnections.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.Threading;
 using QuickGraph;
+using _IDisplayGraph = QuickGraph.IBidirectionalGraph<CodeConnections.Graph.Display.DisplayNode, CodeConnections.Graph.Display.DisplayEdge>;
 
 namespace CodeConnections.Presentation
 {
@@ -44,10 +45,10 @@ namespace CodeConnections.Presentation
 		private readonly SerialCancellationDisposable _projectUpdatesRegistration = new SerialCancellationDisposable();
 		private readonly SerialCancellationDisposable _statsRetrievalRegistration = new SerialCancellationDisposable();
 
-		public IBidirectionalGraph<DisplayNode, DisplayEdge> Graph { get => _graph; set => OnValueSet(ref _graph, value); }
+		public _IDisplayGraph Graph { get => _graph; set => OnValueSet(ref _graph, value); }
 
-		private IBidirectionalGraph<DisplayNode, DisplayEdge> _graph = Empty;
-		private static IBidirectionalGraph<DisplayNode, DisplayEdge> Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
+		private _IDisplayGraph _graph = Empty;
+		private static _IDisplayGraph Empty { get; } = new BidirectionalGraph<DisplayNode, DisplayEdge>();
 
 		public bool IncludePureGenerated
 		{
@@ -142,8 +143,41 @@ namespace CodeConnections.Presentation
 		public GraphLayoutMode[] LayoutModes { get; } = EnumUtils.GetValues<GraphLayoutMode>();
 
 		public ICommand ClearRootsCommand { get; }
+		public ICommand ShowAllNodesCommand { get; }
 		public ICommand LogStatsCommand { get; }
 		public IToggleCommand TogglePinnedCommand { get; }
+
+		/// <summary>
+		/// The maximum number of nodes to show without prompting explicit user opt-in.
+		/// </summary>
+		private const int MaxAutomaticallyLoadedNodes = 60; // TODO: user setting
+
+		/// <summary>
+		/// If true, don't prompt user opt-in when loading large numbers of nodes.
+		/// </summary>
+		private bool _shouldLoadAnyNumberOfNodes = false;
+
+		private bool _shouldShowUnloadedNodesWarning;
+		/// <summary>
+		/// Should warning message that display graph contains a large number of elements be visible?
+		/// </summary>
+		public bool ShouldShowUnloadedNodesWarning
+		{
+			get => _shouldShowUnloadedNodesWarning;
+			set => OnValueSet(ref _shouldShowUnloadedNodesWarning, value);
+		}
+
+		private int _unloadedNodesCount;
+		public int UnloadedNodesCount { get => _unloadedNodesCount; set => OnValueSet(ref _unloadedNodesCount, value); }
+
+		/// <summary>
+		/// If a graph isn't being displayed because it has a large number of nodes, it's stashed here.
+		/// </summary>
+		private _IDisplayGraph? _escrowedGraph;
+
+#if DEBUG
+		public DependencyGraphToolWindowViewModel() => throw new NotSupportedException("XAML Design usage");
+#endif
 
 		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService, ISettingsService settingsService)
 		{
@@ -163,6 +197,7 @@ namespace CodeConnections.Presentation
 			_modificationsService.SolutionInvalidated += OnSolutionChanged;
 
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
+			ShowAllNodesCommand = SimpleCommand.Create(ShowAllNodes);
 			LogStatsCommand = SimpleCommand.Create(LogStats);
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
@@ -172,24 +207,44 @@ namespace CodeConnections.Presentation
 			ApplySettings();
 		}
 
-		private void OnDisplayGraphChanged(IBidirectionalGraph<DisplayNode, DisplayEdge> newGraph, GraphStatistics statistics)
+		private void OnDisplayGraphChanged(_IDisplayGraph newGraph, GraphStatistics statistics)
 		{
-			Graph = newGraph;
+			var shouldShowGraph = newGraph.EdgeCount <= MaxAutomaticallyLoadedNodes || _shouldLoadAnyNumberOfNodes;
+			if (shouldShowGraph)
+			{
+				ShowGraph(newGraph);
+			}
+			else
+			{
+				ShouldShowUnloadedNodesWarning = true;
+				UnloadedNodesCount = newGraph.EdgeCount;
+				_escrowedGraph = newGraph;
+			}
 
-			SetActiveDocumentAsSelected();
-
-			var reporter = GetStatsReporter(statistics);
-			// TODO: this should be opt-in/hidden behind debug flag
 			if (!Graph.IsVerticesEmpty)
 			{
+				var reporter = GetStatsReporter(statistics);
+				// TODO: this should be opt-in/hidden behind debug flag
 				_outputService.WriteLines(reporter.WriteStatistics(StatisticsReportContent.GraphingSpecific));
 			}
+		}
+
+		private void ShowGraph(_IDisplayGraph? newGraph)
+		{
+			ShouldShowUnloadedNodesWarning = false;
+			UnloadedNodesCount = 0;
+			_escrowedGraph = null;
+
+			Graph = newGraph ?? Empty;
+
+			SetActiveDocumentAsSelected();
 		}
 
 		private void OnDocumentInvalidated(DocumentId documentId) => _graphStateManager.InvalidateDocument(documentId);
 
 		private void ResetNodeGraph()
 		{
+			_shouldLoadAnyNumberOfNodes = false;
 			Graph = Empty;
 			_graphStateManager.InvalidateNodeGraph();
 		}
@@ -238,7 +293,15 @@ namespace CodeConnections.Presentation
 		private void ClearRoots()
 		{
 			IsGitModeEnabled = false;
+			_shouldLoadAnyNumberOfNodes = false;
+			Graph = Empty;
 			_graphStateManager.ClearSubgraph();
+		}
+
+		private void ShowAllNodes()
+		{
+			_shouldLoadAnyNumberOfNodes = true;
+			ShowGraph(_escrowedGraph);
 		}
 
 		private void LogStats()
