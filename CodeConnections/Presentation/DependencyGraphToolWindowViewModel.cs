@@ -150,7 +150,7 @@ namespace CodeConnections.Presentation
 		/// <summary>
 		/// The maximum number of nodes to show without prompting explicit user opt-in.
 		/// </summary>
-		private const int MaxAutomaticallyLoadedNodes = 60; // TODO: user setting
+		private const int MaxAutomaticallyLoadedNodes = 100; // TODO: user setting
 
 		/// <summary>
 		/// If true, don't prompt user opt-in when loading large numbers of nodes.
