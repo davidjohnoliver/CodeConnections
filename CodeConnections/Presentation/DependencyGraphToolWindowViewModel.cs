@@ -145,6 +145,7 @@ namespace CodeConnections.Presentation
 		public ICommand ClearRootsCommand { get; }
 		public ICommand ShowAllNodesCommand { get; }
 		public ICommand LogStatsCommand { get; }
+		public ICommand TogglePinnedMenuCommand { get; }
 		public IToggleCommand TogglePinnedCommand { get; }
 
 		/// <summary>
@@ -199,6 +200,7 @@ namespace CodeConnections.Presentation
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
 			ShowAllNodesCommand = SimpleCommand.Create(ShowAllNodes);
 			LogStatsCommand = SimpleCommand.Create(LogStats);
+			TogglePinnedMenuCommand = SimpleCommand.Create<DisplayNode>(TogglePinned);
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
 			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, getActiveDocument: _documentsService.GetActiveDocument, this);
@@ -330,6 +332,16 @@ namespace CodeConnections.Presentation
 			if (displayNode != null)
 			{
 				_graphStateManager.TogglePinnedInSubgraph(displayNode.Key, toggleState ?? false);
+			}
+		}
+
+		private void TogglePinned(DisplayNode? displayNode)
+		{
+			if (displayNode != null)
+			{
+				var newIsPinned = !displayNode.IsPinned;
+				_graphStateManager.TogglePinnedInSubgraph(displayNode.Key, newIsPinned);
+				displayNode.IsPinned = newIsPinned;
 			}
 		}
 

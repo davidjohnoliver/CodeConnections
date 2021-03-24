@@ -99,6 +99,7 @@
     <Compile Include="Graph\TypeNode.cs" />
     <Compile Include="Graph\TypeNodeKey.cs" />
     <Compile Include="Input\IToggleCommand.cs" />
+    <Compile Include="Presentation\Converters\BooleanToStringConverter.cs" />
     <Compile Include="Presentation\Converters\DebugConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayNodeGitIndicatorVisibilityConverter.cs" />
