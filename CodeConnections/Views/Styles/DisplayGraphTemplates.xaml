@@ -14,8 +14,10 @@
 					mc:Ignorable="d">
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="CheckBox.xaml" />
+		<ResourceDictionary Source="ContextMenu.xaml" />
+		<ResourceDictionary Source="MenuItem.xaml" />
 	</ResourceDictionary.MergedDictionaries>
-	
+
 	<converters:DisplayEdgeStrokeDashArrayConverter x:Key="DisplayEdgeStrokeDashArrayConverter"
 													MultiStrokeDashArray="4 2" />
 	<converters:DisplayEdgeTooltipConverter x:Key="DisplayEdgeTooltipConverter" />
@@ -42,8 +44,10 @@
 							Padding="4,6,4,6">
 						<Border.ContextMenu>
 							<ContextMenu>
-								<MenuItem Header="{Binding IsPinned, Converter={StaticResource IsPinnedToMessageConverter}}"
-										  Command="{Binding ParentContext.TogglePinnedMenuCommand}" CommandParameter="{Binding}"/>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Header="{Binding IsPinned, Converter={StaticResource IsPinnedToMessageConverter}}"
+										  Command="{Binding ParentContext.TogglePinnedMenuCommand}"
+										  CommandParameter="{Binding}" />
 							</ContextMenu>
 						</Border.ContextMenu>
 						<StackPanel Orientation="Horizontal"
@@ -58,7 +62,8 @@
 									  ToolTip="{Binding IsPinned, Converter={StaticResource IsPinnedToMessageConverter}}"
 									  ext:ToggleButtonExtensions.ToggleCommand="{Binding ParentContext.TogglePinnedCommand}"
 									  ext:ToggleButtonExtensions.ToggleCommandParameter="{Binding}" />
-							<Grid x:Name="GitStatusContainer" Margin="0,-8,-5,0"
+							<Grid x:Name="GitStatusContainer"
+								  Margin="0,-8,-5,0"
 								  HorizontalAlignment="Right"
 								  VerticalAlignment="Top"
 								  ToolTip="{Binding GitStatus, Converter={StaticResource GitStatusTooltipConverter}}">
