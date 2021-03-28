@@ -48,6 +48,10 @@
 										  Header="{Binding IsPinned, Converter={StaticResource IsPinnedToMessageConverter}}"
 										  Command="{Binding ParentContext.TogglePinnedMenuCommand}"
 										  CommandParameter="{Binding}" />
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Header="Pin this and connected elements to graph"
+										  Command="{Binding ParentContext.PinNodeAndNeighboursMenuCommand}"
+										  CommandParameter="{Binding}" />
 							</ContextMenu>
 						</Border.ContextMenu>
 						<StackPanel Orientation="Horizontal"

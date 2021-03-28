@@ -260,7 +260,7 @@ namespace CodeConnections.Graph.Display
 			InvalidateNodeGraph();
 		}
 
-		private void ModifySubgraph(Subgraph.Operation operation)
+		public void ModifySubgraph(Subgraph.Operation operation)
 		{
 			ThreadUtils.ThrowIfNotOnUIThread();
 
@@ -505,10 +505,9 @@ namespace CodeConnections.Graph.Display
 					{
 						var activeSymbols = await compilationCache.GetDeclaredSymbolsFromFilePath(activeDocument, ct);
 						var activeNodeKey = activeSymbols.FirstOrDefault()?.ToNodeKey();
-						const int maxLinks = 30; // TODO: this, properly
 						if (activeNodeKey != null)
 						{
-							ModifySubgraph(Subgraph.SetSelected(activeNodeKey, maxLinks));
+							ModifySubgraph(Subgraph.SetSelected(activeNodeKey));
 						}
 					}
 				}

@@ -30,8 +30,12 @@ namespace CodeConnections.Graph
 		/// An operation to set a particular node as 'selected', adding it and its neighbours as <see cref="AdditionalNodes"/>.
 		/// </summary>
 
-		/// <param name="maxLinks">The maximum number of links to be included. If there are more neighbours than this, they will be omitted.</param>
-		public static Operation SetSelected(NodeKey selected, int maxLinks) => new UpdateSelectedOperation(selected, maxLinks);
+		public static Operation SetSelected(NodeKey selected) => new UpdateSelectedOperation(selected);
+
+		/// <summary>
+		/// An operation to pin <paramref name="targetNode"/> and all neighbouring nodes to the graph.
+		/// </summary>
+		public static Operation PinNodeAndNeighbours(NodeKey targetNode) => new PinNodeAndNeighboursOperation(targetNode);
 
 		/// <summary>
 		/// An operation to 'sanitize' the subgraph by removing any nodes that aren't found in the full <see cref="NodeGraph"/>.
@@ -134,12 +138,9 @@ namespace CodeConnections.Graph
 		{
 			private readonly NodeKey _selected;
 
-			private readonly int _maxLinks;
-
-			public UpdateSelectedOperation(NodeKey selected, int maxLinks)
+			public UpdateSelectedOperation(NodeKey selected)
 			{
 				_selected = selected ?? throw new ArgumentNullException(nameof(selected));
-				_maxLinks = maxLinks;
 			}
 
 			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
@@ -165,7 +166,34 @@ namespace CodeConnections.Graph
 					}
 				}
 
-				modified |= subgraph.SetSelected(_selected);
+				modified |= subgraph.SetSelectedNode(_selected);
+
+				return Task.FromResult(modified);
+			}
+		}
+
+		private class PinNodeAndNeighboursOperation : Operation
+		{
+			private readonly NodeKey _targetNode;
+
+			public PinNodeAndNeighboursOperation(NodeKey targetNode)
+			{
+				_targetNode = targetNode;
+			}
+
+			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
+			{
+				var modified = false;
+
+				var nodes = fullGraph.Nodes;
+				var nodesToPin = nodes.ContainsKey(_targetNode) ?
+					nodes[_targetNode].AllLinkKeys(includeThis: true) :
+					ArrayUtils.GetEmpty<NodeKey>();
+
+				foreach (var node in nodesToPin)
+				{
+					modified |= subgraph.AddPinnedNode(node, fullGraph);
+				}
 
 				return Task.FromResult(modified);
 			}

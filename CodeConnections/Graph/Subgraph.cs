@@ -55,6 +55,10 @@ namespace CodeConnections.Graph
 			_shouldIncludeNode = shouldIncludeNode;
 		}
 
+		/// <summary>
+		/// Add <paramref name="nodeKey"/> as a pinned node. If it's currently present as an additional node, pin it.
+		/// </summary>
+		/// <returns>True if the node was added to pinned nodes (and was not already pinned), false otherwise.</returns>
 		private bool AddPinnedNode(NodeKey nodeKey, NodeGraph nodeGraph)
 		{
 			if (!_shouldIncludeNode(nodeKey, nodeGraph))
@@ -135,7 +139,7 @@ namespace CodeConnections.Graph
 			return true;
 		}
 
-		private bool SetSelected(NodeKey? selected)
+		private bool SetSelectedNode(NodeKey? selected)
 		{
 			var result = !Equals(_selectedNode, selected);
 			_selectedNode = selected;
