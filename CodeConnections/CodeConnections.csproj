@@ -173,6 +173,20 @@
     <Compile Include="Views\GraphOptionsControl.xaml.cs">
       <DependentUpon>GraphOptionsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Graph\CCLayoutAlgorithmFactory.cs" />
+    <Compile Include="Views\Graph\FDP\LinLogLayoutAlgorithm.cs" />
+    <Compile Include="Views\Graph\FDP\LinLogLayoutAlgorithm.QuadTree.cs" />
+    <Compile Include="Views\Graph\FDP\LinLogLayoutParameters.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaAlgorithm.BuildSparseNormalizedGraph.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaAlgorithm.DoCrossingMinimizations.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaAlgorithm.DoPreparing.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.AlternatingLayer.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.Data.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.HorizontalAssignment.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.SegmentContainer.cs" />
+    <Compile Include="Views\Graph\Hierarchical\EfficientSugiyamaLayoutParameters.cs" />
+    <Compile Include="Views\Graph\Hierarchical\SugiyamaEdgeRoutings.cs" />
     <Compile Include="Views\TopInfoBar.xaml.cs">
       <DependentUpon>TopInfoBar.xaml</DependentUpon>
     </Compile>

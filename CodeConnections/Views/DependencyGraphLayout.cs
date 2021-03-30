@@ -9,19 +9,22 @@ using System.Threading.Tasks;
 using System.Windows;
 using CodeConnections.Extensions;
 using CodeConnections.Graph.Display;
+using CodeConnections.Views.Graph;
 using GraphSharp.Algorithms.OverlapRemoval;
 using GraphSharp.AttachedBehaviours;
 using GraphSharp.Controls;
 using QuickGraph;
+using _IDisplayGraph = QuickGraph.IBidirectionalGraph<CodeConnections.Graph.Display.DisplayNode, CodeConnections.Graph.Display.DisplayEdge>;
 
 namespace CodeConnections.Views
 {
-	public class DependencyGraphLayout : GraphLayout<DisplayNode, DisplayEdge, IBidirectionalGraph<DisplayNode, DisplayEdge>?>
+	public class DependencyGraphLayout : GraphLayout<DisplayNode, DisplayEdge, _IDisplayGraph?>
 	{
 		private readonly Stopwatch _stopwatch = new Stopwatch();
 
 		public DependencyGraphLayout()
 		{
+			LayoutAlgorithmFactory = new CCLayoutAlgorithmFactory<DisplayNode, DisplayEdge, _IDisplayGraph?>();
 			OverlapRemovalParameters = new OverlapRemovalParameters() { HorizontalGap = 10, VerticalGap = 10 };
 			OverlapRemovalAlgorithmType = "FSA";
 			AsyncCompute = true;
@@ -55,7 +58,7 @@ namespace CodeConnections.Views
 			StartTimer();
 			SelectedVertexControl = null;
 			// Workaround for XamlParseException when binding directly to Graph property https://stackoverflow.com/questions/13007129/method-or-operation-not-implemented-error-on-binding
-			var newGraph = newValue as IBidirectionalGraph<DisplayNode, DisplayEdge>;
+			var newGraph = newValue as _IDisplayGraph;
 			ApplyLightUpdate(newGraph);
 
 			Graph = newGraph;
@@ -68,7 +71,7 @@ namespace CodeConnections.Views
 		/// Update mutable values on vertices currently in use, to preempt costly layout updates when not needed.
 		/// </summary>
 		/// <param name="graph">The new graph about to be applied.</param>
-		private void ApplyLightUpdate(IBidirectionalGraph<DisplayNode, DisplayEdge>? graph)
+		private void ApplyLightUpdate(_IDisplayGraph? graph)
 		{
 			if (graph != null && Graph != null)
 			{
