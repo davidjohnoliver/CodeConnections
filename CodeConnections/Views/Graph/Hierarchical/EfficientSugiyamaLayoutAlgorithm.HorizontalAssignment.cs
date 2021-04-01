@@ -171,9 +171,9 @@ namespace CodeConnections.Views.Graph.Hierarchical
 				return;
 
 			_layerPositions = new double[_layers.Count];
-			_layerPositions[0] = 0;
-			for (int i = 1; i < _layers.Count; i++)
-				_layerPositions[i] = _layerPositions[i - 1] + _layerHeights[i - 1] + Parameters.LayerDistance;
+			_layerPositions[^1] = 0;
+			for (int i = 2; i < _layers.Count + 1; i++)
+				_layerPositions[^i] = _layerPositions[^(i - 1)] + _layerHeights[^(i - 1)] + Parameters.LayerDistance;
 		}
 
 		private void CalculateRealPositions()
