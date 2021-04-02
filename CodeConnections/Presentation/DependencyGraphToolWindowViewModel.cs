@@ -177,6 +177,13 @@ namespace CodeConnections.Presentation
 		/// </summary>
 		private _IDisplayGraph? _escrowedGraph;
 
+		private int _randomSeed = DateTime.Now.Millisecond;
+
+		/// <summary>
+		/// The current random seed.
+		/// </summary>
+		public int RandomSeed { get => _randomSeed; set => OnValueSet(ref _randomSeed, value); }
+
 #if DEBUG
 		public DependencyGraphToolWindowViewModel() => throw new NotSupportedException("XAML Design usage");
 #endif
@@ -203,7 +210,7 @@ namespace CodeConnections.Presentation
 			LogStatsCommand = SimpleCommand.Create(LogStats);
 			TogglePinnedMenuCommand = SimpleCommand.Create<DisplayNode>(TogglePinned);
 			PinNodeAndNeighboursMenuCommand = SimpleCommand.Create<DisplayNode>(PinNodeAndNeighbours);
-			
+
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
 			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, getActiveDocument: _documentsService.GetActiveDocument, this);
@@ -297,10 +304,24 @@ namespace CodeConnections.Presentation
 
 		private void ClearRoots()
 		{
+			RerollRandomSeed();
 			IsGitModeEnabled = false;
 			_shouldLoadAnyNumberOfNodes = false;
 			Graph = Empty;
 			_graphStateManager.ClearSubgraph();
+		}
+
+		/// <summary>
+		/// Change the current random seed to a new value.
+		/// </summary>
+		private void RerollRandomSeed()
+		{
+			var newSeed = DateTime.Now.Millisecond;
+			if (newSeed == RandomSeed)
+			{
+				newSeed++; // Hey there's a 1/1000 chance
+			}
+			RandomSeed = newSeed;
 		}
 
 		private void ShowAllNodes()
@@ -350,7 +371,7 @@ namespace CodeConnections.Presentation
 
 		private void PinNodeAndNeighbours(DisplayNode? displayNode)
 		{
-			if (displayNode!= null)
+			if (displayNode != null)
 			{
 				var op = Subgraph.PinNodeAndNeighbours(displayNode.Key);
 				_graphStateManager.ModifySubgraph(op);

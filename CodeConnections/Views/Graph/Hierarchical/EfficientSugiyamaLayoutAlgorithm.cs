@@ -10,7 +10,7 @@ using QuickGraph;
 namespace CodeConnections.Views.Graph.Hierarchical
 {
 	public partial class EfficientSugiyamaLayoutAlgorithm<TVertex, TEdge, TGraph>
-		: DefaultParameterizedLayoutAlgorithmBase<TVertex, TEdge, TGraph, EfficientSugiyamaLayoutParameters>,
+		: StableLayoutAlgorithmBase<TVertex, TEdge, TGraph, EfficientSugiyamaLayoutParameters>,
 		  IEdgeRoutingAlgorithm<TVertex, TEdge, TGraph>
 		where TVertex : class
 		where TEdge : IEdge<TVertex>
@@ -38,10 +38,13 @@ namespace CodeConnections.Views.Graph.Hierarchical
 			TGraph visitedGraph,
 			EfficientSugiyamaLayoutParameters? parameters,
 			IDictionary<TVertex, Point> vertexPositions,
-			IDictionary<TVertex, Size> vertexSizes)
-			: base(visitedGraph, vertexPositions, parameters)
+			IDictionary<TVertex, Size> vertexSizes,
+			int randomSeed)
+			: base(visitedGraph, vertexPositions, parameters, randomSeed)
 		{
 			_vertexSizes = vertexSizes;
+
+			_rnd = GetRandomWithCurrentSeed();
 		}
 
 		/// <summary>Initializes the private _graph field which stores the graph that we operate on.</summary>
@@ -72,6 +75,8 @@ namespace CodeConnections.Views.Graph.Hierarchical
 
 		protected override void InternalCompute()
 		{
+			ResetSeedForCompute();
+
 			InitTheGraph();
 
 			DoPreparing();

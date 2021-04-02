@@ -11,18 +11,15 @@ using GraphSharp;
 
 namespace CodeConnections.Views.Graph.FDP
 {
-	public partial class LinLogLayoutAlgorithm<TVertex, TEdge, TGraph> : DefaultParameterizedLayoutAlgorithmBase<TVertex, TEdge, TGraph, LinLogLayoutParameters>
+	public partial class LinLogLayoutAlgorithm<TVertex, TEdge, TGraph> : StableLayoutAlgorithmBase<TVertex, TEdge, TGraph, LinLogLayoutParameters>
 		where TVertex : class
 		where TEdge : IEdge<TVertex>
 		where TGraph : IBidirectionalGraph<TVertex, TEdge>
 	{
 		#region Constructors
-		public LinLogLayoutAlgorithm(TGraph visitedGraph)
-			: base(visitedGraph) { }
-
 		public LinLogLayoutAlgorithm(TGraph visitedGraph, IDictionary<TVertex, Point> positions,
-									  LinLogLayoutParameters parameters)
-			: base(visitedGraph, positions, parameters) { }
+									  LinLogLayoutParameters parameters, int randomSeed)
+			: base(visitedGraph, positions, parameters, randomSeed) { }
 		#endregion
 
 		#region Member variables - privates
@@ -50,6 +47,8 @@ namespace CodeConnections.Views.Graph.FDP
 
 		protected override void InternalCompute()
 		{
+			ResetSeedForCompute();
+
 			if (VisitedGraph.VertexCount <= 1) return;
 
 			InitializeWithRandomPositions(1, 1, -0.5, -0.5);

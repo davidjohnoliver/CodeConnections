@@ -10,6 +10,9 @@
 			 xmlns:vsimagecat="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
 			 xmlns:vstheming="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
 			 mc:Ignorable="d">
+	<d:UserControl.DataContext>
+		<DependencyGraphToolWindowViewModel xmlns="clr-namespace:CodeConnections.Presentation" />
+	</d:UserControl.DataContext>
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>

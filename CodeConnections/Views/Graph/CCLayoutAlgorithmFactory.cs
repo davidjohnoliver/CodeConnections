@@ -23,6 +23,8 @@ namespace CodeConnections.Views.Graph
 	{
 		public IEnumerable<string> AlgorithmTypes => new[] { "LinLog", "EfficientSugiyama" };
 
+		public int RandomSeed { get; set; } = DateTime.Now.Millisecond;
+
 		public ILayoutAlgorithm<TVertex, TEdge, TGraph>? CreateAlgorithm(string newAlgorithmType, ILayoutContext<TVertex, TEdge, TGraph> context, ILayoutParameters parameters)
 		{
 			if (context == null || context.Graph == null)
@@ -33,13 +35,16 @@ namespace CodeConnections.Views.Graph
 				switch (newAlgorithmType)
 				{
 					case "LinLog":
-						return new LinLogLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, context.Positions,
-																				 parameters as LinLogLayoutParameters);
+						return new LinLogLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, 
+																				 context.Positions,
+																				 parameters as LinLogLayoutParameters,
+																				 RandomSeed);
 					case "EfficientSugiyama":
 						return new EfficientSugiyamaLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph,
 																							parameters as EfficientSugiyamaLayoutParameters,
 																							context.Positions,
-																							context.Sizes);
+																							context.Sizes,
+																							RandomSeed);
 					default:
 						return null;
 				}

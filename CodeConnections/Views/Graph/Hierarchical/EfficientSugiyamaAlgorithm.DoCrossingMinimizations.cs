@@ -16,7 +16,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 		where TEdge : IEdge<TVertex>
 		where TGraph : IVertexAndEdgeListGraph<TVertex, TEdge>
 	{
-		private readonly Random _rnd = new Random(DateTime.Now.Millisecond);
+		private Random _rnd;
 
 		private int[]? _crossCounts;
 
@@ -27,6 +27,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 		/// <summary>Minimizes the crossings between the layers by sweeping up and down while there could be something optimized.</summary>
 		private void DoCrossingMinimizations()
 		{
+			_rnd = GetRandomWithCurrentSeed();
 			int prevCrossings;
 			int crossings = int.MaxValue;
 			int phase = 1;
@@ -357,7 +358,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 				{
 					sortedVertexList = new List<SugiVertex>(verticesWithSameMeasure.Count);
 					var stack = new Stack<SugiVertex>(verticesWithSameMeasure.Count);
-					var rnd = new Random(DateTime.Now.Millisecond);
+					var rnd = GetRandomWithCurrentSeed();
 					foreach (var v in verticesWithSameMeasure)
 					{
 						if (stack.Count > 0 && (stack.Peek().MeasuredPosition != v.MeasuredPosition || rnd.NextDouble() > 0.8))

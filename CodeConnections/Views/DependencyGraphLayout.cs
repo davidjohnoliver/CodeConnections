@@ -113,6 +113,24 @@ namespace CodeConnections.Views
 		public static readonly DependencyProperty AlgorithmTypeProperty =
 			DependencyProperty.Register("AlgorithmType", typeof(string), typeof(DependencyGraphLayout), new PropertyMetadata("", (o, e) => ((DependencyGraphLayout)o).LayoutAlgorithmType = (string)e.NewValue));
 
+
+		public int RandomSeed
+		{
+			get { return (int)GetValue(RandomSeedProperty); }
+			set { SetValue(RandomSeedProperty, value); }
+		}
+
+		public static readonly DependencyProperty RandomSeedProperty =
+			DependencyProperty.Register("RandomSeed", typeof(int), typeof(DependencyGraphLayout), new PropertyMetadata(0, (o, e) => ((DependencyGraphLayout)o).OnRandomSeedChanged((int)e.OldValue, (int)e.NewValue)));
+
+		private void OnRandomSeedChanged(int oldValue, int newValue)
+		{
+			if (LayoutAlgorithmFactory is CCLayoutAlgorithmFactory<DisplayNode, DisplayEdge, _IDisplayGraph> factory)
+			{
+				factory.RandomSeed = newValue;
+			}
+		}
+
 		public VertexControl? SelectedVertexControl
 		{
 			get { return (VertexControl?)GetValue(SelectedVertexControlProperty); }
