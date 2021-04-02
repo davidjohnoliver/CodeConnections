@@ -1,5 +1,5 @@
 ﻿// https://github.com/NinetailLabs/GraphSharp/tree/4831873c0465c0738adc94c7180a417352efeb58/Graph%23/Algorithms/Layout/Simple
-#nullable disable
+#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -18,11 +18,11 @@ namespace CodeConnections.Views.Graph.Hierarchical
 	{
 		private readonly Random _rnd = new Random(DateTime.Now.Millisecond);
 
-		private int[] _crossCounts;
+		private int[]? _crossCounts;
 
-		private IList<Edge<Data>>[] _sparseCompactionByLayerBackup;
+		private IList<Edge<Data>>[]? _sparseCompactionByLayerBackup;
 
-		private AlternatingLayer[] _alternatingLayers;
+		private AlternatingLayer[]? _alternatingLayers;
 
 		/// <summary>Minimizes the crossings between the layers by sweeping up and down while there could be something optimized.</summary>
 		private void DoCrossingMinimizations()
@@ -80,7 +80,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 		{
 			int crossings = 0;
 			changed = false;
-			if (_alternatingLayers.Length > 0)
+			if (_alternatingLayers?.Length > 0)
 			{
 				AlternatingLayer alternatingLayer;
 				if (_alternatingLayers[startLayerIndex] == null)
@@ -95,6 +95,10 @@ namespace CodeConnections.Views.Graph.Hierarchical
 					alternatingLayer = _alternatingLayers[startLayerIndex];
 
 				OutputAlternatingLayer(alternatingLayer, startLayerIndex, 0);
+				if (_crossCounts == null)
+				{
+					throw new InvalidOperationException();
+				}
 				for (int i = startLayerIndex; i != endLayerIndex; i += step)
 				{
 					int ci = Math.Min(i, i + step);
@@ -138,9 +142,8 @@ namespace CodeConnections.Views.Graph.Hierarchical
 			Debug.Write(layerIndex + " | " + crossCount + ": ");
 			foreach (var element in alternatingLayer)
 			{
-				if (element is SugiVertex)
+				if (element is SugiVertex vertex)
 				{
-					var vertex = element as SugiVertex;
 					Debug.Write(string.Format("{0},{1}\t", vertex.OriginalVertex, vertex.Type.ToString()[0]));
 				}
 				else
@@ -244,6 +247,10 @@ namespace CodeConnections.Views.Graph.Hierarchical
 
 		private void AddAlternatingLayerToSparseCompactionGraph(AlternatingLayer nextAlternatingLayer, int layerIndex)
 		{
+			if (_sparseCompactionByLayerBackup == null)
+			{
+				throw new InvalidOperationException();
+			}
 			var sparseCompationGraphEdgesOfLayer = _sparseCompactionByLayerBackup[layerIndex];
 			if (sparseCompationGraphEdgesOfLayer != null)
 			{
@@ -252,10 +259,10 @@ namespace CodeConnections.Views.Graph.Hierarchical
 			}
 
 			sparseCompationGraphEdgesOfLayer = new List<Edge<Data>>();
-			SugiVertex prevVertex = null;
+			SugiVertex? prevVertex = null;
 			for (int i = 1; i < nextAlternatingLayer.Count; i += 2)
 			{
-				var vertex = nextAlternatingLayer[i] as SugiVertex;
+				var vertex = (SugiVertex)nextAlternatingLayer[i];
 				var prevContainer = nextAlternatingLayer[i - 1] as SegmentContainer;
 				var nextContainer = nextAlternatingLayer[i + 1] as SegmentContainer;
 				if (prevContainer != null && prevContainer.Count > 0)
@@ -296,7 +303,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 		private class CrossCounterPair : Pair
 		{
 			public EdgeTypes Type = EdgeTypes.InnerSegment;
-			public SugiEdge NonInnerSegment;
+			public SugiEdge? NonInnerSegment;
 		}
 
 		private class CrossCounterTreeNode
@@ -666,7 +673,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 							tree[index].InnerSegmentMarker = true;
 							break;
 						case EdgeTypes.NonInnerSegment:
-							tree[index].NonInnerSegmentQueue.Enqueue(pair.NonInnerSegment);
+							tree[index].NonInnerSegmentQueue.Enqueue(pair.NonInnerSegment!);
 							break;
 					}
 					while (index > 0)
@@ -686,7 +693,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 								case EdgeTypes.NonInnerSegment:
 									if (tree[index + 1].InnerSegmentMarker)
 									{
-										pair.NonInnerSegment.Marked = true;
+										pair.NonInnerSegment!.Marked = true;
 									}
 									break;
 							}
@@ -699,7 +706,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 								tree[index].InnerSegmentMarker = true;
 								break;
 							case EdgeTypes.NonInnerSegment:
-								tree[index].NonInnerSegmentQueue.Enqueue(pair.NonInnerSegment);
+								tree[index].NonInnerSegmentQueue.Enqueue(pair.NonInnerSegment!);
 								break;
 						}
 					}

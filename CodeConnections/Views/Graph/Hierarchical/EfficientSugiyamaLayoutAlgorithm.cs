@@ -1,5 +1,5 @@
 ﻿// https://github.com/NinetailLabs/GraphSharp/tree/4831873c0465c0738adc94c7180a417352efeb58/Graph%23/Algorithms/Layout/Simple
-#nullable disable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Windows;
@@ -17,7 +17,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 		where TGraph : IVertexAndEdgeListGraph<TVertex, TEdge>
 	{
 		/// <summary>The copy of the VisitedGraph which should be laid out.</summary>
-		private IMutableBidirectionalGraph<SugiVertex, SugiEdge> _graph;
+		private IMutableBidirectionalGraph<SugiVertex, SugiEdge> _graph =  new BidirectionalGraph<SugiVertex, SugiEdge>();
 
 		/// <summary>Routing points for the edges of the original graph.</summary>
 		private readonly IDictionary<TEdge, Point[]> _edgeRoutingPoints = new Dictionary<TEdge, Point[]>();
@@ -29,14 +29,14 @@ namespace CodeConnections.Views.Graph.Hierarchical
 		private readonly IDictionary<TVertex, SugiVertex> _vertexMap = new Dictionary<TVertex, SugiVertex>();
 
 		/// <summary>Isolated vertices in the visited graph, which will be handled only in the last step of the layout.</summary>
-		private List<SugiVertex> _isolatedVertices;
+		private List<SugiVertex>? _isolatedVertices;
 
 		/// <summary>It stores the vertices or segments which inside the layers.</summary>
 		private readonly IList<IList<SugiVertex>> _layers = new List<IList<SugiVertex>>();
 
 		public EfficientSugiyamaLayoutAlgorithm(
 			TGraph visitedGraph,
-			EfficientSugiyamaLayoutParameters parameters,
+			EfficientSugiyamaLayoutParameters? parameters,
 			IDictionary<TVertex, Point> vertexPositions,
 			IDictionary<TVertex, Size> vertexSizes)
 			: base(visitedGraph, vertexPositions, parameters)
