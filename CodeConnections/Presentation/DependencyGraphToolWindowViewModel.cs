@@ -419,7 +419,7 @@ namespace CodeConnections.Presentation
 		private void SetActiveDocumentAsSelected()
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
-			SelectedNode = Graph.Vertices.FirstOrDefault(dn => dn.FilePath == activeDocument);
+			SelectedNode = Graph.Vertices.FirstOrDefault(dn => dn.FilePath?.Equals(activeDocument, StringComparison.OrdinalIgnoreCase) ?? false);
 		}
 
 		/// <summary>
