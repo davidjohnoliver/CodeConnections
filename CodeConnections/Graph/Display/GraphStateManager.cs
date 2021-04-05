@@ -109,6 +109,11 @@ namespace CodeConnections.Graph.Display
 		}
 
 		/// <summary>
+		/// Raised whenever an active update begins.
+		/// </summary>
+		public event Action? DisplayGraphUpdating;
+
+		/// <summary>
 		/// Raised whenever a new copy of the display graph is created.
 		/// </summary>
 		public event Action<IBidirectionalGraph<DisplayNode, DisplayEdge>, GraphStatistics>? DisplayGraphChanged;
@@ -432,6 +437,11 @@ namespace CodeConnections.Graph.Display
 				{
 					_currentUpdateState = UpdateState.WaitingForIdle;
 					await _idleTimer.WaitForIdle(ct);
+				}
+
+				if (!ct.IsCancellationRequested)
+				{
+					DisplayGraphUpdating?.Invoke();
 				}
 
 				if (_nodeGraph == null)

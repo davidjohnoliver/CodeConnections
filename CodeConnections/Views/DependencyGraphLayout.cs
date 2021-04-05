@@ -59,6 +59,7 @@ namespace CodeConnections.Views
 			SelectedVertexControl = null;
 			// Workaround for XamlParseException when binding directly to Graph property https://stackoverflow.com/questions/13007129/method-or-operation-not-implemented-error-on-binding
 			var newGraph = newValue as _IDisplayGraph;
+			IsBusy = newGraph?.VertexCount > 0;
 			ApplyLightUpdate(newGraph);
 
 			Graph = newGraph;
@@ -96,6 +97,7 @@ namespace CodeConnections.Views
 
 		private void CompleteTimer()
 		{
+			// TODO: this should probably be in OnLayoutFinished
 			_stopwatch.Stop();
 			if (VertexControls.Count > 0)
 			{
@@ -130,6 +132,16 @@ namespace CodeConnections.Views
 				factory.RandomSeed = newValue;
 			}
 		}
+
+		public bool IsBusy
+		{
+			get { return (bool)GetValue(IsBusyProperty); }
+			set { SetValue(IsBusyProperty, value); }
+		}
+
+		public static readonly DependencyProperty IsBusyProperty =
+			DependencyProperty.Register("IsBusy", typeof(bool), typeof(DependencyGraphLayout), new PropertyMetadata(false));
+
 
 		public VertexControl? SelectedVertexControl
 		{
@@ -199,6 +211,12 @@ namespace CodeConnections.Views
 			var oldControl = VertexControls[vertex];
 			base.RemoveVertexControl(vertex);
 			oldControl.MouseLeftButtonUp -= OnVertexControlMouseLeftButtonUp;
+		}
+
+		protected override void OnLayoutFinished()
+		{
+			base.OnLayoutFinished();
+			IsBusy = false;
 		}
 	}
 }

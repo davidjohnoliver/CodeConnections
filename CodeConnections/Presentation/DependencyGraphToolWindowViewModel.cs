@@ -184,6 +184,24 @@ namespace CodeConnections.Presentation
 		/// </summary>
 		public int RandomSeed { get => _randomSeed; set => OnValueSet(ref _randomSeed, value); }
 
+		private bool _isNodeGraphUpdating;
+		/// <summary>
+		/// Is <see cref="GraphStateManager"/> currently running an update?
+		/// </summary>
+		private bool IsNodeGraphUpdating { get => _isNodeGraphUpdating; set => OnValueSet(ref _isNodeGraphUpdating, value); }
+
+		private bool _isGraphLayoutUpdating;
+		/// <summary>
+		/// Is the displayed graph currently updating its layout, etc?
+		/// </summary>
+		public bool IsGraphLayoutUpdating { get => _isGraphLayoutUpdating; set => OnValueSet(ref _isGraphLayoutUpdating, value); }
+
+		/// <summary>
+		/// Should the busy indicator be displayed?
+		/// </summary>
+		public bool IsBusy => Compose(IsNodeGraphUpdating, nameof(IsNodeGraphUpdating), IsGraphLayoutUpdating, nameof(IsGraphLayoutUpdating), (n, l) => n || l);
+
+
 #if DEBUG
 		public DependencyGraphToolWindowViewModel() => throw new NotSupportedException("XAML Design usage");
 #endif
@@ -214,13 +232,20 @@ namespace CodeConnections.Presentation
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
 			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, getActiveDocument: _documentsService.GetActiveDocument, this);
+			_graphStateManager.DisplayGraphUpdating += OnDisplayGraphUpdating;
 			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 
 			ApplySettings();
 		}
 
+		private void OnDisplayGraphUpdating()
+		{
+			IsNodeGraphUpdating = true;
+		}
+
 		private void OnDisplayGraphChanged(_IDisplayGraph newGraph, GraphStatistics statistics)
 		{
+			IsNodeGraphUpdating = false;
 			var shouldShowGraph = newGraph.EdgeCount <= MaxAutomaticallyLoadedNodes || _shouldLoadAnyNumberOfNodes;
 			if (shouldShowGraph)
 			{

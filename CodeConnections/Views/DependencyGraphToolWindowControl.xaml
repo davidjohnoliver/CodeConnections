@@ -32,19 +32,27 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<local:TopInfoBar Grid.Row="0"
 						  Visibility="{Binding ShouldShowUnloadedNodesWarning, Converter={StaticResource BooleanToVisibilityConverter}}" />
-		<graphZoom:ZoomControl Grid.Row="1"
+		<ProgressBar Grid.Row="1"
+					 IsIndeterminate="{Binding IsBusy}"
+					 Height="2"
+					 BorderThickness="0"
+					 Background="{DynamicResource {x:Static vsshell:VsBrushes.ScrollBarBackgroundKey}}"
+					 Foreground="{DynamicResource {x:Static vsshell:VsBrushes.HighlightKey}}" />
+		<graphZoom:ZoomControl Grid.Row="2"
 							   Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}">
 			<local:DependencyGraphLayout x:Name="GraphLayout"
 										 DisplayGraph="{Binding Graph}"
 										 AlgorithmType="{Binding LayoutMode, Converter={StaticResource GraphLayoutModeLayoutAlgorithmConverter}}"
 										 SelectedVertex="{Binding SelectedNode, Mode=TwoWay}"
-										 RandomSeed="{Binding RandomSeed}"/>
+										 RandomSeed="{Binding RandomSeed}"
+										 IsBusy="{Binding IsGraphLayoutUpdating, Mode=TwoWay}"/>
 		</graphZoom:ZoomControl>
-		<local:GraphOptionsControl Grid.Row="1"
+		<local:GraphOptionsControl Grid.Row="2"
 								   HorizontalAlignment="Right"
 								   VerticalAlignment="Top"
 								   Margin="10" />
