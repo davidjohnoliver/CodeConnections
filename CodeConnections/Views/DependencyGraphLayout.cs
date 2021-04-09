@@ -28,6 +28,7 @@ namespace CodeConnections.Views
 			OverlapRemovalParameters = new OverlapRemovalParameters() { HorizontalGap = 10, VerticalGap = 10 };
 			OverlapRemovalAlgorithmType = "FSA";
 			AsyncCompute = true;
+			AnimationLength = TimeSpan.FromMilliseconds(200);
 
 			HighlightAlgorithmType = "Simple";
 		}
