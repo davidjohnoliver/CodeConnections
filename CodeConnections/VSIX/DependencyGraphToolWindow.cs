@@ -80,7 +80,7 @@ namespace CodeConnections.VSIX
 			var gitService = new GitService(solutionService).DisposeWith(_disposables);
 
 			var solutionPersistence = (IVsSolutionPersistence)GetService(typeof(SVsSolutionPersistence));
-			var settingsService = new SettingsService(solutionPersistence);
+			var settingsService = new SolutionSettingsService(solutionPersistence);
 
 			if (Content is DependencyGraphToolWindowControl content)
 			{

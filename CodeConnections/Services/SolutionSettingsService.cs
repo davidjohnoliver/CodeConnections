@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace CodeConnections.Services
 {
-	internal class SettingsService : IVsPersistSolutionOpts, ISettingsService
+	internal class SolutionSettingsService : IVsPersistSolutionOpts, ISolutionSettingsService
 	{
 		private const string SolutionSettingsString = "CodeConnections.Settings";
 		private readonly IVsSolutionPersistence _vsSolutionPersistence;
@@ -35,7 +35,7 @@ namespace CodeConnections.Services
 			}
 		}
 
-		public SettingsService(IVsSolutionPersistence vsSolutionPersistence)
+		public SolutionSettingsService(IVsSolutionPersistence vsSolutionPersistence)
 		{
 			_vsSolutionPersistence = vsSolutionPersistence ?? throw new ArgumentNullException(nameof(vsSolutionPersistence));
 		}

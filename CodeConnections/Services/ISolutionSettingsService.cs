@@ -6,9 +6,9 @@ using CodeConnections.Presentation;
 namespace CodeConnections.Services
 {
 	/// <summary>
-	/// Save and load persisted settings.
+	/// Save and load persisted solution-level settings.
 	/// </summary>
-	internal interface ISettingsService
+	internal interface ISolutionSettingsService
 	{
 		/// <summary>
 		/// Raised when solution-level settings should be saved.

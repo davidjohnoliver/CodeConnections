@@ -37,7 +37,7 @@ namespace CodeConnections.Presentation
 		private readonly ISolutionService _solutionService;
 		private readonly IOutputService _outputService;
 		private readonly IModificationsService _modificationsService;
-		private readonly ISettingsService _settingsService;
+		private readonly ISolutionSettingsService _settingsService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 
 		private readonly GraphStateManager _graphStateManager;
@@ -206,7 +206,7 @@ namespace CodeConnections.Presentation
 		public DependencyGraphToolWindowViewModel() => throw new NotSupportedException("XAML Design usage");
 #endif
 
-		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService, ISettingsService settingsService)
+		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService, ISolutionSettingsService settingsService)
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));

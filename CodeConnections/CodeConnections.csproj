@@ -143,11 +143,11 @@
     <Compile Include="Services\IModificationsService.cs" />
     <Compile Include="Services\IOutputService.cs" />
     <Compile Include="Services\IRoslynService.cs" />
-    <Compile Include="Services\ISettingsService.cs" />
+    <Compile Include="Services\ISolutionSettingsService.cs" />
     <Compile Include="Services\ISolutionService.cs" />
     <Compile Include="Services\OutputWindowOutputService.cs" />
     <Compile Include="Services\RoslynService.cs" />
-    <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\SolutionSettingsService.cs" />
     <Compile Include="Services\SolutionService.cs" />
     <Compile Include="Statistics\DiscreteStatisticsResult.cs" />
     <Compile Include="Statistics\DisplayNodeAndEdges.cs" />
