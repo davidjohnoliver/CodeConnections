@@ -8,7 +8,11 @@ using System.Threading.Tasks;
 
 namespace CodeConnections.Presentation
 {
-	public record PersistedUserSettings(int MaxAutomaticallyLoadedNodes, GraphLayoutMode LayoutMode)
+	public record PersistedUserSettings(
+		int MaxAutomaticallyLoadedNodes,
+		GraphLayoutMode LayoutMode,
+		bool IsActiveAlwaysIncluded
+	)
 	{
 	}
 }

@@ -106,7 +106,13 @@ namespace CodeConnections.Presentation
 		public bool IsActiveAlwaysIncluded
 		{
 			get => _graphStateManager.IsActiveAlwaysIncluded;
-			set => OnValueSet(_graphStateManager.IsActiveAlwaysIncluded, v => _graphStateManager.IsActiveAlwaysIncluded = v, value);
+			set
+			{
+				if (OnValueSet(_graphStateManager.IsActiveAlwaysIncluded, v => _graphStateManager.IsActiveAlwaysIncluded = v, value))
+				{
+					_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { IsActiveAlwaysIncluded = value });
+				}
+			}
 		}
 
 		private SelectionList<ProjectIdentifier>? _projects;
@@ -336,7 +342,6 @@ namespace CodeConnections.Presentation
 			{
 				IncludePureGenerated = settings.IncludeGeneratedTypes;
 				IsGitModeEnabled = settings.IsGitModeEnabled;
-				IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
 				IncludeNestedTypes = settings.IncludeNestedTypes;
 			}
 			_excludedProjects = settings?.ExcludedProjects;
@@ -349,13 +354,14 @@ namespace CodeConnections.Presentation
 
 			MaxAutomaticallyLoadedNodes = settings.MaxAutomaticallyLoadedNodes;
 			LayoutMode = settings.LayoutMode;
+			IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
 		}
 
 		private string[]? GetExcludedProjects() => Projects?.UnselectedItems().Select(pi => pi.ProjectName).ToArray();
 
 		private void OnSolutionSettingsSaving()
 		{
-			_solutionSettingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, _excludedProjects, IsActiveAlwaysIncluded, IncludeNestedTypes));
+			_solutionSettingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, _excludedProjects, IncludeNestedTypes));
 		}
 
 		private void OnSolutionChanged()

@@ -25,6 +25,11 @@ namespace CodeConnections.VSIX
 		[Description("Choose whether graph elements should be laid out in a vertical hierarchy, or in a compact space-efficient packing.")]
 		public GraphLayoutMode LayoutMode { get; set; }
 
+		[Category(GraphOptionsString)]
+		[DisplayName("Always include active document")]
+		[Description("Choose whether to always include the active document and its connections in the graph.")]
+		public bool IsActiveAlwaysIncluded { get; set; } = true;
+
 		internal event Action? OptionsApplied;
 
 		protected override void OnApply(PageApplyEventArgs e)

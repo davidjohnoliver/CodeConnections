@@ -26,7 +26,8 @@ namespace CodeConnections.Services
 		{
 			return new PersistedUserSettings(
 				_dialogPage.MaxAutomaticallyLoadedNodes,
-				_dialogPage.LayoutMode
+				_dialogPage.LayoutMode,
+				_dialogPage.IsActiveAlwaysIncluded
 			);
 		}
 
@@ -34,6 +35,7 @@ namespace CodeConnections.Services
 		{
 			_dialogPage.MaxAutomaticallyLoadedNodes = settings.MaxAutomaticallyLoadedNodes;
 			_dialogPage.LayoutMode = settings.LayoutMode;
+			_dialogPage.IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
 
 			_dialogPage.SaveSettingsToStorage();
 			SettingsChanged?.Invoke();
