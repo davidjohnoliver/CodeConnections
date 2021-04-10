@@ -55,6 +55,7 @@
     <Compile Include="Collections\ISelectionCollection.cs" />
     <Compile Include="Collections\SelectionCollection.cs" />
     <Compile Include="Collections\SelectionList.cs" />
+    <Compile Include="ComponentModel\SortedCategoryAttribute.cs" />
     <Compile Include="Disposables\CancellationDisposable.cs" />
     <Compile Include="Disposables\CompositeDisposable.cs" />
     <Compile Include="Disposables\Disposable.cs" />
