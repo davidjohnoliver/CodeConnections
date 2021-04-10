@@ -80,11 +80,12 @@ namespace CodeConnections.VSIX
 			var gitService = new GitService(solutionService).DisposeWith(_disposables);
 
 			var solutionPersistence = (IVsSolutionPersistence)GetService(typeof(SVsSolutionPersistence));
-			var settingsService = new SolutionSettingsService(solutionPersistence);
+			var solutionSettingsService = new SolutionSettingsService(solutionPersistence);
+			var userSettingsService = new DialogUserSettingsService(CodeConnectionsPackage.UserOptionsDialog ?? throw new InvalidOperationException("User options unavailable"));
 
 			if (Content is DependencyGraphToolWindowControl content)
 			{
-				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService, roslynService, settingsService)
+				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService, roslynService, solutionSettingsService, userSettingsService)
 					.DisposeWith(_disposables);
 			}
 		}

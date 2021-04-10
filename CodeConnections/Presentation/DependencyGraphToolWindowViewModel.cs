@@ -37,7 +37,8 @@ namespace CodeConnections.Presentation
 		private readonly ISolutionService _solutionService;
 		private readonly IOutputService _outputService;
 		private readonly IModificationsService _modificationsService;
-		private readonly ISolutionSettingsService _settingsService;
+		private readonly ISolutionSettingsService _solutionSettingsService;
+		private readonly IUserSettingsService _userSettingsService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 
 		private readonly GraphStateManager _graphStateManager;
@@ -149,10 +150,26 @@ namespace CodeConnections.Presentation
 		public ICommand PinNodeAndNeighboursMenuCommand { get; }
 		public IToggleCommand TogglePinnedCommand { get; }
 
+		private int _maxAutomaticallyLoadedNodes;
 		/// <summary>
 		/// The maximum number of nodes to show without prompting explicit user opt-in.
 		/// </summary>
-		private const int MaxAutomaticallyLoadedNodes = 100; // TODO: user setting
+		private int MaxAutomaticallyLoadedNodes
+		{
+			get => _maxAutomaticallyLoadedNodes;
+			set
+			{
+				if (value != _maxAutomaticallyLoadedNodes)
+				{
+					_maxAutomaticallyLoadedNodes = value;
+
+					if (ShouldShowUnloadedNodesWarning && _escrowedGraph != null && UnloadedNodesCount <= _maxAutomaticallyLoadedNodes)
+					{
+						ShowGraph(_escrowedGraph);
+					}
+				}
+			}
+		}
 
 		/// <summary>
 		/// If true, don't prompt user opt-in when loading large numbers of nodes.
@@ -206,7 +223,7 @@ namespace CodeConnections.Presentation
 		public DependencyGraphToolWindowViewModel() => throw new NotSupportedException("XAML Design usage");
 #endif
 
-		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService, ISolutionSettingsService settingsService)
+		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService, ISolutionSettingsService solutionSettingsService, IUserSettingsService userSettingsService)
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));
@@ -215,11 +232,14 @@ namespace CodeConnections.Presentation
 			_solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
 			_outputService = outputService ?? throw new ArgumentNullException(nameof(outputService));
 			_modificationsService = modificationsService ?? throw new ArgumentNullException(nameof(modificationsService));
-			_settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+			_solutionSettingsService = solutionSettingsService ?? throw new ArgumentNullException(nameof(solutionSettingsService));
+			_userSettingsService = userSettingsService ?? throw new ArgumentNullException(nameof(userSettingsService));
+
 			_documentsService.ActiveDocumentChanged += OnActiveDocumentChanged;
 			_solutionService.SolutionOpened += OnSolutionOpened;
 			_solutionService.SolutionClosed += OnSolutionClosed;
-			_settingsService.SolutionSettingsSaving += OnSolutionSettingsSaving;
+			_solutionSettingsService.SolutionSettingsSaving += OnSolutionSettingsSaving;
+			_userSettingsService.SettingsChanged += ApplyUserSettings;
 			_modificationsService.DocumentInvalidated += OnDocumentInvalidated;
 			_modificationsService.SolutionInvalidated += OnSolutionChanged;
 
@@ -235,7 +255,8 @@ namespace CodeConnections.Presentation
 			_graphStateManager.DisplayGraphUpdating += OnDisplayGraphUpdating;
 			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 
-			ApplySettings();
+			ApplySolutionSettings();
+			ApplyUserSettings();
 		}
 
 		private void OnDisplayGraphUpdating()
@@ -289,7 +310,7 @@ namespace CodeConnections.Presentation
 		private void OnSolutionOpened()
 		{
 			ResetNodeGraph();
-			ApplySettings();
+			ApplySolutionSettings();
 		}
 
 		private void OnSolutionClosed()
@@ -299,9 +320,9 @@ namespace CodeConnections.Presentation
 			ResetNodeGraph();
 		}
 
-		private void ApplySettings()
+		private void ApplySolutionSettings()
 		{
-			var settings = _settingsService.LoadSolutionSettings();
+			var settings = _solutionSettingsService.LoadSolutionSettings();
 			if (settings != null)
 			{
 				IncludePureGenerated = settings.IncludeGeneratedTypes;
@@ -313,11 +334,17 @@ namespace CodeConnections.Presentation
 			UpdateProjects();
 		}
 
+		private void ApplyUserSettings()
+		{
+			var settings = _userSettingsService.GetSettings();
+			MaxAutomaticallyLoadedNodes = settings.MaxAutomaticallyLoadedNodes;
+		}
+
 		private string[]? GetExcludedProjects() => Projects?.UnselectedItems().Select(pi => pi.ProjectName).ToArray();
 
 		private void OnSolutionSettingsSaving()
 		{
-			_settingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, _excludedProjects, IsActiveAlwaysIncluded, IncludeNestedTypes));
+			_solutionSettingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, _excludedProjects, IsActiveAlwaysIncluded, IncludeNestedTypes));
 		}
 
 		private void OnSolutionChanged()
@@ -465,7 +492,7 @@ namespace CodeConnections.Presentation
 			_documentsService.ActiveDocumentChanged -= OnActiveDocumentChanged;
 			_solutionService.SolutionOpened -= OnSolutionOpened;
 			_solutionService.SolutionClosed -= OnSolutionClosed;
-			_settingsService.SolutionSettingsSaving -= OnSolutionSettingsSaving;
+			_solutionSettingsService.SolutionSettingsSaving -= OnSolutionSettingsSaving;
 			_modificationsService.DocumentInvalidated -= OnDocumentInvalidated;
 			_modificationsService.SolutionInvalidated -= OnSolutionChanged;
 			if (Projects != null)
