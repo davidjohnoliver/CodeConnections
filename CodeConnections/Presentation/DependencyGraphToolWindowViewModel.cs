@@ -139,8 +139,17 @@ namespace CodeConnections.Presentation
 			_graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
 		}
 
-		private GraphLayoutMode _graphLayoutMode = GraphLayoutMode.Hierarchy; // TODO: saved setting
-		public GraphLayoutMode LayoutMode { get => _graphLayoutMode; set => OnValueSet(ref _graphLayoutMode, value); }
+		private GraphLayoutMode _graphLayoutMode;
+		public GraphLayoutMode LayoutMode
+		{
+			get => _graphLayoutMode; set
+			{
+				if (OnValueSet(ref _graphLayoutMode, value))
+				{
+					_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { LayoutMode = value });
+				}
+			}
+		}
 		public GraphLayoutMode[] LayoutModes { get; } = EnumUtils.GetValues<GraphLayoutMode>();
 
 		public ICommand ClearRootsCommand { get; }
@@ -337,7 +346,9 @@ namespace CodeConnections.Presentation
 		private void ApplyUserSettings()
 		{
 			var settings = _userSettingsService.GetSettings();
+
 			MaxAutomaticallyLoadedNodes = settings.MaxAutomaticallyLoadedNodes;
+			LayoutMode = settings.LayoutMode;
 		}
 
 		private string[]? GetExcludedProjects() => Projects?.UnselectedItems().Select(pi => pi.ProjectName).ToArray();

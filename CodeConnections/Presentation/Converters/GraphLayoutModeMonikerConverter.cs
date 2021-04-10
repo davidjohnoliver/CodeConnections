@@ -16,7 +16,7 @@ namespace CodeConnections.Presentation.Converters
 		protected override ImageMoniker ConvertInner(GraphLayoutMode value, object parameter, CultureInfo culture) => value switch
 		{
 			GraphLayoutMode.Hierarchy => KnownMonikers.Diagram,
-			GraphLayoutMode.Blob => KnownMonikers.Hub,
+			GraphLayoutMode.Compact => KnownMonikers.Hub,
 			_ => default
 		};
 

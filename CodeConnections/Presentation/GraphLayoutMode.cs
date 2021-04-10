@@ -18,6 +18,6 @@ namespace CodeConnections.Presentation
 		/// <summary>
 		/// Layout graph for maximum space efficiency
 		/// </summary>
-		Blob
+		Compact
 	}
 }

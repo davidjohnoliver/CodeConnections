@@ -6,16 +6,24 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CodeConnections.Presentation;
 using Microsoft.VisualStudio.Shell;
 
 namespace CodeConnections.VSIX
 {
 	public class UserOptionsDialog : DialogPage
 	{
-		[Category("Graph Options")]
+		private const string GraphOptionsString = "Graph Options";
+
+		[Category(GraphOptionsString)]
 		[DisplayName("Element warning threshold")]
 		[Description("The number of graph elements to load without warnings. If a graph operation would add more elements than this, a warning message appears.")]
 		public int MaxAutomaticallyLoadedNodes { get; set; } = 100;
+
+		[Category(GraphOptionsString)]
+		[DisplayName("Layout style")]
+		[Description("Choose whether graph elements should be laid out in a vertical hierarchy, or in a compact space-efficient packing.")]
+		public GraphLayoutMode LayoutMode { get; set; }
 
 		internal event Action? OptionsApplied;
 

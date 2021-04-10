@@ -15,8 +15,8 @@ namespace CodeConnections.Presentation.Converters
 	{
 		protected override string? ConvertInner(GraphLayoutMode value, object parameter, CultureInfo culture) => value switch
 		{
-			GraphLayoutMode.Hierarchy => "Vertical Dependency Hierarchy",
-			GraphLayoutMode.Blob => "Space-efficient Packing",
+			GraphLayoutMode.Hierarchy => "Hierarchy: Layout graph with dependencies above and dependents below",
+			GraphLayoutMode.Compact => "Compact: Layout graph in a space-efficient way",
 			_ => default
 		};
 

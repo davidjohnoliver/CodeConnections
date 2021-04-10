@@ -25,15 +25,18 @@ namespace CodeConnections.Services
 		public PersistedUserSettings GetSettings()
 		{
 			return new PersistedUserSettings(
-				_dialogPage.MaxAutomaticallyLoadedNodes
+				_dialogPage.MaxAutomaticallyLoadedNodes,
+				_dialogPage.LayoutMode
 			);
 		}
 
 		public void ApplySettings(PersistedUserSettings settings)
 		{
 			_dialogPage.MaxAutomaticallyLoadedNodes = settings.MaxAutomaticallyLoadedNodes;
+			_dialogPage.LayoutMode = settings.LayoutMode;
 
 			_dialogPage.SaveSettingsToStorage();
+			SettingsChanged?.Invoke();
 		}
 	}
 }
