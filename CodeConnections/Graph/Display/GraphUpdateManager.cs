@@ -23,7 +23,7 @@ namespace CodeConnections.Graph.Display
 	/// <summary>
 	/// Manages invalidation and asynchronous updating of <see cref="NodeGraph"/> and display graph state.
 	/// </summary>
-	public sealed class GraphStateManager : IDisposable
+	public sealed class GraphUpdateManager : IDisposable
 	{
 		private bool _includePureGenerated;
 		/// <summary>
@@ -149,7 +149,7 @@ namespace CodeConnections.Graph.Display
 		private Subgraph _includedNodes;
 		private readonly List<Subgraph.Operation> _pendingSubgraphOperations = new();
 
-		public GraphStateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, Func<string?> getActiveDocument, object nodeParentContext)
+		public GraphUpdateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, Func<string?> getActiveDocument, object nodeParentContext)
 		{
 			_joinableTaskFactory = joinableTaskFactory;
 			_getCurrentSolution = getCurrentSolution ?? throw new ArgumentNullException(nameof(getCurrentSolution));

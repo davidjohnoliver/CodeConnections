@@ -87,7 +87,7 @@
     <Compile Include="Extensions\TypeSymbolExtensions.cs" />
     <Compile Include="Git\GitInfo.cs" />
     <Compile Include="Git\GitStatus.cs" />
-    <Compile Include="Graph\Display\GraphStateManager.cs" />
+    <Compile Include="Graph\Display\GraphUpdateManager.cs" />
     <Compile Include="Graph\Display\CyclicCluster.cs" />
     <Compile Include="Graph\NodeGraph.Builder.cs" />
     <Compile Include="Graph\Node.cs" />

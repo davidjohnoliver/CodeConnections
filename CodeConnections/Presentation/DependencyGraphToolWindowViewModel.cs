@@ -41,7 +41,7 @@ namespace CodeConnections.Presentation
 		private readonly IUserSettingsService _userSettingsService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 
-		private readonly GraphStateManager _graphStateManager;
+		private readonly GraphUpdateManager _graphUpdateManager;
 
 		private readonly SerialCancellationDisposable _projectUpdatesRegistration = new SerialCancellationDisposable();
 		private readonly SerialCancellationDisposable _statsRetrievalRegistration = new SerialCancellationDisposable();
@@ -53,14 +53,14 @@ namespace CodeConnections.Presentation
 
 		public bool IncludePureGenerated
 		{
-			get => _graphStateManager.IncludePureGenerated;
-			set => OnValueSet(_graphStateManager.IncludePureGenerated, v => _graphStateManager.IncludePureGenerated = v, value);
+			get => _graphUpdateManager.IncludePureGenerated;
+			set => OnValueSet(_graphUpdateManager.IncludePureGenerated, v => _graphUpdateManager.IncludePureGenerated = v, value);
 		}
 
 		public bool IncludeNestedTypes
 		{
-			get => _graphStateManager.IncludeNestedTypes;
-			set => OnValueSet(_graphStateManager.IncludeNestedTypes, v => _graphStateManager.IncludeNestedTypes = v, value);
+			get => _graphUpdateManager.IncludeNestedTypes;
+			set => OnValueSet(_graphUpdateManager.IncludeNestedTypes, v => _graphUpdateManager.IncludeNestedTypes = v, value);
 		}
 
 		private DisplayNode? _selectedNode;
@@ -96,8 +96,8 @@ namespace CodeConnections.Presentation
 
 		public bool IsGitModeEnabled
 		{
-			get => _graphStateManager.IsGitModeEnabled;
-			set => OnValueSet(_graphStateManager.IsGitModeEnabled, v => _graphStateManager.IsGitModeEnabled = v, value);
+			get => _graphUpdateManager.IsGitModeEnabled;
+			set => OnValueSet(_graphUpdateManager.IsGitModeEnabled, v => _graphUpdateManager.IsGitModeEnabled = v, value);
 		}
 
 		/// <summary>
@@ -105,10 +105,10 @@ namespace CodeConnections.Presentation
 		/// </summary>
 		public bool IsActiveAlwaysIncluded
 		{
-			get => _graphStateManager.IsActiveAlwaysIncluded;
+			get => _graphUpdateManager.IsActiveAlwaysIncluded;
 			set
 			{
-				if (OnValueSet(_graphStateManager.IsActiveAlwaysIncluded, v => _graphStateManager.IsActiveAlwaysIncluded = v, value))
+				if (OnValueSet(_graphUpdateManager.IsActiveAlwaysIncluded, v => _graphUpdateManager.IsActiveAlwaysIncluded = v, value))
 				{
 					_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { IsActiveAlwaysIncluded = value });
 				}
@@ -132,7 +132,7 @@ namespace CodeConnections.Presentation
 					{
 						value.SelectionChanged += OnProjectsSelectionChanged;
 					}
-					_graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
+					_graphUpdateManager.SetIncludedProjects(Projects?.SelectedItems);
 				}
 			}
 		}
@@ -142,7 +142,7 @@ namespace CodeConnections.Presentation
 		private void OnProjectsSelectionChanged()
 		{
 			_excludedProjects = GetExcludedProjects();
-			_graphStateManager.SetIncludedProjects(Projects?.SelectedItems);
+			_graphUpdateManager.SetIncludedProjects(Projects?.SelectedItems);
 		}
 
 		private GraphLayoutMode _graphLayoutMode;
@@ -218,7 +218,7 @@ namespace CodeConnections.Presentation
 
 		private bool _isNodeGraphUpdating;
 		/// <summary>
-		/// Is <see cref="GraphStateManager"/> currently running an update?
+		/// Is <see cref="GraphUpdateManager"/> currently running an update?
 		/// </summary>
 		private bool IsNodeGraphUpdating { get => _isNodeGraphUpdating; set => OnValueSet(ref _isNodeGraphUpdating, value); }
 
@@ -266,9 +266,9 @@ namespace CodeConnections.Presentation
 
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
-			_graphStateManager = new GraphStateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, getActiveDocument: _documentsService.GetActiveDocument, this);
-			_graphStateManager.DisplayGraphUpdating += OnDisplayGraphUpdating;
-			_graphStateManager.DisplayGraphChanged += OnDisplayGraphChanged;
+			_graphUpdateManager = new GraphUpdateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, getActiveDocument: _documentsService.GetActiveDocument, this);
+			_graphUpdateManager.DisplayGraphUpdating += OnDisplayGraphUpdating;
+			_graphUpdateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 
 			ApplySolutionSettings();
 			ApplyUserSettings();
@@ -313,13 +313,13 @@ namespace CodeConnections.Presentation
 			SetActiveDocumentAsSelected();
 		}
 
-		private void OnDocumentInvalidated(DocumentId documentId) => _graphStateManager.InvalidateDocument(documentId);
+		private void OnDocumentInvalidated(DocumentId documentId) => _graphUpdateManager.InvalidateDocument(documentId);
 
 		private void ResetNodeGraph()
 		{
 			_shouldLoadAnyNumberOfNodes = false;
 			Graph = Empty;
-			_graphStateManager.InvalidateNodeGraph();
+			_graphUpdateManager.InvalidateNodeGraph();
 		}
 
 		private void OnSolutionOpened()
@@ -377,7 +377,7 @@ namespace CodeConnections.Presentation
 			IsGitModeEnabled = false;
 			_shouldLoadAnyNumberOfNodes = false;
 			Graph = Empty;
-			_graphStateManager.ClearSubgraph();
+			_graphUpdateManager.ClearSubgraph();
 		}
 
 		/// <summary>
@@ -407,7 +407,7 @@ namespace CodeConnections.Presentation
 				_outputService.FocusOutput();
 
 				var ct = _statsRetrievalRegistration.GetNewToken();
-				var stats = await _graphStateManager.GetStatisticsForFullGraph(ct);
+				var stats = await _graphUpdateManager.GetStatisticsForFullGraph(ct);
 				if (ct.IsCancellationRequested || stats == null)
 				{
 					return;
@@ -424,7 +424,7 @@ namespace CodeConnections.Presentation
 		{
 			if (displayNode != null)
 			{
-				_graphStateManager.TogglePinnedInSubgraph(displayNode.Key, toggleState ?? false);
+				_graphUpdateManager.TogglePinnedInSubgraph(displayNode.Key, toggleState ?? false);
 			}
 		}
 
@@ -433,7 +433,7 @@ namespace CodeConnections.Presentation
 			if (displayNode != null)
 			{
 				var newIsPinned = !displayNode.IsPinned;
-				_graphStateManager.TogglePinnedInSubgraph(displayNode.Key, newIsPinned);
+				_graphUpdateManager.TogglePinnedInSubgraph(displayNode.Key, newIsPinned);
 				displayNode.IsPinned = newIsPinned;
 			}
 		}
@@ -443,7 +443,7 @@ namespace CodeConnections.Presentation
 			if (displayNode != null)
 			{
 				var op = Subgraph.PinNodeAndNeighbours(displayNode.Key);
-				_graphStateManager.ModifySubgraph(op);
+				_graphUpdateManager.ModifySubgraph(op);
 			}
 		}
 
@@ -481,7 +481,7 @@ namespace CodeConnections.Presentation
 			SetActiveDocumentAsSelected();
 			if (IsActiveAlwaysIncluded)
 			{
-				_graphStateManager.InvalidateActiveDocument();
+				_graphUpdateManager.InvalidateActiveDocument();
 			}
 		}
 
@@ -502,7 +502,7 @@ namespace CodeConnections.Presentation
 
 		public void Dispose()
 		{
-			_graphStateManager.Dispose();
+			_graphUpdateManager.Dispose();
 			_projectUpdatesRegistration.Dispose();
 			_statsRetrievalRegistration.Dispose();
 
