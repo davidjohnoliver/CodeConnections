@@ -31,7 +31,8 @@ namespace CodeConnections.VSIX
 	[PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 	[Guid(CodeConnectionsPackage.PackageGuidString)]
 	[ProvideMenuResource("Menus.ctmenu", 1)]
-	[ProvideToolWindow(typeof(CodeConnections.VSIX.DependencyGraphToolWindow))]
+	[ProvideToolWindow(typeof(DependencyGraphToolWindow))]
+	[ProvideOptionPage(typeof(UserOptionsDialog), "Code Connections", "General", 0, 0, true)]
 	public sealed class CodeConnectionsPackage : AsyncPackage, IVsPersistSolutionOpts
 	{
 		/// <summary>
@@ -40,6 +41,8 @@ namespace CodeConnections.VSIX
 		public const string PackageGuidString = "a2b91160-b751-4d85-967c-136fed47e2b2";
 
 		internal static event Action? SaveUserOptions;
+
+		internal static UserOptionsDialog? UserOptionsDialog { get; private set; }
 
 		#region Package Members
 
@@ -56,7 +59,10 @@ namespace CodeConnections.VSIX
 			// Do any initialization that requires the UI thread after switching to the UI thread.
 			await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
+			UserOptionsDialog = GetDialogPage(typeof(UserOptionsDialog)) as UserOptionsDialog;
+
 			await DependencyGraphToolWindowCommand.InitializeAsync(this);
+
 		}
 
 		#endregion

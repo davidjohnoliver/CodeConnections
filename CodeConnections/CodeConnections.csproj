@@ -117,6 +117,7 @@
     <Compile Include="Graph\Display\DisplayNode.cs" />
     <Compile Include="Graph\Display\MultiDependencyDisplayEdge.cs" />
     <Compile Include="Presentation\PersistedSolutionSettings.cs" />
+    <Compile Include="Presentation\PersistedUserSettings.cs" />
     <Compile Include="Presentation\SimpleCommand.cs" />
     <Compile Include="Graph\Display\SimpleDisplayEdge.cs" />
     <Compile Include="Presentation\SimpleToggleCommand.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Roslyn\CompilationCache.cs" />
     <Compile Include="Roslyn\ProjectIdentifier.cs" />
     <Compile Include="Roslyn\TypeIdentifier.cs" />
+    <Compile Include="Services\DialogUserSettingsService.cs" />
     <Compile Include="Services\DocumentsService.cs" />
     <Compile Include="Services\DocumentsService.DocTableEvents.cs" />
     <Compile Include="Services\GitService.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="Services\IRoslynService.cs" />
     <Compile Include="Services\ISolutionSettingsService.cs" />
     <Compile Include="Services\ISolutionService.cs" />
+    <Compile Include="Services\IUserSettingsService.cs" />
     <Compile Include="Services\OutputWindowOutputService.cs" />
     <Compile Include="Services\RoslynService.cs" />
     <Compile Include="Services\SolutionSettingsService.cs" />
@@ -197,6 +200,9 @@
     <Compile Include="VSIX\DependencyGraphToolWindowCommand.cs" />
     <Compile Include="Views\DependencyGraphToolWindowControl.xaml.cs">
       <DependentUpon>DependencyGraphToolWindowControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VSIX\UserOptionsDialog.cs">
+      <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
