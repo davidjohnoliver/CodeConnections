@@ -166,6 +166,7 @@
     <Compile Include="Utilities\ArrayUtils.cs" />
     <Compile Include="Utilities\EnumUtils.cs" />
     <Compile Include="Utilities\IdleTimer.cs" />
+    <Compile Include="Utilities\PathUtils.cs" />
     <Compile Include="Utilities\SetUtils.cs" />
     <Compile Include="Utilities\ThreadUtils.cs" />
     <Compile Include="Utilities\TimeUtils.cs" />

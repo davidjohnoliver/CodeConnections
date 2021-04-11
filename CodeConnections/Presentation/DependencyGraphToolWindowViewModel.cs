@@ -73,7 +73,7 @@ namespace CodeConnections.Presentation
 				{
 					if (value?.FilePath != null
 						// Don't try to open the currently-open file. (This can, eg, disrupt the 'diff' view being opened from the source control changes window.)
-						&& value.FilePath != _documentsService.GetActiveDocument())
+						&& !PathUtils.AreEquivalent(value.FilePath, _documentsService.GetActiveDocument()))
 					{
 						_joinableTaskFactory.RunAsync(async () =>
 						{
@@ -518,7 +518,7 @@ namespace CodeConnections.Presentation
 		private void SetActiveDocumentAsSelected()
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
-			SelectedNode = Graph.Vertices.FirstOrDefault(dn => dn.FilePath?.Equals(activeDocument, StringComparison.OrdinalIgnoreCase) ?? false);
+			SelectedNode = Graph.Vertices.FirstOrDefault(dn => PathUtils.AreEquivalent(dn.FilePath, activeDocument));
 		}
 
 		public void Dispose()
