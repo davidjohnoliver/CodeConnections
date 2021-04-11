@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CodeConnections.Presentation;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace CodeConnections.Services
@@ -12,6 +13,8 @@ namespace CodeConnections.Services
 	internal class OutputWindowOutputService : IOutputService
 	{
 		IVsOutputWindowPane _outputPane;
+
+		public OutputLevel CurrentOutputLevel { get; set; }
 
 		public OutputWindowOutputService(string guidString, IVsOutputWindow outputWindow, string outputPaneName)
 		{
@@ -36,5 +39,7 @@ namespace CodeConnections.Services
 			Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
 			_outputPane.Activate();
 		}
+
+		public bool IsEnabled(OutputLevel outputLevel) => outputLevel <= CurrentOutputLevel;
 	}
 }

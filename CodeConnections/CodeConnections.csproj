@@ -117,6 +117,7 @@
     <Compile Include="Presentation\Converters\DisplayEdgeStrokeDashArrayConverter.cs" />
     <Compile Include="Graph\Display\DisplayNode.cs" />
     <Compile Include="Graph\Display\MultiDependencyDisplayEdge.cs" />
+    <Compile Include="Presentation\OutputLevel.cs" />
     <Compile Include="Presentation\PersistedSolutionSettings.cs" />
     <Compile Include="Presentation\PersistedUserSettings.cs" />
     <Compile Include="Presentation\SimpleCommand.cs" />

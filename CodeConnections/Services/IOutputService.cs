@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CodeConnections.Presentation;
 
 namespace CodeConnections.Services
 {
@@ -20,5 +21,15 @@ namespace CodeConnections.Services
 		/// Focus the output or otherwise bring it into view (if applicable).
 		/// </summary>
 		void FocusOutput();
+
+		/// <summary>
+		/// The current output verbosity level.
+		/// </summary>
+		OutputLevel CurrentOutputLevel { get; set; }
+
+		/// <summary>
+		/// Should messages at <paramref name="outputLevel"/> be sent to output?
+		/// </summary>
+		bool IsEnabled(OutputLevel outputLevel);
 	}
 }

@@ -209,8 +209,13 @@ namespace CodeConnections.Presentation
 		/// </summary>
 		private _IDisplayGraph? _escrowedGraph;
 
-		private int _randomSeed = DateTime.Now.Millisecond;
+		/// <summary>
+		/// Has an exception already been logged?
+		/// </summary>
+		/// <remarks>Reset when the graph is updated successfully, the graph is clear, the solution changes, etc</remarks>
+		private bool _hasLoggedException;
 
+		private int _randomSeed = DateTime.Now.Millisecond;
 		/// <summary>
 		/// The current random seed.
 		/// </summary>
@@ -220,7 +225,11 @@ namespace CodeConnections.Presentation
 		/// <summary>
 		/// Is <see cref="GraphUpdateManager"/> currently running an update?
 		/// </summary>
-		private bool IsNodeGraphUpdating { get => _isNodeGraphUpdating; set => OnValueSet(ref _isNodeGraphUpdating, value); }
+		private bool IsNodeGraphUpdating
+		{
+			get => _isNodeGraphUpdating;
+			set => OnValueSet(ref _isNodeGraphUpdating, value);
+		}
 
 		private bool _isGraphLayoutUpdating;
 		/// <summary>
@@ -266,9 +275,11 @@ namespace CodeConnections.Presentation
 
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
-			_graphUpdateManager = new GraphUpdateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), getGitInfo: _gitService.GetAllModifiedAndNewFiles, getActiveDocument: _documentsService.GetActiveDocument, this);
+			_graphUpdateManager = new GraphUpdateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), _gitService.GetAllModifiedAndNewFiles, _documentsService.GetActiveDocument, outputService, this);
 			_graphUpdateManager.DisplayGraphUpdating += OnDisplayGraphUpdating;
 			_graphUpdateManager.DisplayGraphChanged += OnDisplayGraphChanged;
+			_graphUpdateManager.UpdateFailed += OnGraphUpdateFailed;
+			_graphUpdateManager.UpdateCompletedUnchanged += OnGraphUpdateCompletedUnchanged;
 
 			ApplySolutionSettings();
 			ApplyUserSettings();
@@ -281,7 +292,9 @@ namespace CodeConnections.Presentation
 
 		private void OnDisplayGraphChanged(_IDisplayGraph newGraph, GraphStatistics statistics)
 		{
+			_hasLoggedException = false;
 			IsNodeGraphUpdating = false;
+
 			var shouldShowGraph = newGraph.EdgeCount <= MaxAutomaticallyLoadedNodes || _shouldLoadAnyNumberOfNodes;
 			if (shouldShowGraph)
 			{
@@ -294,10 +307,9 @@ namespace CodeConnections.Presentation
 				_escrowedGraph = newGraph;
 			}
 
-			if (!Graph.IsVerticesEmpty)
+			if (!Graph.IsVerticesEmpty && _outputService.IsEnabled(OutputLevel.Diagnostic))
 			{
 				var reporter = GetStatsReporter(statistics);
-				// TODO: this should be opt-in/hidden behind debug flag
 				_outputService.WriteLines(reporter.WriteStatistics(StatisticsReportContent.GraphingSpecific));
 			}
 		}
@@ -313,11 +325,27 @@ namespace CodeConnections.Presentation
 			SetActiveDocumentAsSelected();
 		}
 
+		private void OnGraphUpdateFailed(Exception e)
+		{
+			_hasLoggedException = true;
+			IsNodeGraphUpdating = false;
+
+			var shouldShowException = (_outputService.IsEnabled(OutputLevel.Normal) && !_hasLoggedException)
+				|| _outputService.IsEnabled(OutputLevel.Diagnostic);
+			if (shouldShowException)
+			{
+				_outputService.WriteLine($"Graph update failed. {e}");
+			}
+		}
+
+		private void OnGraphUpdateCompletedUnchanged() => IsNodeGraphUpdating = false;
+
 		private void OnDocumentInvalidated(DocumentId documentId) => _graphUpdateManager.InvalidateDocument(documentId);
 
 		private void ResetNodeGraph()
 		{
 			_shouldLoadAnyNumberOfNodes = false;
+			_hasLoggedException = false;
 			Graph = Empty;
 			_graphUpdateManager.InvalidateNodeGraph();
 		}
@@ -355,6 +383,7 @@ namespace CodeConnections.Presentation
 			MaxAutomaticallyLoadedNodes = settings.MaxAutomaticallyLoadedNodes;
 			LayoutMode = settings.LayoutMode;
 			IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
+			_outputService.CurrentOutputLevel = settings.OutputLevel;
 		}
 
 		private string[]? GetExcludedProjects() => Projects?.UnselectedItems().Select(pi => pi.ProjectName).ToArray();
@@ -376,6 +405,7 @@ namespace CodeConnections.Presentation
 			RerollRandomSeed();
 			IsGitModeEnabled = false;
 			_shouldLoadAnyNumberOfNodes = false;
+			_hasLoggedException = false;
 			Graph = Empty;
 			_graphUpdateManager.ClearSubgraph();
 		}
@@ -489,15 +519,6 @@ namespace CodeConnections.Presentation
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
 			SelectedNode = Graph.Vertices.FirstOrDefault(dn => dn.FilePath?.Equals(activeDocument, StringComparison.OrdinalIgnoreCase) ?? false);
-		}
-
-		/// <summary>
-		/// Write to output window from a background thread.
-		/// </summary>
-		private async Task WriteLineAsync(string line, CancellationToken ct)
-		{
-			await _joinableTaskFactory.SwitchToMainThreadAsync(ct);
-			_outputService.WriteLine(line);
 		}
 
 		public void Dispose()

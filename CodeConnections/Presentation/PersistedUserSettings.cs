@@ -11,7 +11,8 @@ namespace CodeConnections.Presentation
 	public record PersistedUserSettings(
 		int MaxAutomaticallyLoadedNodes,
 		GraphLayoutMode LayoutMode,
-		bool IsActiveAlwaysIncluded
+		bool IsActiveAlwaysIncluded,
+		OutputLevel OutputLevel
 	)
 	{
 	}

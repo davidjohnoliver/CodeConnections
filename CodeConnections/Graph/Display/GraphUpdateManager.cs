@@ -17,6 +17,8 @@ using CodeConnections.Utilities;
 using CodeConnections.Statistics;
 using CodeConnections.Git;
 using System.Diagnostics.CodeAnalysis;
+using CodeConnections.Services;
+using CodeConnections.Presentation;
 
 namespace CodeConnections.Graph.Display
 {
@@ -118,6 +120,16 @@ namespace CodeConnections.Graph.Display
 		/// </summary>
 		public event Action<IBidirectionalGraph<DisplayNode, DisplayEdge>, GraphStatistics>? DisplayGraphChanged;
 
+		/// <summary>
+		/// Raised when an update failed to complete.
+		/// </summary>
+		public event Action<Exception>? UpdateFailed;
+
+		/// <summary>
+		/// Raised when an update completed without modifying the display graph.
+		/// </summary>
+		public event Action? UpdateCompletedUnchanged;
+
 		private UpdateState _currentUpdateState = UpdateState.NotUpdating;
 		private readonly SerialCancellationDisposable _updateSubscription = new SerialCancellationDisposable();
 		private readonly IdleTimer _idleTimer = new IdleTimer(idleWaitTimeMS: 2000);
@@ -133,6 +145,7 @@ namespace CodeConnections.Graph.Display
 		private readonly Func<CancellationToken, Task<ICollection<GitInfo>>> _getGitInfo;
 		private readonly Func<string?> _getActiveDocument;
 		private readonly object _nodeParentContext;
+		private readonly IOutputService _outputService;
 		private bool _needsDisplayGraphUpdate;
 		/// <summary>
 		/// When this flag is set, indicates that another update should be run immediately after the current one.
@@ -149,13 +162,14 @@ namespace CodeConnections.Graph.Display
 		private Subgraph _includedNodes;
 		private readonly List<Subgraph.Operation> _pendingSubgraphOperations = new();
 
-		public GraphUpdateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, Func<string?> getActiveDocument, object nodeParentContext)
+		internal GraphUpdateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, Func<string?> getActiveDocument, IOutputService outputService, object nodeParentContext)
 		{
 			_joinableTaskFactory = joinableTaskFactory;
 			_getCurrentSolution = getCurrentSolution ?? throw new ArgumentNullException(nameof(getCurrentSolution));
 			_getGitInfo = getGitInfo ?? throw new ArgumentNullException(nameof(getGitInfo));
 			_getActiveDocument = getActiveDocument;
 			_nodeParentContext = nodeParentContext;
+			_outputService = outputService ?? throw new ArgumentNullException(nameof(outputService));
 			ClearSubgraphAndPendingOperations();
 		}
 
@@ -378,6 +392,10 @@ namespace CodeConnections.Graph.Display
 
 				if (!ct.IsCancellationRequested && displayGraph.Graph != null && displayGraph.Stats != null)
 				{
+					if (_outputService.IsEnabled(OutputLevel.Diagnostic))
+					{
+						_outputService.WriteLine($"Updated display graph. Vertex count: {displayGraph.Graph.VertexCount}");
+					}
 					DisplayGraphChanged?.Invoke(displayGraph.Graph, displayGraph.Stats);
 				}
 
@@ -446,12 +464,22 @@ namespace CodeConnections.Graph.Display
 
 				if (_nodeGraph == null)
 				{
-					_currentUpdateState = UpdateState.RebuildingDisplayGraph;
+					_currentUpdateState = UpdateState.RebuildingNodeGraph;
+
+					if (_outputService.IsEnabled(OutputLevel.Diagnostic))
+					{
+						_outputService.WriteLine("Rebuilding node graph...");
+					}
 
 					compilationCache = EnsureCompilationCache();
 					var nodeGraph = await RebuildNodeGraph(compilationCache, ct);
 					if (!ct.IsCancellationRequested)
 					{
+
+						if (_outputService.IsEnabled(OutputLevel.Diagnostic))
+						{
+							_outputService.WriteLine("Node graph rebuild completed.");
+						}
 						_nodeGraph = nodeGraph;
 					}
 					_needsDisplayGraphUpdate = true;
@@ -567,10 +595,24 @@ namespace CodeConnections.Graph.Display
 					}
 				}
 			}
+			catch (Exception e)
+			{
+				if (!ct.IsCancellationRequested)
+				{
+					UpdateFailed?.Invoke(e);
+				}
+
+				return (null, null); // Don't invoke Unchanged event
+			}
 			finally
 			{
 				_currentUpdateState = UpdateState.NotUpdating;
 				compilationCache?.ClearSolution();
+			}
+
+			if (!ct.IsCancellationRequested)
+			{
+				UpdateCompletedUnchanged?.Invoke();
 			}
 
 			return (null, null); // In case we updated NodeGraph but display graph did not change

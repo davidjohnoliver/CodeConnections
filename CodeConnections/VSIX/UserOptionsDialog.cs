@@ -36,6 +36,12 @@ namespace CodeConnections.VSIX
 		[Description("The number of graph elements to load without warnings. If a graph operation would add more elements than this, a warning message appears.")]
 		public int MaxAutomaticallyLoadedNodes { get; set; } = 100;
 
+
+		[SortedCategory(AdditionalOptionsString, AdditionalOptionsPosition, CategoryCount)]
+		[DisplayName("Output verbosity")]
+		[Description("Choose the volume of messages to output to the console.")]
+		public OutputLevel OutputLevel { get; set; } = OutputLevel.Normal;
+
 		internal event Action? OptionsApplied;
 
 		protected override void OnApply(PageApplyEventArgs e)
