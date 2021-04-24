@@ -3,14 +3,16 @@
   "version": "1.0-dev",
   "publicReleaseRefSpec": [
     "^refs/heads/main$",
-    "^refs/heads/v\\d+(?:\\.\\d+)?$"
+    "^refs/heads/release/v\\d+(?:\\.\\d+)?$"
   ],
+  "release" : {
+    "branchName" : "release/v{version}",
+    "versionIncrement" : "minor",
+    "firstUnstableTag" : "dev"
+  },
   "cloudBuild": {
     "buildNumber": {
       "enabled": true
-    },
-    "release" : {
-      "firstUnstableTag" : "dev"
     }
   }
 }
