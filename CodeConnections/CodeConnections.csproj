@@ -215,6 +215,7 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Compile Include="Graph\NodeGraph.Updates.cs" />
+    <Content Include="VSIX\Resources\logo-square-thick_16.png" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
