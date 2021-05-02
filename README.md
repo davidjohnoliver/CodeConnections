@@ -10,7 +10,7 @@ Visual Studio 2019 for Windows, 16.6 or higher
 
 ## Get started
 
-1. Install the Code Connections Visual Studio extension.
+1. Install the [Code Connections Visual Studio extension](https://marketplace.visualstudio.com/items?itemName=DavidOliver.codeconnections).
 
 2. Run Visual Studio.
 
