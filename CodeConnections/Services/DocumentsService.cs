@@ -24,7 +24,7 @@ namespace CodeConnections.Services
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			_dte = dte ?? throw new ArgumentNullException(nameof(dte));
-			_oldActiveDocument = dte.ActiveDocument?.FullName;
+			_oldActiveDocument = GetActiveDocument();
 		}
 		public string? GetActiveDocument()
 		{
