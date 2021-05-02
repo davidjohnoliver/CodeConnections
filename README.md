@@ -2,6 +2,8 @@
 
 See the connections in your C# code. Open any class, and see its dependencies (the other types in your solution it refers to) and dependents (the types that refer to it) mapped out as a graph. Make changes to your code and the graph updates on the fly. You can use Code Connections to understand your code, to organise source control changes, or just as a navigation tool.
 
+![Code Connections graph](doc/assets/Graph-CC-1.png)
+
 ## Prerequisites
 
 Visual Studio 2019 for Windows, 16.6 or higher
@@ -23,6 +25,8 @@ The Graph window is where the action happens. Here you can visualize the depende
 ### Always include active document and its connections
 
 By default, the active document (ie the current tab) and all its connections will be included in the graph. To toggle this behavior, press the lock icon in the options panel.
+
+![Active document](doc/assets/Graph-active-document.png)
 
 ### Select a graph element
 
@@ -47,6 +51,8 @@ The Clear Graph button will clear all pinned elements and any custom inclusion m
 
 Enabling Git Mode will automatically pin all locally modified types to the graph. When Git mode is enabled, an icon in the upper right corner of the element indicates if it is a new or modified file.
 
+![Git mode](doc/assets/Graph-Git-mode.png)
+
 ## Hierarchy and Compact layouts
 
 You can change the way elements are arranged relative to each other in the graph.
@@ -55,11 +61,13 @@ You can change the way elements are arranged relative to each other in the graph
 
 **Compact** arranges elements in a space-efficient way, without a fixed spatial order. It's useful when you want to visualize a large number of elements at a time.
 
+![Hierarchy and compact layouts](doc/assets/Graph-hierarchy-compact.png)
+
 ## Filters
 
 Expanding 'More options' on the options panel will show settings to filter the types that are visible. This lets you focus on what you're interested in, and can also speed up graph generation, particularly in large solutions.
 
- * **Included projects**: You can opt do exclude particular projects. Excluding a project here will ignore all the types in that project.
+ * **Included projects**: You can opt to exclude particular projects. Excluding a project here will ignore all the types in that project.
  * **Include generated?** You can opt to exclude generated types. A type is considered generated if it is defined entirely in generated code. If a type has both generated and nongenerated definitions (eg `MyType.cs` and also `MyType.g.cs`) it won't be covered by this flag.
  * **Include nested classes?** You can opt to exclude nested classes, ie classes defined inside of another class.
 
