@@ -154,6 +154,24 @@ namespace CodeConnections.Tests.GraphTests
 			}
 		}
 
+		[Test]
+		public async Task When_Purely_Generated_Excluded_And_Updated()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
+				AssertEx.Contains(fullGraph.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomeGeneratedClass");
+				AssertEx.Contains(fullGraph.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomePartiallyGeneratedClass");
+
+				var graphWithGeneratedExcluded = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), excludePureGenerated: true);
+
+				await graphWithGeneratedExcluded.Update(CompilationCache.CacheWithSolution(workspace.CurrentSolution), workspace.CurrentSolution.GetAllDocumentIds(), default);
+
+				AssertEx.None(graphWithGeneratedExcluded.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomeGeneratedClass");
+				AssertEx.Contains(graphWithGeneratedExcluded.Nodes, n => (n.Value as TypeNode)?.Identifier.Name == "SomePartiallyGeneratedClass");
+			}
+		}
+
 		private static void AssertNoDuplicates(NodeGraph graph)
 		{
 			var nodes = GetAllNodes(graph).OfType<TypeNode>().ToList();

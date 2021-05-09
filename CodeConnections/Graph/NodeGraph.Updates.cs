@@ -29,10 +29,10 @@ namespace CodeConnections.Graph
 		private readonly object _gate = new object();
 
 		/// <summary>
-		/// Updates node connections for modifications to the solution, as determined by calls to <see cref="InvalidateDocument(DocumentId)"/> since 
-		/// the beginning of the previous update.
+		/// Updates node connections for modifications to the solution.
 		/// </summary>
-		/// <param name="solution">The current solution</param>
+		/// <param name="compilationCache">Compilation cache for the current solution</param>
+		/// <param name="invalidatedDocuments">The documents in the solution that have been invalidated</param>
 		/// <param name="ct">A cancellation token. Note that the expected usage is that an update will only be cancelled if the graph is no 
 		/// longer needed (eg the current open solution changes).</param>
 		/// <returns>A list of nodes whose connectivity has changed.</returns>
@@ -184,7 +184,10 @@ namespace CodeConnections.Graph
 				}
 			}
 
-			var dependencies = await symbol.GetTypeDependencies(compilationCache, project, includeExternalMetadata: false, ct).Select(s => GetOrCreateNode(s)).ToListAsync();
+			var dependencies = await symbol.GetTypeDependencies(compilationCache, project, includeExternalMetadata: false, ct)
+				.Where(IsSymbolIncluded)
+				.Select(s => GetOrCreateNode(s))
+				.ToListAsync();
 			if (ct.IsCancellationRequested)
 			{
 				return ArrayUtils.GetEmpty<Node>();
