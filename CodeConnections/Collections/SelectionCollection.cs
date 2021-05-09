@@ -46,5 +46,7 @@ namespace CodeConnections.Collections
 
 			return false;
 		}
+
+		public void DeselectAll() => SelectedItemsBacking?.Clear();
 	}
 }

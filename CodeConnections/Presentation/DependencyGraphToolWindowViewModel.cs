@@ -163,6 +163,8 @@ namespace CodeConnections.Presentation
 		public ICommand LogStatsCommand { get; }
 		public ICommand TogglePinnedMenuCommand { get; }
 		public ICommand PinNodeAndNeighboursMenuCommand { get; }
+		public ICommand DeselectAllProjectsCommand { get; }
+		public ICommand SelectAllProjectsCommand { get; }
 		public IToggleCommand TogglePinnedCommand { get; }
 
 		private int _maxAutomaticallyLoadedNodes;
@@ -272,6 +274,8 @@ namespace CodeConnections.Presentation
 			LogStatsCommand = SimpleCommand.Create(LogStats);
 			TogglePinnedMenuCommand = SimpleCommand.Create<DisplayNode>(TogglePinned);
 			PinNodeAndNeighboursMenuCommand = SimpleCommand.Create<DisplayNode>(PinNodeAndNeighbours);
+			DeselectAllProjectsCommand = SimpleCommand.Create(() => Projects?.DeselectAll());
+			SelectAllProjectsCommand = SimpleCommand.Create(() => Projects?.SelectAll());
 
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 

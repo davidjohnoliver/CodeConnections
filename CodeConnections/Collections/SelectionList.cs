@@ -37,6 +37,22 @@ namespace CodeConnections.Collections
 
 		public bool DeselectItem(T item) => base.DeselectItem(item);
 
+		public void SelectAll()
+		{
+			if (SelectedItemsBacking == null)
+			{
+				return;
+			}
+
+			foreach (var item in this)
+			{
+				if (!(SelectedItemsBacking.Contains(item)))
+				{
+					SelectedItemsBacking.Add(item);
+				}
+			}
+		}
+
 		#region IList<T>
 		public T this[int index] { get => _inner[index]; set => _inner[index] = value; }
 
