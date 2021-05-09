@@ -24,5 +24,10 @@ namespace CodeConnections.Services
 		/// </summary>
 		/// <returns>Path to the current solution, or an empty string if no solution is open.</returns>
 		string GetSolutionPath();
+
+		/// <summary>
+		/// Is a solution currently opening?
+		/// </summary>
+		bool IsSolutionOpening { get; }
 	}
 }

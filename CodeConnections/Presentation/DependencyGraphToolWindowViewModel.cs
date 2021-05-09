@@ -275,7 +275,7 @@ namespace CodeConnections.Presentation
 
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
-			_graphUpdateManager = new GraphUpdateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), _gitService.GetAllModifiedAndNewFiles, _documentsService.GetActiveDocument, outputService, this);
+			_graphUpdateManager = new GraphUpdateManager(joinableTaskFactory, () => _roslynService.GetCurrentSolution(), _gitService.GetAllModifiedAndNewFiles, _documentsService.GetActiveDocument, outputService, this, () => _solutionService.IsSolutionOpening);
 			_graphUpdateManager.DisplayGraphUpdating += OnDisplayGraphUpdating;
 			_graphUpdateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 			_graphUpdateManager.UpdateFailed += OnGraphUpdateFailed;

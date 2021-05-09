@@ -145,6 +145,7 @@ namespace CodeConnections.Graph.Display
 		private readonly Func<CancellationToken, Task<ICollection<GitInfo>>> _getGitInfo;
 		private readonly Func<string?> _getActiveDocument;
 		private readonly object _nodeParentContext;
+		private readonly Func<bool> _isSolutionStillOpening;
 		private readonly IOutputService _outputService;
 		private bool _needsDisplayGraphUpdate;
 		/// <summary>
@@ -162,13 +163,19 @@ namespace CodeConnections.Graph.Display
 		private Subgraph _includedNodes;
 		private readonly List<Subgraph.Operation> _pendingSubgraphOperations = new();
 
-		internal GraphUpdateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, Func<string?> getActiveDocument, IOutputService outputService, object nodeParentContext)
+		/// <summary>
+		/// The number of NodeGraph rebuilds currently in flight in the background.
+		/// </summary>
+		private int _backgroundGraphRebuildsActive;
+
+		internal GraphUpdateManager(JoinableTaskFactory joinableTaskFactory, Func<Solution> getCurrentSolution, Func<CancellationToken, Task<ICollection<GitInfo>>> getGitInfo, Func<string?> getActiveDocument, IOutputService outputService, object nodeParentContext, Func<bool> isSolutionStillOpening)
 		{
 			_joinableTaskFactory = joinableTaskFactory;
 			_getCurrentSolution = getCurrentSolution ?? throw new ArgumentNullException(nameof(getCurrentSolution));
 			_getGitInfo = getGitInfo ?? throw new ArgumentNullException(nameof(getGitInfo));
 			_getActiveDocument = getActiveDocument;
 			_nodeParentContext = nodeParentContext;
+			_isSolutionStillOpening = isSolutionStillOpening ?? throw new ArgumentNullException(nameof(isSolutionStillOpening));
 			_outputService = outputService ?? throw new ArgumentNullException(nameof(outputService));
 			ClearSubgraphAndPendingOperations();
 		}
@@ -622,11 +629,42 @@ namespace CodeConnections.Graph.Display
 		{
 			var includedProjects = _includedProjects;
 			var excludePureGenerated = !IncludePureGenerated;
-			var nodeGraph = await Task.Run(async () =>
+
+			while(ShouldWait())
 			{
-				return await NodeGraph.BuildGraph(compilationCache, includedProjects, excludePureGenerated, ct);
-			}, ct);
-			return nodeGraph;
+				// Don't bother to build graph while solution is still opening
+				await Task.Delay(1000);
+			}
+
+			if (ct.IsCancellationRequested)
+			{
+				return null;
+			}
+
+			try
+			{
+				if (_outputService.IsEnabled(OutputLevel.Diagnostic))
+				{
+					_outputService.WriteLine($"Starting graph rebuild, {_backgroundGraphRebuildsActive} other rebuilds already underway");
+				}
+				_backgroundGraphRebuildsActive++;
+				var nodeGraph = await Task.Run(async () =>
+				{
+					return await NodeGraph.BuildGraph(compilationCache, includedProjects, excludePureGenerated, ct);
+				}, ct);
+				return nodeGraph;
+			}
+			finally
+			{
+				_backgroundGraphRebuildsActive--;
+				if (_outputService.IsEnabled(OutputLevel.Diagnostic))
+				{
+					var concluded = ct.IsCancellationRequested ? "Cancelled" : "Completed";
+					_outputService.WriteLine($"{concluded} graph rebuild, {_backgroundGraphRebuildsActive} other rebuilds still underway");
+				}
+			}
+
+			bool ShouldWait() => !ct.IsCancellationRequested && (_backgroundGraphRebuildsActive > 1 || _isSolutionStillOpening());
 		}
 
 		private async Task AnnotateGitInfo(CancellationToken ct)

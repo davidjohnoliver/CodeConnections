@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EnvDTE;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace CodeConnections.Services
@@ -17,6 +18,8 @@ namespace CodeConnections.Services
 
 		public event Action? SolutionOpened;
 		public event Action? SolutionClosed;
+
+		public bool IsSolutionOpening => KnownUIContexts.SolutionOpeningContext?.IsActive ?? false;
 
 		public SolutionService(EnvDTE.DTE dte)
 		{
