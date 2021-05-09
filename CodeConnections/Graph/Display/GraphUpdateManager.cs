@@ -37,7 +37,7 @@ namespace CodeConnections.Graph.Display
 			set
 			{
 				_includePureGenerated = value;
-				InvalidateNodeGraph();
+				InvalidateNodeGraph(shouldWaitUntilIdle: false);
 			}
 		}
 
@@ -132,7 +132,8 @@ namespace CodeConnections.Graph.Display
 
 		private UpdateState _currentUpdateState = UpdateState.NotUpdating;
 		private readonly SerialCancellationDisposable _updateSubscription = new SerialCancellationDisposable();
-		private readonly IdleTimer _idleTimer = new IdleTimer(idleWaitTimeMS: 2000);
+		private readonly IdleTimer _documentEditIdleTimer = new IdleTimer(idleWaitTimeMS: 2000);
+		private readonly IdleTimer _graphRebuildIdleTimer = new IdleTimer(idleWaitTimeMS: 3000);
 
 		private ProjectIdentifier[]? _includedProjects;
 		private NodeGraph? _nodeGraph;
@@ -183,12 +184,16 @@ namespace CodeConnections.Graph.Display
 		/// <summary>
 		/// Invalidate the current <see cref="NodeGraph"/> completely, requiring it to be rebuilt.
 		/// </summary>
-		public void InvalidateNodeGraph()
+		public void InvalidateNodeGraph(bool shouldWaitUntilIdle)
 		{
 			ThreadUtils.ThrowIfNotOnUIThread();
 
 			_invalidatedDocuments.Clear();
 			_nodeGraph = null;
+			if (shouldWaitUntilIdle)
+			{
+				_graphRebuildIdleTimer.RecordActive();
+			}
 			ClearSubgraphAndPendingOperations();
 			RunUpdate(waitForIdle: false);
 		}
@@ -227,7 +232,7 @@ namespace CodeConnections.Graph.Display
 
 			_invalidatedDocuments.Add(documentId);
 
-			_idleTimer.RecordActive();
+			_documentEditIdleTimer.RecordActive();
 
 			if (_currentUpdateState != UpdateState.NotUpdating)
 			{
@@ -283,7 +288,7 @@ namespace CodeConnections.Graph.Display
 		public void SetIncludedProjects(IEnumerable<ProjectIdentifier>? includedProjects)
 		{
 			_includedProjects = includedProjects?.ToArray();
-			InvalidateNodeGraph();
+			InvalidateNodeGraph(shouldWaitUntilIdle: false);
 		}
 
 		public void ModifySubgraph(Subgraph.Operation operation)
@@ -380,7 +385,7 @@ namespace CodeConnections.Graph.Display
 			{
 				if (!waitForIdle)
 				{
-					_idleTimer.FastTrackTimer();
+					_documentEditIdleTimer.FastTrackTimer();
 					// The idling update will execute
 					return;
 				}
@@ -461,7 +466,7 @@ namespace CodeConnections.Graph.Display
 				if (waitForIdle)
 				{
 					_currentUpdateState = UpdateState.WaitingForIdle;
-					await _idleTimer.WaitForIdle(ct);
+					await _documentEditIdleTimer.WaitForIdle(ct);
 				}
 
 				if (!ct.IsCancellationRequested)
@@ -630,11 +635,13 @@ namespace CodeConnections.Graph.Display
 			var includedProjects = _includedProjects;
 			var excludePureGenerated = !IncludePureGenerated;
 
-			while(ShouldWait())
+			while (ShouldWait())
 			{
 				// Don't bother to build graph while solution is still opening
 				await Task.Delay(1000);
 			}
+
+			await _graphRebuildIdleTimer.WaitForIdle(ct);
 
 			if (ct.IsCancellationRequested)
 			{

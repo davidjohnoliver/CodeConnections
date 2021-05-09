@@ -347,7 +347,7 @@ namespace CodeConnections.Presentation
 			_shouldLoadAnyNumberOfNodes = false;
 			_hasLoggedException = false;
 			Graph = Empty;
-			_graphUpdateManager.InvalidateNodeGraph();
+			_graphUpdateManager.InvalidateNodeGraph(shouldWaitUntilIdle: true);
 		}
 
 		private void OnSolutionOpened()
