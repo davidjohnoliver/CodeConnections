@@ -35,7 +35,7 @@ namespace CodeConnections.Extensions
 
 			foreach (var kvp in displayNodes)
 			{
-				foreach (var link in kvp.Key.ForwardLinks)
+				foreach (var link in kvp.Key.ForwardLinkNodes)
 				{
 					if (displayNodes.ContainsKey(link))
 					{
@@ -82,7 +82,7 @@ namespace CodeConnections.Extensions
 
 					var current = toExplore.Dequeue();
 
-					foreach (var link in current.Node.ForwardLinks)
+					foreach (var link in current.Node.ForwardLinkNodes)
 					{
 						if (nodesSeen.Contains(link))
 						{

@@ -89,6 +89,8 @@
     <Compile Include="Git\GitStatus.cs" />
     <Compile Include="Graph\Display\GraphUpdateManager.cs" />
     <Compile Include="Graph\Display\CyclicCluster.cs" />
+    <Compile Include="Graph\Link.cs" />
+    <Compile Include="Graph\LinkType.cs" />
     <Compile Include="Graph\NodeGraph.Builder.cs" />
     <Compile Include="Graph\Node.cs" />
     <Compile Include="Graph\NodeGraph.cs" />

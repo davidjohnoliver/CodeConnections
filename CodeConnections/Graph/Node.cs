@@ -14,18 +14,22 @@ namespace CodeConnections.Graph
 	/// </summary>
 	public abstract class Node
 	{
-		private readonly HashSet<Node> _forwardLinks = new HashSet<Node>();
-		private readonly HashSet<Node> _backLinks = new HashSet<Node>();
+		private readonly HashSet<Link> _forwardLinks = new();
+		private readonly HashSet<Link> _backLinks = new();
 
 		/// <summary>
 		/// The nodes that this node depends upon.
 		/// </summary>
-		public IReadOnlyCollection<Node> ForwardLinks => _forwardLinks;
+		public IReadOnlyCollection<Link> ForwardLinks => _forwardLinks;
+
+		public IEnumerable<Node> ForwardLinkNodes => _forwardLinks.Select(l => l.Dependency);
 
 		/// <summary>
 		/// The nodes that depend upon this node.
 		/// </summary>
-		public IReadOnlyCollection<Node> BackLinks => _backLinks;
+		public IReadOnlyCollection<Link> BackLinks => _backLinks;
+
+		public IEnumerable<Node> BackLinkNodes => _backLinks.Select(l => l.Dependent);
 
 		/// <summary>
 		/// Total number of dependencies and dependents.
@@ -49,21 +53,41 @@ namespace CodeConnections.Graph
 		/// at the same time.
 		/// </summary>
 		/// <param name="forwardLink"></param>
-		public void AddForwardLink(Node forwardLink)
+		public void AddForwardLink(Node forwardLink, params LinkType[] linkTypes)
 		{
-			_forwardLinks.Add(forwardLink);
-			forwardLink._backLinks.Add(this);
+			var linkType = LinkType.Unspecified;
+			foreach (var type in linkTypes)
+			{
+				linkType |= type;
+			}
+			var link = new Link(forwardLink, this, linkType);
+			_forwardLinks.Add(link);
+			forwardLink._backLinks.Add(link);
 		}
 
 		/// <summary>
 		/// Remove <paramref name="forwardLink"/> as a dependency of this node, updating the <see cref="BackLinks"/> collection on 
 		/// <paramref name="forwardLink"/> at the same time.
 		/// </summary>
-		/// <param name="forwardLink"></param>
+		public void RemoveForwardLink(Link link)
+		{
+				_forwardLinks.Remove(link);
+				link.Dependency._backLinks.Remove(link);
+		}
+
+
+		/// <summary>
+		/// Remove <paramref name="forwardLink"/> as a dependency of this node, updating the <see cref="BackLinks"/> collection on 
+		/// <paramref name="forwardLink"/> at the same time.
+		/// </summary>
 		public void RemoveForwardLink(Node forwardLink)
 		{
-			_forwardLinks.Remove(forwardLink);
-			forwardLink._backLinks.Remove(this);
+			var link = _forwardLinks.FirstOrDefault(l => l.Dependency == forwardLink);
+			if (link != null)
+			{
+				_forwardLinks.Remove(link);
+				forwardLink._backLinks.Remove(link);
+			}
 		}
 	}
 }

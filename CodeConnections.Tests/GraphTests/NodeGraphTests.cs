@@ -38,14 +38,14 @@ namespace CodeConnections.Tests.GraphTests
 				var root = graph.GetNodeForType(classSymbol);
 				Assert.AreEqual(classSymbol.ToIdentifier(), root.Identifier);
 				Assert.AreEqual(4, root.ForwardLinks.Count);
-				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Identifier.Name == "SomeEnumeratedClass");
-				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Identifier.Name == "SomeClassCore");
-				var someOtherClassNode = AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Identifier.Name == "SomeOtherClass") as TypeNode;
+				AssertEx.Contains(root.ForwardLinkNodes, n => (n as TypeNode)?.Identifier.Name == "SomeEnumeratedClass");
+				AssertEx.Contains(root.ForwardLinkNodes, n => (n as TypeNode)?.Identifier.Name == "SomeClassCore");
+				var someOtherClassNode = AssertEx.Contains(root.ForwardLinkNodes, n => (n as TypeNode)?.Identifier.Name == "SomeOtherClass") as TypeNode;
 
-				CollectionAssert.Contains(someOtherClassNode.BackLinks, root);
-				AssertEx.Contains(someOtherClassNode.BackLinks, n => (n as TypeNode)?.Identifier.Name == "SomeCircularClass");
-				AssertEx.Contains(someOtherClassNode.ForwardLinks, n => (n as TypeNode)?.Identifier.Name == "SomeClassInArray");
-				AssertEx.Contains(someOtherClassNode.ForwardLinks, n => (n as TypeNode)?.Identifier.Name == "SomeDeeperClass");
+				CollectionAssert.Contains(someOtherClassNode.BackLinkNodes, root);
+				AssertEx.Contains(someOtherClassNode.BackLinkNodes, n => (n as TypeNode)?.Identifier.Name == "SomeCircularClass");
+				AssertEx.Contains(someOtherClassNode.ForwardLinkNodes, n => (n as TypeNode)?.Identifier.Name == "SomeClassInArray");
+				AssertEx.Contains(someOtherClassNode.ForwardLinkNodes, n => (n as TypeNode)?.Identifier.Name == "SomeDeeperClass");
 
 				AssertConsistentState(graph);
 			}
@@ -98,7 +98,7 @@ namespace CodeConnections.Tests.GraphTests
 				var root = graph.GetNodeForType(classSymbol);
 				Assert.AreEqual(classSymbol.ToIdentifier(), root.Identifier);
 
-				AssertEx.Contains(root.ForwardLinks, n => (n as TypeNode)?.Identifier.Name == "EnumerableExtensions");
+				AssertEx.Contains(root.ForwardLinkNodes, n => (n as TypeNode)?.Identifier.Name == "EnumerableExtensions");
 			}
 		}
 
@@ -114,10 +114,10 @@ namespace CodeConnections.Tests.GraphTests
 				var someClassCoreKey = TypeNodeKey.GetFromFullName("SubjectSolution.Core.SomeClassCore");
 				var someClassCoreNode = graph.Nodes[someClassCoreKey];
 
-				var forwardLink = AssertEx.Contains(someClassNode.ForwardLinks, n => n.Key.Equals(someClassCoreKey));
+				var forwardLink = AssertEx.Contains(someClassNode.ForwardLinkNodes, n => n.Key.Equals(someClassCoreKey));
 				Assert.AreEqual(someClassCoreNode, forwardLink);
 
-				var backLink = AssertEx.Contains(someClassCoreNode.BackLinks, n => n.Key.Equals(someClassKey));
+				var backLink = AssertEx.Contains(someClassCoreNode.BackLinkNodes, n => n.Key.Equals(someClassKey));
 				Assert.AreEqual(someClassNode, backLink);
 			}
 		}

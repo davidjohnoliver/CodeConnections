@@ -152,7 +152,7 @@ namespace CodeConnections.Graph
 				{
 					lp.Iterate();
 					var forwardLink = node.ForwardLinks.First();
-					dirtied.Add(forwardLink);
+					dirtied.Add(forwardLink.Dependency);
 					node.RemoveForwardLink(forwardLink);
 				}
 
@@ -160,9 +160,10 @@ namespace CodeConnections.Graph
 				{
 					lp.Iterate();
 					var backLink = node.BackLinks.First();
-					dirtied.Add(backLink);
-					backLink.RemoveForwardLink(node);
-					InvalidateNode(backLink);
+					var backLinkNode = backLink.Dependent;
+					dirtied.Add(backLinkNode);
+					backLinkNode.RemoveForwardLink(node);
+					InvalidateNode(backLinkNode);
 				}
 
 				return dirtied;
@@ -193,7 +194,7 @@ namespace CodeConnections.Graph
 				return ArrayUtils.GetEmpty<Node>();
 			}
 
-			var diffs = dependencies.GetUnorderedDiff(node.ForwardLinks);
+			var diffs = dependencies.GetUnorderedDiff(node.ForwardLinkNodes);
 
 			if (diffs.IsDifferent)
 			{

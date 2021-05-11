@@ -28,7 +28,7 @@ namespace CodeConnections.Extensions
 			_ => ""
 		};
 
-		public static IEnumerable<Node> AllLinks(this Node node) => node.ForwardLinks.Concat(node.BackLinks);
+		public static IEnumerable<Node> AllLinks(this Node node) => node.ForwardLinkNodes.Concat(node.BackLinkNodes);
 
 		/// <summary>
 		/// Return keys for all links (back- and forward-) associated with <paramref name="node"/>.
@@ -48,11 +48,11 @@ namespace CodeConnections.Extensions
 
 			foreach (var link in node.ForwardLinks)
 			{
-				yield return link.Key;
+				yield return link.Dependency.Key;
 			}
 			foreach (var link in node.BackLinks)
 			{
-				yield return link.Key;
+				yield return link.Dependent.Key;
 			}
 		}
 	}

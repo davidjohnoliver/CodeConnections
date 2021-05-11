@@ -77,7 +77,7 @@ namespace CodeConnections.Tests.GraphTests
 
 			var mutatedmutableClassNode = (TypeNode)fullGraph.Nodes[mutableClassKey]; // For now this is reference-equal to mutableClassNode, but let's try not to rely on it
 			Assert.AreEqual(2, mutableClassNode.ForwardLinks.Count);
-			AssertEx.Contains(mutableClassNode.ForwardLinks, n => (n as TypeNode).Identifier.Name == "SomeClassAddableReference");
+			AssertEx.Contains(mutableClassNode.ForwardLinkNodes, n => (n as TypeNode).Identifier.Name == "SomeClassAddableReference");
 
 			AssertConsistentState(fullGraph);
 		}
@@ -93,8 +93,8 @@ namespace CodeConnections.Tests.GraphTests
 			var mutableClassNode = (TypeNode)fullGraph.Nodes[mutableClassKey];
 
 			Assert.AreEqual(1, mutableClassNode.ForwardLinks.Count);
-			var removableReferenceNode = AssertEx.Contains(mutableClassNode.ForwardLinks, n => (n as TypeNode).Identifier.Name == "SomeClassRemovableReference");
-			AssertEx.Contains(removableReferenceNode.BackLinks, mutableClassNode);
+			var removableReferenceNode = AssertEx.Contains(mutableClassNode.ForwardLinkNodes, n => (n as TypeNode).Identifier.Name == "SomeClassRemovableReference");
+			AssertEx.Contains(removableReferenceNode.BackLinkNodes, mutableClassNode);
 
 			var project = workspace.CurrentSolution.Projects.Single(p => p.Name == "SubjectSolution");
 			var mutableDoc = project.Documents.Single(d => d.FilePath.EndsWith("SomeMutableClass.cs"));
@@ -113,7 +113,7 @@ namespace CodeConnections.Tests.GraphTests
 
 			var mutatedmutableClassNode = (TypeNode)fullGraph.Nodes[mutableClassKey]; // For now this is reference-equal to mutableClassNode, but let's try not to rely on it
 			Assert.AreEqual(0, mutatedmutableClassNode.ForwardLinks.Count);
-			AssertEx.None(removableReferenceNode.BackLinks, n => (n as TypeNode).Identifier.Name == "SomeMutableClass");
+			AssertEx.None(removableReferenceNode.BackLinkNodes, n => (n as TypeNode).Identifier.Name == "SomeMutableClass");
 		}
 	}
 }
