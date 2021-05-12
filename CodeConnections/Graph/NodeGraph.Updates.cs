@@ -185,10 +185,13 @@ namespace CodeConnections.Graph
 				}
 			}
 
-			var dependencies = await symbol.GetTypeDependencies(compilationCache, project, includeExternalMetadata: false, ct)
+			var dependencySymbols = await symbol.GetTypeDependencies(compilationCache, project, includeExternalMetadata: false, ct)
 				.Where(IsSymbolIncluded)
-				.Select(s => GetOrCreateNode(s))
 				.ToListAsync();
+
+			var symbolsForDependencies = dependencySymbols.ToDictionary(s => (Node)GetOrCreateNode(s));
+
+			var dependencies = symbolsForDependencies.Keys;
 			if (ct.IsCancellationRequested)
 			{
 				return ArrayUtils.GetEmpty<Node>();
@@ -211,7 +214,8 @@ namespace CodeConnections.Graph
 				{
 					if (addedItem != node)
 					{
-						node.AddForwardLink(addedItem);
+						var linkType = GetLinkType(symbolsForDependencies[addedItem], symbol);
+						node.AddForwardLink(addedItem, linkType);
 					}
 					dirtied.Add(addedItem);
 				}

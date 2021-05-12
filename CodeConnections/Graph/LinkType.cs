@@ -14,8 +14,19 @@ namespace CodeConnections.Graph
 	{
 		Unspecified = 0,
 		/// <summary>
+		/// The dependent inherits from the dependency class.
+		/// </summary>
+		InheritsFromClass = 1,
+
+		/// <summary>
+		/// The dependent implements the dependency interface.
+		/// </summary>
+		ImplementsInterface = 2,
+
+
+		/// <summary>
 		/// The dependent implements or inherits from the dependency.
 		/// </summary>
-		Implements = 1
+		InheritsOrImplements = InheritsFromClass | ImplementsInterface
 	}
 }

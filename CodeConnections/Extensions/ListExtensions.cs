@@ -35,7 +35,7 @@ namespace CodeConnections.Extensions
 		///		Added: Items in <paramref name="newCollection"/> but not <paramref name="oldCollection"/>.
 		///		Removed: Items not in <paramref name="newCollection"/> that were present in <paramref name="oldCollection"/>.
 		/// </returns>
-		/// <remarks>This is intended to handle collections of unique items; duplicatess will be ignored.</remarks>
+		/// <remarks>This is intended to handle collections of unique items; duplicates will be ignored.</remarks>
 		public static (bool IsDifferent, IList<T> Added, IList<T> Removed) GetUnorderedDiff<T>(this IEnumerable<T> newCollection, IEnumerable<T> oldCollection)
 		{
 			var oldSet = oldCollection.ToHashSet();

@@ -53,13 +53,8 @@ namespace CodeConnections.Graph
 		/// at the same time.
 		/// </summary>
 		/// <param name="forwardLink"></param>
-		public void AddForwardLink(Node forwardLink, params LinkType[] linkTypes)
+		public void AddForwardLink(Node forwardLink, LinkType linkType)
 		{
-			var linkType = LinkType.Unspecified;
-			foreach (var type in linkTypes)
-			{
-				linkType |= type;
-			}
 			var link = new Link(forwardLink, this, linkType);
 			_forwardLinks.Add(link);
 			forwardLink._backLinks.Add(link);

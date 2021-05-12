@@ -172,6 +172,56 @@ namespace CodeConnections.Tests.GraphTests
 			}
 		}
 
+		[Test]
+		public async Task When_Inherited_Class()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
+				var inheritedClassNode = fullGraph.Nodes.Values.Single(n => (n as TypeNode)?.Identifier.Name == "SomeInheritedClassDepth1");
+				var baseClassLink = AssertEx.ContainsSingle(inheritedClassNode.ForwardLinks, l => (l.Dependency as TypeNode)?.Identifier.Name == "SomeBaseClass");
+				Assert.AreEqual(LinkType.InheritsFromClass, baseClassLink.LinkType);
+				var derivedClassLink = AssertEx.ContainsSingle(inheritedClassNode.BackLinks, l => (l.Dependent as TypeNode)?.Identifier.Name == "SomeInheritedClassDepth2");
+				Assert.AreEqual(LinkType.InheritsFromClass, baseClassLink.LinkType);
+			}
+		}
+
+		[Test]
+		public async Task When_Inherited_Class_Generic()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
+				var inheritedClassNode = fullGraph.Nodes.Values.Single(n => (n as TypeNode)?.Identifier.Name == "SomeInheritedConcretifiedClass");
+				var baseClassLink = AssertEx.ContainsSingle(inheritedClassNode.ForwardLinks, l => (l.Dependency as TypeNode)?.Identifier.Name == "SomeBaseGenericClass<T>");
+				Assert.AreEqual(LinkType.InheritsFromClass, baseClassLink.LinkType);
+			}
+		}
+
+		[Test]
+		public async Task When_Implemented_Interface()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
+				var implementingClassNode = fullGraph.Nodes.Values.Single(n => (n as TypeNode)?.Identifier.Name == "SomeBaseClass");
+				AssertImplements(implementingClassNode, "ISomeInheritedInterface");
+				AssertImplements(implementingClassNode, "ISomeStillOtherInterface");
+				AssertImplements(implementingClassNode, "ISomeGenericInterface<T>");
+
+				void AssertImplements(Node implementer, string interfaceName)
+				{
+					var interfaceLink = AssertEx.ContainsSingle(implementer.ForwardLinks, l => (l.Dependency as TypeNode)?.Identifier.Name == interfaceName);
+					Assert.AreEqual(LinkType.ImplementsInterface, interfaceLink.LinkType);
+				}
+				;
+				//var baseClassLink = AssertEx.ContainsSingle(inheritedClassNode.ForwardLinks, l => (l.Dependency as TypeNode)?.Identifier.Name == "SomeBaseClass");
+				//Assert.AreEqual(LinkType.InheritsFromClass, baseClassLink.LinkType);
+				//var derivedClassLink = AssertEx.ContainsSingle(inheritedClassNode.BackLinks, l => (l.Dependent as TypeNode)?.Identifier.Name == "SomeInheritedClassDepth2");
+				//Assert.AreEqual(LinkType.InheritsFromClass, baseClassLink.LinkType);
+			}
+		}
+
 		private static void AssertNoDuplicates(NodeGraph graph)
 		{
 			var nodes = GetAllNodes(graph).OfType<TypeNode>().ToList();

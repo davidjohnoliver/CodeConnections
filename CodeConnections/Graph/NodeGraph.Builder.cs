@@ -64,7 +64,7 @@ namespace CodeConnections.Graph
 
 							if (node != dependencyNode)
 							{
-								node.AddForwardLink(dependencyNode);
+								node.AddForwardLink(dependencyNode, GetLinkType(dependency, symbol));
 							}
 						}
 					}
@@ -84,6 +84,23 @@ namespace CodeConnections.Graph
 					return node;
 				}
 			}
+		}
+
+		private static LinkType GetLinkType(ITypeSymbol dependency, ITypeSymbol dependent)
+		{
+			var linkType = LinkType.Unspecified;
+			// Check ConstructedFrom (eg IFoo<T> instead of IFoo<string>) - t.ConstructedFrom == t for non-generic types
+			if (dependency.Equals(dependent.BaseType?.ConstructedFrom, SymbolEqualityComparer.Default))
+			{
+				linkType |= LinkType.InheritsFromClass;
+			}
+
+			if (dependent.Interfaces.Select(i => i.ConstructedFrom).Contains(dependency))
+			{
+				linkType |= LinkType.ImplementsInterface;
+			}
+
+			return linkType;
 		}
 
 		private static TypeNode CreateTypeNodeForSymbol(ITypeSymbol symbol, TypeNodeKey key)

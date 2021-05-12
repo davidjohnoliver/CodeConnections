@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SubjectSolution.Generated;
+using SubjectSolution.Inheritance;
 
 namespace SubjectSolution
 {
@@ -12,6 +13,8 @@ namespace SubjectSolution
 		public SomeClassDepth3 SomeClassDepth3;
 
 		public SomeClassSelfReference SomeClassSelfReference;
+
+		public SomeBaseClass SomeBaseClass;
 
 		void DoStuff()
 		{
