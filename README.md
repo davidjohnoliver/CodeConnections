@@ -24,7 +24,9 @@ The Graph window is where the action happens. Here you can visualize the depende
 
 ### Always include active document and its connections
 
-By default, the active document (ie the current tab) and all its connections will be included in the graph. To toggle this behavior, press the lock icon in the options panel.
+By default, the active document (ie the current tab) will be included in the graph. To toggle this behavior, press the lock icon in the options panel.
+
+You can choose via the dropdown whether to include the active document and also all its connections (dependencies and dependents), or the active document only.
 
 ![Active document](doc/assets/Graph-active-document.png)
 
@@ -40,8 +42,11 @@ Use the pin icon to pin or unpin an individual element.
 
 Right-clicking an element brings up a context menu with more options:
 
- * **Pin element to graph** will pin the current element (the same as the pin icon).
- * **Pin this and connected elements to graph** will pin the current element and all its direct connections.
+ * **Pin/unpin element** will pin or unpin the current element (the same as the pin icon).
+ * **Add connections of type** will add the current element and all its direct connections (dependencies and dependents).
+ * **Add all base types of type** will add all the base classes of the type that are in the solution (and match the filter settings), as well as all interfaces that the type implements.
+ * **Add all subtypes derived from type** will add all the types that directly or indirectly derive from the type: if it's a class, all the classes that inherit from it, or if it's an interface, all the types that directly or indirectly implement it.
+ * **Add direct subtypes of type** will add all the types that directly derive from the type: the immediate derived classes of a class, or the types that directly implement an interface.
 
 ### Clear Graph
 
