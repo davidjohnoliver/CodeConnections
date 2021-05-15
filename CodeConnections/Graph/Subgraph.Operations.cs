@@ -30,7 +30,9 @@ namespace CodeConnections.Graph
 		/// An operation to set a particular node as 'selected', adding it and its neighbours as <see cref="AdditionalNodes"/>.
 		/// </summary>
 
-		public static Operation SetSelected(NodeKey selected) => new UpdateSelectedOperation(selected);
+		public static Operation SetSelected(NodeKey selected, bool includeConnectionsAsWell) => new UpdateSelectedOperation(selected, includeConnectionsAsWell);
+
+		public static Operation ClearSelected() => new ClearSelectedOperation();
 
 		/// <summary>
 		/// An operation to pin <paramref name="targetNode"/> and all neighbouring nodes to the graph.
@@ -137,19 +139,25 @@ namespace CodeConnections.Graph
 		private class UpdateSelectedOperation : Operation
 		{
 			private readonly NodeKey _selected;
+			private readonly bool _includeConnectionsAsWell;
 
-			public UpdateSelectedOperation(NodeKey selected)
+			public UpdateSelectedOperation(NodeKey selected, bool includeConnectionsAsWell)
 			{
 				_selected = selected ?? throw new ArgumentNullException(nameof(selected));
+				_includeConnectionsAsWell = includeConnectionsAsWell;
 			}
 
 			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
 			{
 				var currentAdditionals = subgraph.AdditionalNodes;
 				var nodes = fullGraph.Nodes;
-				var newAdditionals = nodes.ContainsKey(_selected) ?
-					nodes[_selected].AllLinkKeys(includeThis: true) :
-					ArrayUtils.GetEmpty<NodeKey>();
+
+				var newAdditionals = (nodes.ContainsKey(_selected), _includeConnectionsAsWell) switch
+				{
+					(false, _) => ArrayUtils.GetEmpty<NodeKey>(),
+					(_, false) => new[] { _selected },
+					(_, true) => nodes[_selected].AllLinkKeys(includeThis: true)
+				};
 
 				var (isDifferent, addedNodes, removedNodes) = newAdditionals.GetUnorderedDiff(currentAdditionals);
 
@@ -168,6 +176,15 @@ namespace CodeConnections.Graph
 
 				modified |= subgraph.SetSelectedNode(_selected);
 
+				return Task.FromResult(modified);
+			}
+		}
+
+		private class ClearSelectedOperation : Operation
+		{
+			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
+			{
+				var modified = subgraph.ClearAdditional();
 				return Task.FromResult(modified);
 			}
 		}

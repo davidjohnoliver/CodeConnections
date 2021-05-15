@@ -100,20 +100,50 @@ namespace CodeConnections.Presentation
 			set => OnValueSet(_graphUpdateManager.IsGitModeEnabled, v => _graphUpdateManager.IsGitModeEnabled = v, value);
 		}
 
+		private bool _isActiveAlwaysIncluded;
 		/// <summary>
 		/// Should the active document (and its connections) automatically be included in the graph?
 		/// </summary>
 		public bool IsActiveAlwaysIncluded
 		{
-			get => _graphUpdateManager.IsActiveAlwaysIncluded;
+			get => _isActiveAlwaysIncluded;
 			set
 			{
-				if (OnValueSet(_graphUpdateManager.IsActiveAlwaysIncluded, v => _graphUpdateManager.IsActiveAlwaysIncluded = v, value))
+				if (OnValueSet(ref _isActiveAlwaysIncluded, value))
 				{
 					_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { IsActiveAlwaysIncluded = value });
+					UpdateIncludeActiveMode(true);
 				}
 			}
 		}
+
+		/// <summary>
+		/// The 'real' value of IncludeActiveMode. This is always equal to the last chosen of either active-only or active-plus-connections, 
+		/// whereas SelectedIncludeActiveMode may be nulled out to facilitate the behaviour that making a selection in the combo box reactivates 
+		/// IsActiveAlwaysIncluded.
+		/// </summary>
+		private IncludeActiveMode _implicitIncludeActiveMode;
+
+		private IncludeActiveMode? _selectedIncludeActiveMode;
+		public IncludeActiveMode? SelectedIncludeActiveMode
+		{
+			get => _selectedIncludeActiveMode;
+			set
+			{
+				if (OnValueSet(ref _selectedIncludeActiveMode, value))
+				{
+					if (value is { } selection)
+					{
+						_implicitIncludeActiveMode = selection;
+						_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { IncludeActiveMode = selection });
+						IsActiveAlwaysIncluded = true;
+					}
+					UpdateIncludeActiveMode(false);
+				}
+			}
+		}
+
+		public IncludeActiveMode[] IncludeActiveModes { get; } = new[] { IncludeActiveMode.ActiveOnly, IncludeActiveMode.ActiveAndConnections };
 
 		private SelectionList<ProjectIdentifier>? _projects;
 		public SelectionList<ProjectIdentifier>? Projects
@@ -386,6 +416,7 @@ namespace CodeConnections.Presentation
 
 			MaxAutomaticallyLoadedNodes = settings.MaxAutomaticallyLoadedNodes;
 			LayoutMode = settings.LayoutMode;
+			SelectedIncludeActiveMode = settings.IncludeActiveMode; // Set before IsActiveAlwaysIncluded, so it will be nulled out (but _implicitIncludeActiveMode retained) if IsActiveAlwaysIncluded=false
 			IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
 			_outputService.CurrentOutputLevel = settings.OutputLevel;
 		}
@@ -523,6 +554,28 @@ namespace CodeConnections.Presentation
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
 			SelectedNode = Graph.Vertices.FirstOrDefault(dn => PathUtils.AreEquivalent(dn.FilePath, activeDocument));
+		}
+
+		/// <summary>
+		/// Apply the effective <see cref="IncludeActiveMode"/> to the update manager.
+		/// </summary>
+		/// <param name="isSwitching">Is <see cref="IsActiveAlwaysIncluded"/> changing?</param>
+		private void UpdateIncludeActiveMode(bool isSwitching)
+		{
+			if (isSwitching)
+			{
+				if (IsActiveAlwaysIncluded)
+				{
+					SelectedIncludeActiveMode = _implicitIncludeActiveMode;
+				}
+			}
+
+			if (!IsActiveAlwaysIncluded)
+			{
+				SelectedIncludeActiveMode = null;
+			}
+
+			_graphUpdateManager.IncludeActiveMode = SelectedIncludeActiveMode ?? IncludeActiveMode.DontInclude;
 		}
 
 		public void Dispose()

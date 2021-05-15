@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CodeConnections.ComponentModel;
+using CodeConnections.Graph;
 using CodeConnections.Presentation;
 using Microsoft.VisualStudio.Shell;
 
@@ -27,8 +28,13 @@ namespace CodeConnections.VSIX
 
 		[SortedCategory(BasicOptionsString, BasicOptionsPosition, CategoryCount)]
 		[DisplayName("Always include active document")]
-		[Description("Choose whether to always include the active document and its connections in the graph.")]
+		[Description("Choose whether to always include the active document in the graph.")]
 		public bool IsActiveAlwaysIncluded { get; set; } = true;
+
+		[SortedCategory(BasicOptionsString, BasicOptionsPosition, CategoryCount)]
+		[DisplayName("How to include active")]
+		//[Description("TODO")]
+		public IncludeActiveMode IncludeActiveMode { get; set; } = IncludeActiveMode.ActiveAndConnections;
 
 
 		[SortedCategory(AdditionalOptionsString, AdditionalOptionsPosition, CategoryCount)]

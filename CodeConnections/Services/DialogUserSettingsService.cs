@@ -28,6 +28,7 @@ namespace CodeConnections.Services
 				_dialogPage.MaxAutomaticallyLoadedNodes,
 				_dialogPage.LayoutMode,
 				_dialogPage.IsActiveAlwaysIncluded,
+				_dialogPage.IncludeActiveMode,
 				_dialogPage.OutputLevel
 			);
 		}
@@ -37,6 +38,7 @@ namespace CodeConnections.Services
 			_dialogPage.MaxAutomaticallyLoadedNodes = settings.MaxAutomaticallyLoadedNodes;
 			_dialogPage.LayoutMode = settings.LayoutMode;
 			_dialogPage.IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
+			_dialogPage.IncludeActiveMode = settings.IncludeActiveMode;
 			_dialogPage.OutputLevel = settings.OutputLevel;
 
 			_dialogPage.SaveSettingsToStorage();

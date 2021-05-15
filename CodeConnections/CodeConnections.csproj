@@ -89,6 +89,7 @@
     <Compile Include="Git\GitStatus.cs" />
     <Compile Include="Graph\Display\GraphUpdateManager.cs" />
     <Compile Include="Graph\Display\CyclicCluster.cs" />
+    <Compile Include="Graph\IncludeActiveMode.cs" />
     <Compile Include="Graph\Link.cs" />
     <Compile Include="Graph\LinkType.cs" />
     <Compile Include="Graph\NodeGraph.Builder.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Graph\TypeNode.cs" />
     <Compile Include="Graph\TypeNodeKey.cs" />
     <Compile Include="Input\IToggleCommand.cs" />
+    <Compile Include="Presentation\Converters\BooleanToDoubleConverter.cs" />
     <Compile Include="Presentation\Converters\BooleanToStringConverter.cs" />
     <Compile Include="Presentation\Converters\DebugConverter.cs" />
     <Compile Include="Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Presentation\Converters\GraphLayoutModeLayoutAlgorithmConverter.cs" />
     <Compile Include="Presentation\Converters\GraphLayoutModeTooltipConverter.cs" />
     <Compile Include="Presentation\Converters\GraphLayoutModeMonikerConverter.cs" />
+    <Compile Include="Presentation\Converters\IncludeActiveModeToDescriptionConverter.cs" />
     <Compile Include="Presentation\Converters\MultiValueConverter.cs" />
     <Compile Include="Presentation\Converters\OperationTimeTextConverter.cs" />
     <Compile Include="Presentation\Converters\ValueConverter.cs" />

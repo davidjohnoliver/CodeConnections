@@ -95,16 +95,16 @@ namespace CodeConnections.Graph.Display
 			}
 		}
 
-		private bool _isActiveAlwaysIncluded = true;
-		public bool IsActiveAlwaysIncluded
+		private IncludeActiveMode _includeActiveMode;
+		public IncludeActiveMode IncludeActiveMode
 		{
-			get => _isActiveAlwaysIncluded;
+			get => _includeActiveMode;
 			set
 			{
-				var didChangeToTrue = value && !_isActiveAlwaysIncluded;
-				_isActiveAlwaysIncluded = value;
-				if (didChangeToTrue)
+				var didChange = value != _includeActiveMode;
+				if (didChange)
 				{
+					_includeActiveMode = value;
 					InvalidateActiveDocument();
 				}
 			}
@@ -545,19 +545,26 @@ namespace CodeConnections.Graph.Display
 					_statisticsTCS = null;
 				}
 
-				if (IsActiveAlwaysIncluded && _nodeGraph != null)
+				if (_nodeGraph != null)
 				{
 					// Include active document ( == selected node)
 					_currentUpdateState = UpdateState.IncludeActive;
-					var activeDocument = _getActiveDocument();
-					compilationCache = EnsureCompilationCache();
-					if (activeDocument != null)
+					if (IncludeActiveMode == IncludeActiveMode.DontInclude)
 					{
-						var activeSymbols = await compilationCache.GetDeclaredSymbolsFromFilePath(activeDocument, ct);
-						var activeNodeKey = activeSymbols.FirstOrDefault()?.ToNodeKey();
-						if (activeNodeKey != null)
+						ModifySubgraph(Subgraph.ClearSelected());
+					}
+					else
+					{
+						var activeDocument = _getActiveDocument();
+						compilationCache = EnsureCompilationCache();
+						if (activeDocument != null)
 						{
-							ModifySubgraph(Subgraph.SetSelected(activeNodeKey));
+							var activeSymbols = await compilationCache.GetDeclaredSymbolsFromFilePath(activeDocument, ct);
+							var activeNodeKey = activeSymbols.FirstOrDefault()?.ToNodeKey();
+							if (activeNodeKey != null)
+							{
+								ModifySubgraph(Subgraph.SetSelected(activeNodeKey, IncludeActiveMode == IncludeActiveMode.ActiveAndConnections));
+							}
 						}
 					}
 				}
