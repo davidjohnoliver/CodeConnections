@@ -31,6 +31,8 @@
 	<converters:BooleanToStringConverter x:Key="IsPinnedToMessageConverter"
 										 TrueValue="Unpin element from graph"
 										 FalseValue="Pin element to graph" />
+	<converters:WordTruncateConverter x:Key="TypeNameTruncateConverter"
+									  CharacterLimit="50" />
 
 	<Style TargetType="{x:Type graphControls:VertexControl}">
 		<Setter Property="Template">
@@ -56,7 +58,7 @@
 						</Border.ContextMenu>
 						<StackPanel Orientation="Horizontal"
 									DataContext="{TemplateBinding Vertex}">
-							<TextBlock Text="{Binding DisplayString}"
+							<TextBlock Text="{Binding DisplayString, Converter={StaticResource TypeNameTruncateConverter}}"
 									   FontSize="16" />
 							<CheckBox x:Name="PinCheckBox"
 									  Style="{StaticResource PinCheckBoxStyle}"

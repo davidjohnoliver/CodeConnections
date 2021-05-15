@@ -117,6 +117,7 @@
     <Compile Include="Presentation\Converters\MultiValueConverter.cs" />
     <Compile Include="Presentation\Converters\OperationTimeTextConverter.cs" />
     <Compile Include="Presentation\Converters\ValueConverter.cs" />
+    <Compile Include="Presentation\Converters\WordTruncateConverter.cs" />
     <Compile Include="Presentation\DependencyGraphToolWindowViewModel.cs" />
     <Compile Include="Graph\Display\DisplayEdge.cs" />
     <Compile Include="Presentation\Converters\DisplayEdgeStrokeDashArrayConverter.cs" />
