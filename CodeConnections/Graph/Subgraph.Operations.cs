@@ -39,6 +39,14 @@ namespace CodeConnections.Graph
 		/// </summary>
 		public static Operation PinNodeAndNeighbours(NodeKey targetNode) => new PinNodeAndNeighboursOperation(targetNode);
 
+		public static Operation AddInheritanceDependencyHierarchy(NodeKey rootNode)
+			=> new AddDependencyOrDependentHierarchyOperation(rootNode, false, LinkType.InheritsOrImplements);
+
+		public static Operation AddInheritanceDependentHierarchy(NodeKey rootNode)
+			=> new AddDependencyOrDependentHierarchyOperation(rootNode, true, LinkType.InheritsOrImplements);
+
+		public static Operation AddDirectInheritanceDependents(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, true, LinkType.InheritsOrImplements);
+
 		/// <summary>
 		/// An operation to 'sanitize' the subgraph by removing any nodes that aren't found in the full <see cref="NodeGraph"/>.
 		/// </summary>
@@ -58,6 +66,17 @@ namespace CodeConnections.Graph
 			/// <returns>True if <paramref name="subgraph"/> was modified by the operation, false otherwise.</returns>
 
 			public abstract Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct); // TODO: there's no longer a compelling reason for this to be asynchronous
+		}
+
+		private abstract class SyncOperation : Operation
+		{
+			public sealed override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
+			{
+				var modified = Apply(subgraph, fullGraph);
+				return Task.FromResult(modified);
+			}
+
+			protected abstract bool Apply(Subgraph subgraph, NodeGraph fullGraph);
 		}
 
 		private class CompositeOperation : Operation
@@ -213,6 +232,97 @@ namespace CodeConnections.Graph
 				}
 
 				return Task.FromResult(modified);
+			}
+		}
+
+		private class AddDependencyOrDependentHierarchyOperation : SyncOperation
+		{
+			private readonly NodeKey _rootNodeKey;
+			private readonly bool _isDependent;
+			private readonly LinkType _dependencyRelationship;
+
+			public AddDependencyOrDependentHierarchyOperation(NodeKey rootNodeKey, bool isDependent, LinkType dependencyRelationship)
+			{
+				_rootNodeKey = rootNodeKey;
+				_isDependent = isDependent;
+				_dependencyRelationship = dependencyRelationship;
+			}
+			protected override bool Apply(Subgraph subgraph, NodeGraph fullGraph)
+			{
+				if (fullGraph.Nodes.GetOrDefaultFromReadOnly(_rootNodeKey) is not { } rootNode)
+				{
+					return false;
+				}
+
+				var modified = false;
+				var nodesSeen = new HashSet<Node>();
+				var nodesToExplore = new Queue<Node>();
+
+				void TryEnqueue(Node toEnqueue)
+				{
+					if (nodesSeen.Add(toEnqueue))
+					{
+						nodesToExplore.Enqueue(toEnqueue);
+					}
+				}
+
+				TryEnqueue(rootNode);
+				var lp = new LoopProtection();
+				while (nodesToExplore.Count > 0)
+				{
+					lp.Iterate();
+					var current = nodesToExplore.Dequeue();
+					var links = _isDependent ? current.BackLinks : current.ForwardLinks;
+					foreach (var dependency in links)
+					{
+						if (dependency.LinkType.HasFlagPartially(_dependencyRelationship))
+						{
+							TryEnqueue(_isDependent ? dependency.Dependent : dependency.Dependency);
+						}
+					}
+				}
+
+				foreach (var found in nodesSeen)
+				{
+					modified |= subgraph.AddPinnedNode(found.Key, fullGraph);
+				}
+
+				return modified;
+			}
+		}
+
+		private class AddDirectDependenciesOrDependentsOperation : SyncOperation
+		{
+			private readonly NodeKey _rootNodeKey;
+			private readonly bool _isDependent;
+			private readonly LinkType _dependencyRelationship;
+
+			public AddDirectDependenciesOrDependentsOperation(NodeKey rootNodeKey, bool isDependent, LinkType dependencyRelationship)
+			{
+				_rootNodeKey = rootNodeKey;
+				_isDependent = isDependent;
+				_dependencyRelationship = dependencyRelationship;
+			}
+			protected override bool Apply(Subgraph subgraph, NodeGraph fullGraph)
+			{
+
+				if (fullGraph.Nodes.GetOrDefaultFromReadOnly(_rootNodeKey) is not { } rootNode)
+				{
+					return false;
+				}
+
+				var modified = subgraph.AddPinnedNode(_rootNodeKey, fullGraph);
+
+				var links = _isDependent ? rootNode.BackLinks : rootNode.ForwardLinks;
+				foreach (var link in links)
+				{
+					if (link.LinkType.HasFlagPartially(_dependencyRelationship))
+					{
+						var node = _isDependent ? link.Dependent : link.Dependency;
+						modified |= subgraph.AddPinnedNode(node.Key, fullGraph);
+					}
+				}
+				return modified;
 			}
 		}
 

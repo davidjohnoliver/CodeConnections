@@ -59,6 +59,30 @@
 																		   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
 									</MenuItem.Header>
 								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.AddInheritanceDependencyHierarchyMenuCommand}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add all base types of <Run FontWeight="DemiBold"
+																		   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.AddInheritanceDependentHierarchyMenuCommand}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add all subtypes derived from <Run FontWeight="DemiBold"
+																		   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.AddInheritanceDirectDependentsMenuCommand}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add direct subtypes of <Run FontWeight="DemiBold"
+																			  Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
 							</ContextMenu>
 						</Border.ContextMenu>
 						<StackPanel Orientation="Horizontal"

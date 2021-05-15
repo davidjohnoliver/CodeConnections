@@ -191,10 +191,15 @@ namespace CodeConnections.Presentation
 		public ICommand ClearRootsCommand { get; }
 		public ICommand ShowAllNodesCommand { get; }
 		public ICommand LogStatsCommand { get; }
-		public ICommand TogglePinnedMenuCommand { get; }
-		public ICommand PinNodeAndNeighboursMenuCommand { get; }
 		public ICommand DeselectAllProjectsCommand { get; }
 		public ICommand SelectAllProjectsCommand { get; }
+
+		public ICommand TogglePinnedMenuCommand { get; }
+		public ICommand PinNodeAndNeighboursMenuCommand { get; }
+		public ICommand AddInheritanceDependencyHierarchyMenuCommand { get; }
+		public ICommand AddInheritanceDependentHierarchyMenuCommand { get; }
+		public ICommand AddInheritanceDirectDependentsMenuCommand { get; }
+
 		public IToggleCommand TogglePinnedCommand { get; }
 
 		private int _maxAutomaticallyLoadedNodes;
@@ -302,10 +307,14 @@ namespace CodeConnections.Presentation
 			ClearRootsCommand = SimpleCommand.Create(ClearRoots);
 			ShowAllNodesCommand = SimpleCommand.Create(ShowAllNodes);
 			LogStatsCommand = SimpleCommand.Create(LogStats);
-			TogglePinnedMenuCommand = SimpleCommand.Create<DisplayNode>(TogglePinned);
-			PinNodeAndNeighboursMenuCommand = SimpleCommand.Create<DisplayNode>(PinNodeAndNeighbours);
 			DeselectAllProjectsCommand = SimpleCommand.Create(() => Projects?.DeselectAll());
 			SelectAllProjectsCommand = SimpleCommand.Create(() => Projects?.SelectAll());
+
+			TogglePinnedMenuCommand = SimpleCommand.Create<DisplayNode>(TogglePinned);
+			PinNodeAndNeighboursMenuCommand = SimpleCommand.Create<DisplayNode>(PinNodeAndNeighbours);
+			AddInheritanceDependencyHierarchyMenuCommand = SimpleCommand.Create<DisplayNode>(AddInheritanceDependencyHierarchy);
+			AddInheritanceDependentHierarchyMenuCommand = SimpleCommand.Create<DisplayNode>(AddInheritanceDependentHierarchy);
+			AddInheritanceDirectDependentsMenuCommand = SimpleCommand.Create<DisplayNode>(AddInheritanceDirectDependents);
 
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
@@ -508,6 +517,33 @@ namespace CodeConnections.Presentation
 			if (displayNode != null)
 			{
 				var op = Subgraph.PinNodeAndNeighbours(displayNode.Key);
+				_graphUpdateManager.ModifySubgraph(op);
+			}
+		}
+
+		private void AddInheritanceDependencyHierarchy(DisplayNode? displayNode)
+		{
+			if (displayNode != null)
+			{
+				var op = Subgraph.AddInheritanceDependencyHierarchy(displayNode.Key);
+				_graphUpdateManager.ModifySubgraph(op);
+			}
+		}
+
+		private void AddInheritanceDirectDependents(DisplayNode? displayNode)
+		{
+			if (displayNode != null)
+			{
+				var op = Subgraph.AddDirectInheritanceDependents(displayNode.Key);
+				_graphUpdateManager.ModifySubgraph(op);
+			}
+		}
+
+		private void AddInheritanceDependentHierarchy(DisplayNode? displayNode)
+		{
+			if (displayNode != null)
+			{
+				var op = Subgraph.AddInheritanceDependentHierarchy(displayNode.Key);
 				_graphUpdateManager.ModifySubgraph(op);
 			}
 		}
