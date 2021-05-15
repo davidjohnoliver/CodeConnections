@@ -6,7 +6,6 @@
         <Description xml:space="preserve">Code Connections visualizes class dependencies as an interactive graph.</Description>
         <MoreInfo>https://github.com/davidjohnoliver/CodeConnections</MoreInfo>
         <License>LICENSE.md</License>
-        <Preview>true</Preview>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.6.0, 17.0)" />
