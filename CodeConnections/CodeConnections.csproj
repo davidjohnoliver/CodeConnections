@@ -203,6 +203,7 @@
     <Compile Include="Views\TopInfoBar.xaml.cs">
       <DependentUpon>TopInfoBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Controls\ZoomControl.cs" />
     <Compile Include="VSIX\CodeConnectionsPackage.cs" />
     <Compile Include="Utilities\LoopProtection.cs" />
     <Compile Include="VSIX\DependencyGraphToolWindow.cs" />

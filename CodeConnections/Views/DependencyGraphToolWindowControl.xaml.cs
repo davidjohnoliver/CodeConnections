@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using System.Windows.Controls;
-using GraphSharp.Controls.Zoom;
 using Xceed.Wpf.Toolkit;
 
 namespace CodeConnections.Views
@@ -10,7 +9,7 @@ namespace CodeConnections.Views
 	{
 		public DependencyGraphToolWindowControl()
 		{
-			typeof(ZoomControl).ToString(); // Force an explicit dependency on GraphSharp here, so that assembly is resolved before parsing Xaml
+			typeof(GraphSharp.Controls.Zoom.ZoomControl).ToString(); // Force an explicit dependency on GraphSharp here, so that assembly is resolved before parsing Xaml
 			this.InitializeComponent();
 		}
 	}

@@ -10,17 +10,18 @@
 					xmlns:converters="clr-namespace:GraphSharp.Converters;assembly=GraphSharp.Controls"
 					xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
 					xmlns:zoom="clr-namespace:GraphSharp.Controls.Zoom;assembly=GraphSharp.Controls"
+					xmlns:controls="clr-namespace:CodeConnections.Views.Controls"
 					mc:Ignorable="d">
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="CheckBox.xaml" />
 	</ResourceDictionary.MergedDictionaries>
 	<converters:EqualityToBooleanConverter x:Key="EqualityConverter" />
-	<Style TargetType="zoom:ZoomControl">
+	<Style TargetType="controls:ZoomControl">
 		<Setter Property="MaxZoom"
 				Value="3" />
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type zoom:ZoomControl}">
+				<ControlTemplate TargetType="{x:Type controls:ZoomControl}">
 					<Grid>
 						<Border BorderBrush="{TemplateBinding BorderBrush}"
 								BorderThickness="{TemplateBinding BorderThickness}"
