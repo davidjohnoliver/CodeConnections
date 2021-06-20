@@ -20,6 +20,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Styles/DisplayGraphTemplates.xaml" />
+				<ResourceDictionary Source="Styles/ZoomControl.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<converters:OperationTimeTextConverter x:Key="RenderTimeTextConverter"
 												   OperationType="Rendering" />
