@@ -30,16 +30,17 @@
 							<zoom:ZoomContentPresenter x:Name="PART_Presenter"
 													   ClipToBounds="False" />
 						</Border>
-						<StackPanel Orientation="Horizontal" Margin="5">
+						<StackPanel Orientation="Horizontal"
+									Margin="5">
 							<Border Padding="2"
 									Margin="2"
 									CornerRadius="2"
+									ToolTip="Original size"
 									Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
 									vstheming:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsshell:VsColors.CommandBarGradientMiddleKey}}"
 									VerticalAlignment="Top"
 									HorizontalAlignment="Left">
-								<CheckBox 
-										  Style="{StaticResource HighlightCheckBoxStyle}"
+								<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
 										  IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EqualityConverter},ConverterParameter={x:Static zoom:ZoomControlModes.Original}, Mode=TwoWay}">
 									<vsimaging:CrispImage Width="16"
 														  Height="16"
@@ -47,14 +48,14 @@
 								</CheckBox>
 							</Border>
 							<Border Padding="2"
-										Margin="2"
-										CornerRadius="2"
-										Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
-										vstheming:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsshell:VsColors.CommandBarGradientMiddleKey}}"
-										VerticalAlignment="Top"
-										HorizontalAlignment="Left">
-									<CheckBox 
-										  Style="{StaticResource HighlightCheckBoxStyle}"
+									Margin="2"
+									CornerRadius="2"
+									ToolTip="Fit to window"
+									Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}"
+									vstheming:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsshell:VsColors.CommandBarGradientMiddleKey}}"
+									VerticalAlignment="Top"
+									HorizontalAlignment="Left">
+								<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
 										  IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Mode,Converter={StaticResource EqualityConverter},ConverterParameter={x:Static zoom:ZoomControlModes.Fill}, Mode=TwoWay}">
 									<vsimaging:CrispImage Width="16"
 														  Height="16"
