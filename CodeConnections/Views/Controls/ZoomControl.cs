@@ -290,7 +290,7 @@ namespace CodeConnections.Views.Controls
 		{
 			double startZoom = Zoom;
 			double currentZoom = startZoom * deltaZoom;
-			currentZoom = Math.Max(MinZoom, Math.Min(MaxZoom, currentZoom));
+			currentZoom = ClampTargetZoom(currentZoom);
 
 			var startTranslate = new Vector(TranslateX, TranslateY);
 
@@ -307,6 +307,8 @@ namespace CodeConnections.Views.Controls
 			DoZoomAnimation(currentZoom, transformX, transformY);
 			Mode = ZoomControlModes.Custom;
 		}
+
+		private double ClampTargetZoom(double currentZoom) => Math.Max(MinZoom, Math.Min(MaxZoom, currentZoom));
 
 		private void DoZoomAnimation(double targetZoom, double transformX, double transformY)
 		{
@@ -375,9 +377,10 @@ namespace CodeConnections.Views.Controls
 			if (_presenter == null || Mode != ZoomControlModes.Fill)
 				return;
 
-			var deltaZoom = Math.Min(ActualWidth / _presenter.ContentSize.Width, ActualHeight / _presenter.ContentSize.Height);
+			var targetZoom = Math.Min(ActualWidth / _presenter.ContentSize.Width, ActualHeight / _presenter.ContentSize.Height);
+			targetZoom = ClampTargetZoom(targetZoom);
 			var initialTranslate = GetInitialTranslate();
-			DoZoomAnimation(deltaZoom, initialTranslate.X * deltaZoom, initialTranslate.Y * deltaZoom);
+			DoZoomAnimation(targetZoom, initialTranslate.X * targetZoom, initialTranslate.Y * targetZoom);
 		}
 
 		public override void OnApplyTemplate()
