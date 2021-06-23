@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30330.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeConnections", "CodeConnections\CodeConnections.csproj", "{D070D5A9-196E-40B6-B85B-B8E43A60DF51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeConnections.Dev16", "CodeConnections\CodeConnections.Dev16.csproj", "{D070D5A9-196E-40B6-B85B-B8E43A60DF51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeConnections.Tests", "CodeConnections.Tests\CodeConnections.Tests.csproj", "{5F23B68C-36A5-49F9-8294-16A9F45BE3A2}"
 EndProject

@@ -78,9 +78,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodeConnections\CodeConnections.csproj">
+    <ProjectReference Include="..\CodeConnections\CodeConnections.Dev16.csproj">
       <Project>{d070d5a9-196e-40b6-b85b-b8e43a60df51}</Project>
-      <Name>CodeConnections</Name>
+      <Name>CodeConnections.Dev16</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
