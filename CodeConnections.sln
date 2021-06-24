@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30330.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeConnections", "CodeConnections\CodeConnections.csproj", "{D070D5A9-196E-40B6-B85B-B8E43A60DF51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeConnections.Dev16", "CodeConnections\CodeConnections.Dev16.csproj", "{D070D5A9-196E-40B6-B85B-B8E43A60DF51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeConnections.Tests", "CodeConnections.Tests\CodeConnections.Tests.csproj", "{5F23B68C-36A5-49F9-8294-16A9F45BE3A2}"
 EndProject
@@ -12,7 +12,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CodeConnections.Shared", "CodeConnections.Shared\CodeConnections.Shared.shproj", "{90C0AE13-BD00-4D55-9413-E48155B2B5AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeConnections.Dev17", "CodeConnections.Dev17\CodeConnections.Dev17.csproj", "{947A78EA-9533-40F9-9D5A-086817EC2ADA}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		CodeConnections.Shared\CodeConnections.Shared.projitems*{90c0ae13-bd00-4d55-9413-e48155b2b5af}*SharedItemsImports = 13
+		CodeConnections.Shared\CodeConnections.Shared.projitems*{947a78ea-9533-40f9-9d5a-086817ec2ada}*SharedItemsImports = 4
+		CodeConnections.Shared\CodeConnections.Shared.projitems*{d070d5a9-196e-40b6-b85b-b8e43a60df51}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -26,6 +35,10 @@ Global
 		{5F23B68C-36A5-49F9-8294-16A9F45BE3A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F23B68C-36A5-49F9-8294-16A9F45BE3A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F23B68C-36A5-49F9-8294-16A9F45BE3A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{947A78EA-9533-40F9-9D5A-086817EC2ADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{947A78EA-9533-40F9-9D5A-086817EC2ADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{947A78EA-9533-40F9-9D5A-086817EC2ADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{947A78EA-9533-40F9-9D5A-086817EC2ADA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

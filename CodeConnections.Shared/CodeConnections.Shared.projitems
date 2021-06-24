@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>90c0ae13-bd00-4d55-9413-e48155b2b5af</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>CodeConnections.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Additions\IsExternalInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Additions\NullableAttributes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Additions\Range.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ISelectionCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\SelectionCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\SelectionList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ComponentModel\SortedCategoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Disposables\CancellationDisposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Disposables\CompositeDisposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Disposables\Disposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Disposables\ICancelable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Disposables\SerialCancellationDisposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Disposables\SerialDisposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DictionaryExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DiscreteStatisticsResultExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DisplayGraphExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DisposableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\FileStatusExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ImmutableArrayExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ListExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\NamedTypeSymbolExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\NodeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\NodeGraphExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\NodePathExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\OutputServiceExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ProjectExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\SelectionListExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\SolutionExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StatusEntryExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\SymbolExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\SyntaxNodeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\SyntaxTreeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeSymbolExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Git\GitInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Git\GitStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\GraphUpdateManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\CyclicCluster.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\IncludeActiveMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Link.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\LinkType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\NodeGraph.Builder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Node.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\NodeGraph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\NodeGraph.Updates.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\NodeKey.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\NodePath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\SearchEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Subgraph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Subgraph.Operations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\TypeNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\TypeNodeKey.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Input\IToggleCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\BooleanToDoubleConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\BooleanToStringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DebugConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayNodeGitIndicatorVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusPathConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusTooltipConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GraphLayoutModeLayoutAlgorithmConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GraphLayoutModeTooltipConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GraphLayoutModeMonikerConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\IncludeActiveModeToDescriptionConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\MultiValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\OperationTimeTextConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\ValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\WordTruncateConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\DependencyGraphToolWindowViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\DisplayEdge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayEdgeStrokeDashArrayConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\DisplayNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\MultiDependencyDisplayEdge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\OutputLevel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\PersistedSolutionSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\PersistedUserSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\SimpleCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\SimpleDisplayEdge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\SimpleToggleCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\StatisticsReportContent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\StatisticsReporter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\ViewModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\GraphLayoutMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynInternal\FileNameUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynInternal\GeneratedCodeUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynInternal\Hash.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynInternal\PathKind.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynInternal\PathUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynInternal\PlatformInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynInternal\SyntaxTriviaExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Roslyn\CompilationCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Roslyn\ProjectIdentifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Roslyn\TypeIdentifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\DialogUserSettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\DocumentsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\DocumentsService.DocTableEvents.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\GitService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IDocumentsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IGitService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IModificationsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IOutputService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IRoslynService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ISolutionSettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ISolutionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IUserSettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\OutputWindowOutputService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RoslynService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\SolutionSettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\SolutionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Statistics\DiscreteStatisticsResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Statistics\DisplayNodeAndEdges.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Statistics\GraphStatistics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\CompactListFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\ConsoleHeaderFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\IDictionaryFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\IHeaderFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\ICompactListFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\MarkdownStyleTableFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ArrayUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\EnumUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IdleTimer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PathUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\SetUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ThreadUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\TimeUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\TypeUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\VSStreamWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\MultiSelection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\PinCheckBoxBehaviour.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\ToggleButtonExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\DependencyGraphLayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\GraphOptionsControl.xaml.cs">
+      <DependentUpon>GraphOptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\CCLayoutAlgorithmFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\FDP\LinLogLayoutAlgorithm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\FDP\LinLogLayoutAlgorithm.QuadTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\FDP\LinLogLayoutParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaAlgorithm.BuildSparseNormalizedGraph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaAlgorithm.DoCrossingMinimizations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaAlgorithm.DoPreparing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.AlternatingLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.Data.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.HorizontalAssignment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaLayoutAlgorithm.SegmentContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaLayoutParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\SugiyamaEdgeRoutings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\StableLayoutAlgorithmBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\TopInfoBar.xaml.cs">
+      <DependentUpon>TopInfoBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Controls\ZoomControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VSIX\CodeConnectionsPackage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\LoopProtection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VSIX\DependencyGraphToolWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VSIX\DependencyGraphToolWindowCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\DependencyGraphToolWindowControl.xaml.cs">
+      <DependentUpon>DependencyGraphToolWindowControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)VSIX\UserOptionsDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\DependencyGraphToolWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\ComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\ZoomControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\MenuItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Expander.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\ListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\ContextMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\ListBoxItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\CheckBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Button.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\DisplayGraphTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\GraphOptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\TopInfoBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <VSCTCompile Include="$(MSBuildThisFileDirectory)VSIX\CodeConnectionsPackage.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <Content Include="$(MSBuildThisFileDirectory)lib\win32\x64\git2-106a5f2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)lib\win32\x86\git2-106a5f2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)VSIX\Resources\DependencyGraphToolWindowCommand.png" />
+    <Content Include="$(MSBuildThisFileDirectory)VSIX\Resources\logo-square-thick_16.png" />
+  </ItemGroup>
+  <ItemGroup />
+</Project>

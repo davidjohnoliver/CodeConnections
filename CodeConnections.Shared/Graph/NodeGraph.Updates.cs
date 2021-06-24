@@ -10,7 +10,6 @@ using CodeConnections.Extensions;
 using CodeConnections.Roslyn;
 using CodeConnections.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.VisualStudio.Debugger.Evaluation.IL;
 
 namespace CodeConnections.Graph
 {

@@ -3,7 +3,11 @@ name: CI
 env:
   config: Release
   codeConnectionsSolution: CodeConnections.sln
-  vsixContainer: ${{ github.workspace }}\CodeConnections.vsix
+  vsix2019proj: CodeConnections\CodeConnections.Dev16.csproj
+  vsix2022proj: CodeConnections.Dev17\CodeConnections.Dev17.csproj
+  vs2019testsproj: CodeConnections.Tests\CodeConnections.Tests.csproj
+  vsix2019Container: ${{ github.workspace }}\CodeConnections.vsix
+  vsix2022Container: ${{ github.workspace }}\CodeConnections_2022.vsix
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the main branch
@@ -41,17 +45,33 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore ${{ env.codeConnectionsSolution }}
     
-    - name: Build VSIX
+    - name: Build VS2019 VSIX
       run: |
-        msbuild ${{ env.codeConnectionsSolution }} /p:configuration=${{ env.config }} /p:TargetVsixContainer=${{ env.vsixContainer }} /p:DeployExtension=false /verbosity:minimal
+        msbuild ${{ env.vsix2019proj }} /p:configuration=${{ env.config }} /p:TargetVsixContainer=${{ env.vsix2019Container }} /p:DeployExtension=false /verbosity:minimal
+    
+    - name: Build VS2022 VSIX
+      run: |
+        msbuild ${{ env.vsix2022proj }} /p:configuration=${{ env.config }} /p:TargetVsixContainer=${{ env.vsix2022Container }} /p:DeployExtension=false /verbosity:minimal
+    
+    - name: Build VS2019 unit tests
+      run: |
+        msbuild ${{ env.vs2019testsproj }} /p:configuration=${{ env.config }} /verbosity:minimal
 
-    - name: Upload VSIX Artifact
+    - name: Upload VS2019 VSIX Artifact
       uses: actions/upload-artifact@v2
       with:
         # Artifact name
         name: 'CodeConnections VSIX'
         # A file, directory or wildcard pattern that describes what to upload
-        path: ${{ env.vsixContainer }}
+        path: ${{ env.vsix2019Container }}
+
+    - name: Upload VS2022 VSIX Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        # Artifact name
+        name: 'CodeConnections VSIX VS2022'
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ env.vsix2022Container }}
     
     - name: Unit tests
       run: vstest.console.exe .\CodeConnections.Tests\bin\${{ env.config }}\CodeConnections.Tests.dll
