@@ -23,7 +23,7 @@ namespace CodeConnections.Roslyn
 		public ProjectId Id { get; }
 		public string ProjectName { get; }
 
-		public override bool Equals(object obj) => obj is ProjectIdentifier other && other.Id == Id;
+		public override bool Equals(object? obj) => obj is ProjectIdentifier other && other.Id == Id;
 
 		public override int GetHashCode()
 		{
