@@ -47,6 +47,8 @@ Right-clicking an element brings up a context menu with more options:
  * **Add all base types of type** will add all the base classes of the type that are in the solution (and match the filter settings), as well as all interfaces that the type implements.
  * **Add all subtypes derived from type** will add all the types that directly or indirectly derive from the type: if it's a class, all the classes that inherit from it, or if it's an interface, all the types that directly or indirectly implement it.
  * **Add direct subtypes of type** will add all the types that directly derive from the type: the immediate derived classes of a class, or the types that directly implement an interface.
+ * **Add all types in project** will add all the types in the same project as the current element.
+ * **Add all types in solution** will add all  types in the solution (and match the current filter settings) to the graph. For large solutions, this may take a very long time to render!
 
 ### Clear Graph
 
