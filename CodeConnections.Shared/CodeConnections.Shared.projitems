@@ -6,7 +6,7 @@
     <SharedGUID>90c0ae13-bd00-4d55-9413-e48155b2b5af</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>CodeConnections.Shared</Import_RootNamespace>
+    <Import_RootNamespace>CodeConnections</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Additions\IsExternalInit.cs" />
