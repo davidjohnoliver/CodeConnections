@@ -52,7 +52,7 @@
 										  CommandParameter="{Binding}" />
 								<Separator />
 								<MenuItem Template="{StaticResource MenuItemTemplate}"
-										  Command="{Binding ParentContext.PinNodeAndNeighboursMenuCommand}"
+										  Command="{Binding ParentContext.NodeCommands[PinNodeAndNeighbours]}"
 										  CommandParameter="{Binding}">
 									<MenuItem.Header>
 										<TextBlock>Add connections of <Run FontWeight="DemiBold"
@@ -60,7 +60,7 @@
 									</MenuItem.Header>
 								</MenuItem>
 								<MenuItem Template="{StaticResource MenuItemTemplate}"
-										  Command="{Binding ParentContext.AddInheritanceDependencyHierarchyMenuCommand}"
+										  Command="{Binding ParentContext.NodeCommands[AddInheritanceDependencyHierarchy]}"
 										  CommandParameter="{Binding}">
 									<MenuItem.Header>
 										<TextBlock>Add all base types of <Run FontWeight="DemiBold"
@@ -68,7 +68,7 @@
 									</MenuItem.Header>
 								</MenuItem>
 								<MenuItem Template="{StaticResource MenuItemTemplate}"
-										  Command="{Binding ParentContext.AddInheritanceDependentHierarchyMenuCommand}"
+										  Command="{Binding ParentContext.NodeCommands[AddInheritanceDependentHierarchy]}"
 										  CommandParameter="{Binding}">
 									<MenuItem.Header>
 										<TextBlock>Add all subtypes derived from <Run FontWeight="DemiBold"
@@ -76,7 +76,7 @@
 									</MenuItem.Header>
 								</MenuItem>
 								<MenuItem Template="{StaticResource MenuItemTemplate}"
-										  Command="{Binding ParentContext.AddInheritanceDirectDependentsMenuCommand}"
+										  Command="{Binding ParentContext.NodeCommands[AddInheritanceDirectDependents]}"
 										  CommandParameter="{Binding}">
 									<MenuItem.Header>
 										<TextBlock>Add direct subtypes of <Run FontWeight="DemiBold"

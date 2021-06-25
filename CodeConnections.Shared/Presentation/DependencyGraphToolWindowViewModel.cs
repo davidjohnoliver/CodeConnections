@@ -195,12 +195,10 @@ namespace CodeConnections.Presentation
 		public ICommand SelectAllProjectsCommand { get; }
 
 		public ICommand TogglePinnedMenuCommand { get; }
-		public ICommand PinNodeAndNeighboursMenuCommand { get; }
-		public ICommand AddInheritanceDependencyHierarchyMenuCommand { get; }
-		public ICommand AddInheritanceDependentHierarchyMenuCommand { get; }
-		public ICommand AddInheritanceDirectDependentsMenuCommand { get; }
 
 		public IToggleCommand TogglePinnedCommand { get; }
+
+		public NodeCommands NodeCommands { get; }
 
 		private int _maxAutomaticallyLoadedNodes;
 		/// <summary>
@@ -311,10 +309,6 @@ namespace CodeConnections.Presentation
 			SelectAllProjectsCommand = SimpleCommand.Create(() => Projects?.SelectAll());
 
 			TogglePinnedMenuCommand = SimpleCommand.Create<DisplayNode>(TogglePinned);
-			PinNodeAndNeighboursMenuCommand = SimpleCommand.Create<DisplayNode>(PinNodeAndNeighbours);
-			AddInheritanceDependencyHierarchyMenuCommand = SimpleCommand.Create<DisplayNode>(AddInheritanceDependencyHierarchy);
-			AddInheritanceDependentHierarchyMenuCommand = SimpleCommand.Create<DisplayNode>(AddInheritanceDependentHierarchy);
-			AddInheritanceDirectDependentsMenuCommand = SimpleCommand.Create<DisplayNode>(AddInheritanceDirectDependents);
 
 			TogglePinnedCommand = SimpleToggleCommand.Create<DisplayNode>(TogglePinned);
 
@@ -323,6 +317,12 @@ namespace CodeConnections.Presentation
 			_graphUpdateManager.DisplayGraphChanged += OnDisplayGraphChanged;
 			_graphUpdateManager.UpdateFailed += OnGraphUpdateFailed;
 			_graphUpdateManager.UpdateCompletedUnchanged += OnGraphUpdateCompletedUnchanged;
+
+			NodeCommands = new(_graphUpdateManager);
+			NodeCommands.AddOperationCommand(Subgraph.PinNodeAndNeighbours, "PinNodeAndNeighbours");
+			NodeCommands.AddOperationCommand(Subgraph.AddInheritanceDependencyHierarchy, "AddInheritanceDependencyHierarchy");
+			NodeCommands.AddOperationCommand(Subgraph.AddInheritanceDependentHierarchy, "AddInheritanceDependentHierarchy");
+			NodeCommands.AddOperationCommand(Subgraph.AddDirectInheritanceDependents, "AddInheritanceDirectDependents");
 
 			ApplySolutionSettings();
 			ApplyUserSettings();
@@ -509,42 +509,6 @@ namespace CodeConnections.Presentation
 				var newIsPinned = !displayNode.IsPinned;
 				_graphUpdateManager.TogglePinnedInSubgraph(displayNode.Key, newIsPinned);
 				displayNode.IsPinned = newIsPinned;
-			}
-		}
-
-		private void PinNodeAndNeighbours(DisplayNode? displayNode)
-		{
-			if (displayNode != null)
-			{
-				var op = Subgraph.PinNodeAndNeighbours(displayNode.Key);
-				_graphUpdateManager.ModifySubgraph(op);
-			}
-		}
-
-		private void AddInheritanceDependencyHierarchy(DisplayNode? displayNode)
-		{
-			if (displayNode != null)
-			{
-				var op = Subgraph.AddInheritanceDependencyHierarchy(displayNode.Key);
-				_graphUpdateManager.ModifySubgraph(op);
-			}
-		}
-
-		private void AddInheritanceDirectDependents(DisplayNode? displayNode)
-		{
-			if (displayNode != null)
-			{
-				var op = Subgraph.AddDirectInheritanceDependents(displayNode.Key);
-				_graphUpdateManager.ModifySubgraph(op);
-			}
-		}
-
-		private void AddInheritanceDependentHierarchy(DisplayNode? displayNode)
-		{
-			if (displayNode != null)
-			{
-				var op = Subgraph.AddInheritanceDependentHierarchy(displayNode.Key);
-				_graphUpdateManager.ModifySubgraph(op);
 			}
 		}
 

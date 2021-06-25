@@ -84,6 +84,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayEdgeStrokeDashArrayConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\DisplayNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\MultiDependencyDisplayEdge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\NodeCommands.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\OutputLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\PersistedSolutionSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\PersistedUserSettings.cs" />
