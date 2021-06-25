@@ -19,6 +19,7 @@ namespace CodeConnections.Extensions
 			(node as TypeNode)?.FilePath,
 			isPinned,
 			node.GitStatus,
+			(node as TypeNode)?.Project?.ProjectName,
 			parentContext
 		);
 

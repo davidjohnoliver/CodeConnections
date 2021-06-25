@@ -23,17 +23,19 @@ namespace CodeConnections.Graph.Display
 		private bool _isPinned;
 		public bool IsPinned { get => _isPinned; set => OnValueSet(ref _isPinned, value); }
 		public object? ParentContext { get; }
+		public string? ContainingProject { get; }
 
 		private GitStatus? _gitStatus;
 		public GitStatus? GitStatus { get => _gitStatus; set => OnValueSet(ref _gitStatus, value); }
 
-		public DisplayNode(string displayString, NodeKey key, string? filePath, bool isPinned, GitStatus? gitStatus, object? parentContext)
+		public DisplayNode(string displayString, NodeKey key, string? filePath, bool isPinned, GitStatus? gitStatus, string? containingProject, object? parentContext)
 		{
 			DisplayString = displayString;
 			Key = key;
 			FilePath = filePath;
 			IsPinned = isPinned;
 			ParentContext = parentContext;
+			ContainingProject = containingProject;
 			GitStatus = gitStatus;
 		}
 
