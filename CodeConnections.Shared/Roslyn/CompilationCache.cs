@@ -334,7 +334,9 @@ namespace CodeConnections.Roslyn
 			return GetSolution()?.GetDocument(documentId);
 		}
 
-		private Project? GetContainingProject(TypeNode typeNode)
+		private Project? GetContainingProject(TypeNode typeNode) => GetContainingProject(typeNode.AssociatedFiles);
+
+		public Project? GetContainingProject(IEnumerable<string> associatedFiles)
 		{
 			var solution = GetSolution();
 			if (solution == null)
@@ -342,7 +344,7 @@ namespace CodeConnections.Roslyn
 				return null;
 			}
 
-			foreach (var file in typeNode.AssociatedFiles)
+			foreach (var file in associatedFiles)
 			{
 				var docIds = solution.GetDocumentIdsWithFilePath(file);
 				foreach (var docId in docIds)

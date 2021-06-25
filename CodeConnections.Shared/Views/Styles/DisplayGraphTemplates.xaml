@@ -83,6 +83,22 @@
 																			  Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
 									</MenuItem.Header>
 								</MenuItem>
+								<Separator />
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.NodeCommands[AddAllInSameProject]}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add all types in same project as <Run FontWeight="DemiBold"
+																			  Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.NodeCommands[AddAllInSolution]}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add all types in solution</TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
 							</ContextMenu>
 						</Border.ContextMenu>
 						<StackPanel Orientation="Horizontal"

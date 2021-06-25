@@ -122,7 +122,7 @@ namespace CodeConnections.Graph
 
 			var declaredSymbols = GetIncludedSymbolsFromSyntaxRoot(syntaxRoot, model);
 			// For each symbol, get existing or new node, and invalidate it so it will be reevaluated in the next part of the Update pass.
-			var declaredSymbolNodes = declaredSymbols.Select(s => GetOrCreateNode(s)).ToHashSet();
+			var declaredSymbolNodes = declaredSymbols.Select(s => GetOrCreateNode(s, compilationCache)).ToHashSet();
 			foreach (var node in declaredSymbolNodes)
 			{
 				InvalidateNode(node);
@@ -188,7 +188,7 @@ namespace CodeConnections.Graph
 				.Where(IsSymbolIncluded)
 				.ToListAsync();
 
-			var symbolsForDependencies = dependencySymbols.ToDictionary(s => (Node)GetOrCreateNode(s));
+			var symbolsForDependencies = dependencySymbols.ToDictionary(s => (Node)GetOrCreateNode(s, compilationCache));
 
 			var dependencies = symbolsForDependencies.Keys;
 			if (ct.IsCancellationRequested)

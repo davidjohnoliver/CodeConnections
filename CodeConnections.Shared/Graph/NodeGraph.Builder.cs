@@ -55,12 +55,12 @@ namespace CodeConnections.Graph
 						return;
 					}
 
-					var node = GetFromKnownNodes(symbol);
+					var node = GetFromKnownNodes(symbol, compilationCache);
 					await foreach (var dependency in symbol.GetTypeDependencies(compilationCache, project, includeExternalMetadata: false, ct))
 					{
 						if (graph.IsSymbolIncluded(dependency))
 						{
-							var dependencyNode = GetFromKnownNodes(dependency);
+							var dependencyNode = GetFromKnownNodes(dependency, compilationCache);
 
 							if (node != dependencyNode)
 							{
@@ -70,13 +70,13 @@ namespace CodeConnections.Graph
 					}
 				}
 
-				TypeNode GetFromKnownNodes(ITypeSymbol symbol)
+				TypeNode GetFromKnownNodes(ITypeSymbol symbol, CompilationCache cache)
 				{
 					var identifier = symbol.ToIdentifier();
 					if (!knownNodes.TryGetValue(identifier, out var node))
 					{
 						var key = new TypeNodeKey(identifier);
-						node = CreateTypeNodeForSymbol(symbol, key);
+						node = CreateTypeNodeForSymbol(symbol, key, cache);
 						knownNodes[identifier] = node;
 						graph.AddNode(node);
 					}
@@ -103,8 +103,11 @@ namespace CodeConnections.Graph
 			return linkType;
 		}
 
-		private static TypeNode CreateTypeNodeForSymbol(ITypeSymbol symbol, TypeNodeKey key)
-			=> new TypeNode(key, symbol.GetPreferredDeclaration(), GetAssociatedFiles(symbol), symbol.GetFullMetadataName(), isNestedType: symbol.ContainingType != null);
+		private static TypeNode CreateTypeNodeForSymbol(ITypeSymbol symbol, TypeNodeKey key, CompilationCache cache)
+		{
+			var associatedFiles = GetAssociatedFiles(symbol);
+			return new TypeNode(key, symbol.GetPreferredDeclaration(), associatedFiles, symbol.GetFullMetadataName(), isNestedType: symbol.ContainingType != null, cache.GetContainingProject(associatedFiles)?.ToIdentifier());
+		}
 
 		private static IEnumerable<string> GetAssociatedFiles(ITypeSymbol symbol)
 			=> symbol.DeclaringSyntaxReferences.Select(sr => sr.SyntaxTree.FilePath).ToHashSet();
@@ -112,13 +115,13 @@ namespace CodeConnections.Graph
 		/// <summary>
 		/// Get node for <paramref name="symbol"/>. If none is present, create one and add it to the graph.
 		/// </summary>
-		private TypeNode GetOrCreateNode(ITypeSymbol symbol)
+		private TypeNode GetOrCreateNode(ITypeSymbol symbol, CompilationCache cache)
 		{
 			var identifier = symbol.ToIdentifier();
 			var key = new TypeNodeKey(identifier);
 			if (!_nodes.TryGetValue(key, out var node))
 			{
-				node = CreateTypeNodeForSymbol(symbol, key);
+				node = CreateTypeNodeForSymbol(symbol, key, cache);
 				AddNode(node);
 			}
 			return (TypeNode)node;

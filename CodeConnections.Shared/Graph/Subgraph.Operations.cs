@@ -47,6 +47,10 @@ namespace CodeConnections.Graph
 
 		public static Operation AddDirectInheritanceDependents(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, true, LinkType.InheritsOrImplements);
 
+		public static Operation AddAllInSameProject(NodeKey rootNode) => new AddAllInSameProjectOperation(rootNode);
+
+		public static Operation AddAllInSolution(NodeKey _) => new AddAllInSolutionOperation();
+
 		/// <summary>
 		/// An operation to 'sanitize' the subgraph by removing any nodes that aren't found in the full <see cref="NodeGraph"/>.
 		/// </summary>
@@ -321,6 +325,53 @@ namespace CodeConnections.Graph
 						var node = _isDependent ? link.Dependent : link.Dependency;
 						modified |= subgraph.AddPinnedNode(node.Key, fullGraph);
 					}
+				}
+				return modified;
+			}
+		}
+
+		private class AddAllInSameProjectOperation : SyncOperation
+		{
+			private readonly NodeKey _rootNodeKey;
+
+			public AddAllInSameProjectOperation(NodeKey rootNodeKey)
+			{
+				this._rootNodeKey = rootNodeKey;
+			}
+
+			protected override bool Apply(Subgraph subgraph, NodeGraph fullGraph)
+			{
+				var rootNode = fullGraph.Nodes.GetOrDefaultFromReadOnly(_rootNodeKey);
+				if (rootNode == null)
+				{
+					return false;
+				}
+
+				if ((rootNode as TypeNode)?.Project is not { } project) {
+					return false;
+				}
+
+				var modified = false;
+				foreach (var kvp in fullGraph.Nodes)
+				{
+					if (project.Equals((kvp.Value as TypeNode)?.Project))
+					{
+						modified |= subgraph.AddPinnedNode(kvp.Key, fullGraph);
+					}
+				}
+
+				return modified;
+			}
+		}
+
+		private class AddAllInSolutionOperation : SyncOperation
+		{
+			protected override bool Apply(Subgraph subgraph, NodeGraph fullGraph)
+			{
+				var modified = false;
+				foreach (var kvp in fullGraph.Nodes)
+				{
+					modified |= subgraph.AddPinnedNode(kvp.Key, fullGraph);
 				}
 				return modified;
 			}

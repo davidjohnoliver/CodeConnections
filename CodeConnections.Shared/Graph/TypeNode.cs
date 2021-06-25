@@ -26,12 +26,15 @@ namespace CodeConnections.Graph
 
 		public bool IsNestedType { get; }
 
-		public TypeNode(TypeNodeKey key, string? filePath, IEnumerable<string> associatedFiles, string fullMetadataName, bool isNestedType)
+		public ProjectIdentifier? Project { get; }
+
+		public TypeNode(TypeNodeKey key, string? filePath, IEnumerable<string> associatedFiles, string fullMetadataName, bool isNestedType, ProjectIdentifier? project)
 		{
 			Identifier = key.Identifier;
 			FilePath = filePath;
 			FullMetadataName = fullMetadataName;
 			IsNestedType = isNestedType;
+			Project = project;
 			AssociatedFiles.AddRange(associatedFiles);
 			Key = key;
 		}
