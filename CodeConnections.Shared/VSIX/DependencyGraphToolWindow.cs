@@ -59,34 +59,44 @@ namespace CodeConnections.VSIX
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 
-			var dte = GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
-			AssumePresent(dte);
-			var documentsService = new DocumentsService(dte);
-			SubscribeListeners(documentsService);
-
-			var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;
-			AssumePresent(componentModel);
-			var workspace = componentModel.GetService<VisualStudioWorkspace>();
-			var roslynService = new RoslynService(workspace).DisposeWith(_disposables);
-
-			var solutionService = new SolutionService(dte);
-			SubscribeListeners(solutionService);
-
 			var outputWindow = GetService(typeof(SVsOutputWindow)) as IVsOutputWindow;
 			AssumePresent(outputWindow);
 
 			var outputService = new OutputWindowOutputService(ConsolePaneId, outputWindow, "Code Connections");
 
-			var gitService = new GitService(solutionService).DisposeWith(_disposables);
-
-			var solutionPersistence = (IVsSolutionPersistence)GetService(typeof(SVsSolutionPersistence));
-			var solutionSettingsService = new SolutionSettingsService(solutionPersistence);
-			var userSettingsService = new DialogUserSettingsService(CodeConnectionsPackage.UserOptionsDialog ?? throw new InvalidOperationException("User options unavailable"));
-
-			if (Content is DependencyGraphToolWindowControl content)
+			try
 			{
-				content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService, roslynService, solutionSettingsService, userSettingsService)
-					.DisposeWith(_disposables);
+				var dte = GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+				AssumePresent(dte);
+				var documentsService = new DocumentsService(dte);
+				SubscribeListeners(documentsService);
+
+				var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;
+				AssumePresent(componentModel);
+				var workspace = componentModel.GetService<VisualStudioWorkspace>();
+				var roslynService = new RoslynService(workspace).DisposeWith(_disposables);
+
+				var solutionService = new SolutionService(dte);
+				SubscribeListeners(solutionService);
+
+				var gitService = new GitService(solutionService).DisposeWith(_disposables);
+
+				var solutionPersistence = (IVsSolutionPersistence)GetService(typeof(SVsSolutionPersistence));
+				var solutionSettingsService = new SolutionSettingsService(solutionPersistence);
+				var userSettingsService = new DialogUserSettingsService(CodeConnectionsPackage.UserOptionsDialog ?? throw new InvalidOperationException("User options unavailable"));
+
+				if (Content is DependencyGraphToolWindowControl content)
+				{
+					content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService, roslynService, solutionSettingsService, userSettingsService)
+						.DisposeWith(_disposables);
+				}
+			}
+			catch (Exception e)
+			{
+				outputService.WriteLine($"Failed to open Code Connections tool window.");
+				outputService.WriteLine($"Error: {e}");
+
+				throw;
 			}
 		}
 
