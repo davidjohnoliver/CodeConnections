@@ -24,7 +24,10 @@
 	<converters:DisplayNodeGitIndicatorVisibilityConverter x:Key="DisplayNodeGitIndicatorVisibilityConverter" />
 	<graphConverters:EdgeRouteToPathConverter x:Key="RouteToPathConverter" />
 	<converters:DebugConverter x:Key="DebugConverter" />
-	<converters:GitStatusTooltipConverter x:Key="GitStatusTooltipConverter" />
+	<converters:GitStatusTooltipConverter x:Key="GitStatusTooltipConverter"
+										  ModifiedAndNewFileData="New and modified files"
+										  ModifiedFileData="Modified file"
+										  NewFileData="New file" />
 	<converters:GitStatusPathConverter x:Key="GitStatusPathConverter"
 									   ModifiedFileData="M 10.28125 7.21875 C 10.484375 7.335938 10.617188 7.507812 10.679688 7.738281 C 10.738281 7.96875 10.710938 8.1875 10.59375 8.390625 L 10.167969 9.128906 C 10.050781 9.332031 9.878906 9.464844 9.648438 9.527344 C 9.417969 9.585938 9.199219 9.558594 8.996094 9.441406 L 7.214844 8.417969 L 7.214844 10.472656 C 7.214844 10.707031 7.128906 10.90625 6.957031 11.078125 C 6.789062 11.246094 6.589844 11.332031 6.355469 11.332031 L 5.5 11.332031 C 5.265625 11.332031 5.066406 11.246094 4.894531 11.078125 C 4.726562 10.90625 4.640625 10.707031 4.640625 10.472656 L 4.640625 8.417969 L 2.859375 9.441406 C 2.65625 9.558594 2.4375 9.585938 2.207031 9.527344 C 1.976562 9.464844 1.804688 9.332031 1.6875 9.128906 L 1.261719 8.390625 C 1.144531 8.1875 1.117188 7.96875 1.175781 7.738281 C 1.238281 7.507812 1.371094 7.335938 1.574219 7.21875 L 3.355469 6.1875 L 1.574219 5.15625 C 1.371094 5.042969 1.238281 4.867188 1.175781 4.636719 C 1.117188 4.410156 1.144531 4.191406 1.261719 3.984375 L 1.6875 3.25 C 1.804688 3.042969 1.976562 2.910156 2.207031 2.851562 C 2.4375 2.789062 2.65625 2.816406 2.859375 2.933594 L 4.640625 3.957031 L 4.640625 1.902344 C 4.640625 1.671875 4.726562 1.46875 4.894531 1.300781 C 5.066406 1.128906 5.265625 1.046875 5.5 1.046875 L 6.355469 1.046875 C 6.589844 1.046875 6.789062 1.128906 6.957031 1.300781 C 7.128906 1.46875 7.214844 1.671875 7.214844 1.902344 L 7.214844 3.957031 L 8.996094 2.933594 C 9.199219 2.816406 9.417969 2.789062 9.648438 2.851562 C 9.878906 2.910156 10.050781 3.042969 10.167969 3.25 L 10.59375 3.984375 C 10.710938 4.191406 10.738281 4.410156 10.679688 4.636719 C 10.617188 4.867188 10.484375 5.042969 10.28125 5.15625 L 8.5 6.1875 Z M 10.28125 7.21875 "
 									   NewFileData="M 10.800781 5.523438 L 10.800781 6.808594 C 10.800781 6.988281 10.738281 7.140625 10.613281 7.265625 C 10.488281 7.390625 10.335938 7.453125 10.160156 7.453125 L 7.371094 7.453125 L 7.371094 10.238281 C 7.371094 10.417969 7.308594 10.570312 7.183594 10.695312 C 7.058594 10.820312 6.910156 10.882812 6.730469 10.882812 L 5.445312 10.882812 C 5.265625 10.882812 5.113281 10.820312 4.988281 10.695312 C 4.863281 10.570312 4.800781 10.417969 4.800781 10.238281 L 4.800781 7.453125 L 2.015625 7.453125 C 1.835938 7.453125 1.683594 7.390625 1.558594 7.265625 C 1.433594 7.140625 1.371094 6.988281 1.371094 6.808594 L 1.371094 5.523438 C 1.371094 5.34375 1.433594 5.195312 1.558594 5.070312 C 1.683594 4.945312 1.835938 4.882812 2.015625 4.882812 L 4.800781 4.882812 L 4.800781 2.09375 C 4.800781 1.917969 4.863281 1.765625 4.988281 1.640625 C 5.113281 1.515625 5.265625 1.453125 5.445312 1.453125 L 6.730469 1.453125 C 6.910156 1.453125 7.058594 1.515625 7.183594 1.640625 C 7.308594 1.765625 7.371094 1.917969 7.371094 2.09375 L 7.371094 4.882812 L 10.160156 4.882812 C 10.335938 4.882812 10.488281 4.945312 10.613281 5.070312 C 10.738281 5.195312 10.800781 5.34375 10.800781 5.523438 Z M 10.800781 5.523438 " />
@@ -64,7 +67,7 @@
 										  CommandParameter="{Binding}">
 									<MenuItem.Header>
 										<TextBlock>Add all base types of <Run FontWeight="DemiBold"
-																		   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+																			  Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
 									</MenuItem.Header>
 								</MenuItem>
 								<MenuItem Template="{StaticResource MenuItemTemplate}"
@@ -72,7 +75,7 @@
 										  CommandParameter="{Binding}">
 									<MenuItem.Header>
 										<TextBlock>Add all subtypes derived from <Run FontWeight="DemiBold"
-																		   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+																					  Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
 									</MenuItem.Header>
 								</MenuItem>
 								<MenuItem Template="{StaticResource MenuItemTemplate}"
@@ -80,7 +83,7 @@
 										  CommandParameter="{Binding}">
 									<MenuItem.Header>
 										<TextBlock>Add direct subtypes of <Run FontWeight="DemiBold"
-																			  Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+																			   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
 									</MenuItem.Header>
 								</MenuItem>
 								<Separator />
@@ -89,7 +92,7 @@
 										  CommandParameter="{Binding}">
 									<MenuItem.Header>
 										<TextBlock>Add all types in project <Run FontWeight="DemiBold"
-																			  Text="{Binding ContainingProject, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+																				 Text="{Binding ContainingProject, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
 									</MenuItem.Header>
 								</MenuItem>
 								<MenuItem Template="{StaticResource MenuItemTemplate}"

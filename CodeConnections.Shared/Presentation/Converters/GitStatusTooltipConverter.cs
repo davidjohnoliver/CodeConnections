@@ -10,15 +10,8 @@ using CodeConnections.Git;
 
 namespace CodeConnections.Presentation.Converters
 {
-	public class GitStatusTooltipConverter : ValueConverter<GitStatus, string?>
+	public class GitStatusTooltipConverter : GitStatusConverter<string>
 	{
-		protected override string? ConvertInner(GitStatus value, object parameter, CultureInfo culture) => value switch
-		{
-			GitStatus.Modified => "Modified File",
-			GitStatus.New => "New File",
-			_ => null
-		};
 
-		protected override string? ConvertNull(object parameter, CultureInfo culture) => null;
 	}
 }

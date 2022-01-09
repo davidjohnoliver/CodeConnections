@@ -69,6 +69,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DebugConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayNodeGitIndicatorVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusPathConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusTooltipConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GraphLayoutModeLayoutAlgorithmConverter.cs" />
