@@ -6,7 +6,7 @@ See the connections in your C# code. Open any class, and see its dependencies (t
 
 ## Prerequisites
 
-Visual Studio 2019 for Windows, 16.6 or higher
+Visual Studio 2022 for Windows
 
 ## Get started
 
