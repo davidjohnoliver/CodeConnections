@@ -28,5 +28,7 @@ namespace CodeConnections.Graph
 			var shortName = fullName.Split('.').Last();
 			return new TypeNodeKey(new TypeIdentifier(fullName, shortName));
 		}
+
+		public override string ToString() => $"{Identifier}(TypeNodeKey)";
 	}
 }
