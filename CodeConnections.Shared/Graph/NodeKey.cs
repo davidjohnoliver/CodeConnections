@@ -13,5 +13,11 @@ namespace CodeConnections.Graph
 	/// </summary>
 	public abstract class NodeKey
 	{
+		public override abstract bool Equals(object obj);
+
+		public override abstract int GetHashCode();
+
+		public static bool operator ==(NodeKey? key1, NodeKey? key2) => key1?.Equals(key2) ?? key2 is null;
+		public static bool operator !=(NodeKey? key1, NodeKey? key2) => !(key1 == key2);
 	}
 }
