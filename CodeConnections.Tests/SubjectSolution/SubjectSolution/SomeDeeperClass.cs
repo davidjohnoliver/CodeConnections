@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SubjectSolution.Generated;
 using SubjectSolution.Inheritance;
+using SubjectSolution.MultiTypeFiles;
 
 namespace SubjectSolution
 {
@@ -15,6 +16,8 @@ namespace SubjectSolution
 		public SomeClassSelfReference SomeClassSelfReference;
 
 		public SomeBaseClass SomeBaseClass;
+
+		public SomeMultiRoot someMultiRoot;
 
 		void DoStuff()
 		{
