@@ -63,13 +63,12 @@ namespace CodeConnections.Presentation
 			set => OnValueSet(_graphUpdateManager.IncludeNestedTypes, v => _graphUpdateManager.IncludeNestedTypes = v, value);
 		}
 
-		private DisplayNode? _selectedNode;
 		public DisplayNode? SelectedNode
 		{
-			get => _selectedNode;
+			get => _graphUpdateManager.SelectedNode;
 			set
 			{
-				if (OnValueSet(ref _selectedNode, value))
+				if (OnValueSet(_graphUpdateManager.SelectedNode, v => _graphUpdateManager.SelectedNode = v, value))
 				{
 					if (value?.FilePath != null
 						// Don't try to open the currently-open file. (This can, eg, disrupt the 'diff' view being opened from the source control changes window.)
@@ -83,6 +82,11 @@ namespace CodeConnections.Presentation
 								_documentsService.OpenFileAsPreview(value.FilePath);
 							}
 						});
+					}
+					else
+					{
+						// If we didn't try to open the file, make sure selection is invalidated anyway (perhaps we're switching between two types in the same file)
+						TryInvalidateSelection();
 					}
 				}
 			}
@@ -546,16 +550,27 @@ namespace CodeConnections.Presentation
 		private void OnActiveDocumentChanged()
 		{
 			SetActiveDocumentAsSelected();
+			TryInvalidateSelection();
+		}
+
+		private void TryInvalidateSelection()
+		{
 			if (IsActiveAlwaysIncluded)
 			{
-				_graphUpdateManager.InvalidateActiveDocument();
+				_graphUpdateManager.InvalidateActiveDocumentOrSelection();
 			}
 		}
 
 		private void SetActiveDocumentAsSelected()
 		{
 			var activeDocument = _documentsService.GetActiveDocument();
-			SelectedNode = Graph.Vertices.FirstOrDefault(dn => PathUtils.AreEquivalent(dn.FilePath, activeDocument));
+			bool DoesPathMatchActive(DisplayNode? dn) => PathUtils.AreEquivalent(dn?.FilePath, activeDocument);
+
+			// Keep current selection if it matches path of active document, otherwise select first vertex found which does match
+			if (!DoesPathMatchActive(SelectedNode))
+			{
+				SelectedNode = Graph.Vertices.FirstOrDefault(DoesPathMatchActive);
+			}
 		}
 
 		/// <summary>

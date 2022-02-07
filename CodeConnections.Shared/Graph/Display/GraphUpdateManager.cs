@@ -105,10 +105,12 @@ namespace CodeConnections.Graph.Display
 				if (didChange)
 				{
 					_includeActiveMode = value;
-					InvalidateActiveDocument();
+					InvalidateActiveDocumentOrSelection();
 				}
 			}
 		}
+
+		public DisplayNode? SelectedNode { get; set; }
 
 		/// <summary>
 		/// Raised whenever an active update begins.
@@ -317,7 +319,7 @@ namespace CodeConnections.Graph.Display
 			}
 		}
 
-		public void InvalidateActiveDocument() => EnsureStepReruns(UpdateState.IncludeActive);
+		public void InvalidateActiveDocumentOrSelection() => EnsureStepReruns(UpdateState.IncludeActive);
 
 		/// <summary>
 		/// Returns a <see cref="GraphStatistics"/> object describing the full <see cref="NodeGraph"/>.
@@ -402,7 +404,11 @@ namespace CodeConnections.Graph.Display
 
 				var displayGraph = await Update(waitForIdle, ct);
 
-				if (!ct.IsCancellationRequested && displayGraph.Graph != null && displayGraph.Stats != null)
+				// Save the cancellation state, since we are committing to the graph change at this point; we still want to rerun if
+				// required, even (especially) if a cancellation is subsequently triggered
+				var wasCanceled = ct.IsCancellationRequested;
+
+				if (!wasCanceled && displayGraph.Graph != null && displayGraph.Stats != null)
 				{
 					if (_outputService.IsEnabled(OutputLevel.Diagnostic))
 					{
@@ -411,7 +417,7 @@ namespace CodeConnections.Graph.Display
 					DisplayGraphChanged?.Invoke(displayGraph.Graph, displayGraph.Stats);
 				}
 
-				if (ct.IsCancellationRequested)
+				if (wasCanceled)
 				{
 					return;
 				}
@@ -560,8 +566,11 @@ namespace CodeConnections.Graph.Display
 						if (activeDocument != null)
 						{
 							var activeSymbols = await compilationCache.GetDeclaredSymbolsFromFilePath(activeDocument, ct);
-							var activeNodeKey = activeSymbols.FirstOrDefault()?.ToNodeKey();
-							if (activeNodeKey != null)
+							var activeNodeKey = 
+								// Prefer current selected if it matches active document, otherwise first type in document
+								activeSymbols.Select(s => s.ToNodeKey()).FirstOrDefault(k => k == SelectedNode?.Key) ??
+								activeSymbols.FirstOrDefault()?.ToNodeKey();
+							if (activeNodeKey is not null)
 							{
 								ModifySubgraph(Subgraph.SetSelected(activeNodeKey, IncludeActiveMode == IncludeActiveMode.ActiveAndConnections));
 							}

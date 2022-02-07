@@ -57,13 +57,28 @@ namespace CodeConnections.Views
 		private void OnDisplayGraphChanged(object oldValue, object newValue)
 		{
 			StartTimer();
-			SelectedVertexControl = null;
+			var oldSelectedVertex = SelectedVertex;
+
+			// Clear selection highlights, otherwise they will not be reapplied properly after the Graph has changed
+			UpdateSelectionHighlights(SelectedVertexControl, null);
+
 			// Workaround for XamlParseException when binding directly to Graph property https://stackoverflow.com/questions/13007129/method-or-operation-not-implemented-error-on-binding
 			var newGraph = newValue as _IDisplayGraph;
 			IsBusy = newGraph?.VertexCount > 0;
 			ApplyLightUpdate(newGraph);
 
 			Graph = newGraph;
+
+			if (oldSelectedVertex != null && VertexControls.TryGetValue(oldSelectedVertex, out var newSelectionTarget))
+			{
+				SelectedVertexControl = newSelectionTarget;
+				UpdateSelectionHighlights(null, SelectedVertexControl);
+			}
+			else
+			{
+				SelectedVertexControl = null;
+			}
+
 #pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs - measuring low-level timing information
 			Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)CompleteTimer);
 #pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
@@ -156,6 +171,12 @@ namespace CodeConnections.Views
 
 		private void OnSelectedVertexControlChanged(VertexControl? oldValue, VertexControl? newValue)
 		{
+			UpdateSelectionHighlights(oldValue, newValue);
+			SelectedVertex = newValue?.Vertex as DisplayNode;
+		}
+
+		private void UpdateSelectionHighlights(VertexControl? oldValue, VertexControl? newValue)
+		{
 			if (oldValue != null)
 			{
 				GraphElementBehaviour.SetHighlightTrigger(oldValue, false);
@@ -164,7 +185,6 @@ namespace CodeConnections.Views
 			{
 				GraphElementBehaviour.SetHighlightTrigger(newValue, true);
 			}
-			SelectedVertex = newValue?.Vertex as DisplayNode;
 		}
 
 		public DisplayNode? SelectedVertex
