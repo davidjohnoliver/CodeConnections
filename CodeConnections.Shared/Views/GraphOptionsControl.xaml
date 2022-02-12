@@ -47,6 +47,7 @@
 			<converters:BooleanToDoubleConverter TrueValue="1"
 												 FalseValue="0"
 												 x:Key="BooleanToOpacityConverter" />
+			<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 			<converters:IncludeActiveModeToDescriptionConverter x:Key="IncludeActiveModeToDescriptionConverter" />
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -121,7 +122,8 @@
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
-						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
@@ -158,6 +160,10 @@
 							  Content="Include nested classes"
 							  ToolTip="Include nested classes?"
 							  IsChecked="{Binding IncludeNestedTypes, Mode=TwoWay}" />
+					<local:DebugFeaturesControl Grid.Row="5"
+												Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"
+												Visibility="{Binding EnableDebugFeatures, Converter={StaticResource BooleanToVisibilityConverter}}"
+												Margin="0,32,0,0" />
 				</Grid>
 			</Expander>
 		</StackPanel>

@@ -281,6 +281,17 @@ namespace CodeConnections.Presentation
 		/// </summary>
 		public bool IsBusy => Compose(IsNodeGraphUpdating, nameof(IsNodeGraphUpdating), IsGraphLayoutUpdating, nameof(IsGraphLayoutUpdating), (n, l) => n || l);
 
+		private bool _enableDebugFeatures;
+
+		/// <summary>
+		/// Should additional features for debugging the tool be displayed?
+		/// </summary>
+		public bool EnableDebugFeatures
+		{
+			get => _enableDebugFeatures;
+			set => OnValueSet(ref _enableDebugFeatures, value);
+		}
+
 
 #if DEBUG
 		public DependencyGraphToolWindowViewModel() => throw new NotSupportedException("XAML Design usage");
@@ -434,6 +445,7 @@ namespace CodeConnections.Presentation
 			SelectedIncludeActiveMode = settings.IncludeActiveMode; // Set before IsActiveAlwaysIncluded, so it will be nulled out (but _implicitIncludeActiveMode retained) if IsActiveAlwaysIncluded=false
 			IsActiveAlwaysIncluded = settings.IsActiveAlwaysIncluded;
 			_outputService.CurrentOutputLevel = settings.OutputLevel;
+			EnableDebugFeatures = settings.EnableDebugFeatures;
 		}
 
 		private string[]? GetExcludedProjects() => Projects?.UnselectedItems().Select(pi => pi.ProjectName).ToArray();

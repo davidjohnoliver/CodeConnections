@@ -33,7 +33,7 @@ namespace CodeConnections.VSIX
 
 		[SortedCategory(BasicOptionsString, BasicOptionsPosition, CategoryCount)]
 		[DisplayName("How to include active")]
-		//[Description("TODO")]
+		[Description("Choose whether to include the active document only, or its connections as well.")]
 		public IncludeActiveMode IncludeActiveMode { get; set; } = IncludeActiveMode.ActiveAndConnections;
 
 
@@ -47,6 +47,12 @@ namespace CodeConnections.VSIX
 		[DisplayName("Output verbosity")]
 		[Description("Choose the volume of messages to output to the console.")]
 		public OutputLevel OutputLevel { get; set; } = OutputLevel.Normal;
+
+
+		[SortedCategory(AdditionalOptionsString, AdditionalOptionsPosition, CategoryCount)]
+		[DisplayName("Enable debug tools")]
+		[Description("Enables additional features that are primarily useful in debugging the extension.")]
+		public bool EnableDebugFeatures { get; set; } = false;
 
 		internal event Action? OptionsApplied;
 

@@ -144,6 +144,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\MultiSelection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\PinCheckBoxBehaviour.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\ToggleButtonExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\DebugFeaturesControl.xaml.cs">
+      <DependentUpon>DebugFeaturesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\DependencyGraphLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\GraphOptionsControl.xaml.cs">
       <DependentUpon>GraphOptionsControl.xaml</DependentUpon>
@@ -179,6 +182,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\DebugFeaturesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\DependencyGraphToolWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
