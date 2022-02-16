@@ -28,7 +28,18 @@ namespace CodeConnections.Graph.Display
 		private GitStatus? _gitStatus;
 		public GitStatus? GitStatus { get => _gitStatus; set => OnValueSet(ref _gitStatus, value); }
 
-		public DisplayNode(string displayString, NodeKey key, string? filePath, bool isPinned, GitStatus? gitStatus, string? containingProject, object? parentContext)
+		public int LinesOfCode { get; }
+
+		public DisplayNode(
+			string displayString,
+			NodeKey key,
+			string? filePath,
+			bool isPinned,
+			GitStatus? gitStatus,
+			string? containingProject,
+			int linesOfCode,
+			object? parentContext
+		)
 		{
 			DisplayString = displayString;
 			Key = key;
@@ -37,6 +48,7 @@ namespace CodeConnections.Graph.Display
 			ParentContext = parentContext;
 			ContainingProject = containingProject;
 			GitStatus = gitStatus;
+			LinesOfCode = linesOfCode;
 		}
 
 		public override bool Equals(object obj) => obj is DisplayNode otherNode && otherNode.DisplayString == DisplayString && otherNode.Key == Key && otherNode.GitStatus == GitStatus && otherNode.IsPinned == IsPinned;

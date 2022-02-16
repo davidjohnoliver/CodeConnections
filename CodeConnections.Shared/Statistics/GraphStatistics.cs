@@ -44,6 +44,11 @@ namespace CodeConnections.Statistics
 		public DiscreteStatisticsResult<DisplayNodeAndEdges> NodeDependentsStatistics { get; }
 
 		/// <summary>
+		/// Statistics about lines of code in definition.
+		/// </summary>
+		public DiscreteStatisticsResult<DisplayNode> LinesOfCodeStatistics { get; }
+
+		/// <summary>
 		/// Create a new set of statistics.
 		/// </summary>
 		public GraphStatistics(IMutableBidirectionalGraph<CyclicCluster, CondensedEdge<DisplayNode, DisplayEdge, CyclicCluster>> clusterGraph, IBidirectionalGraph<DisplayNode, DisplayEdge> simpleGraph)
@@ -55,6 +60,8 @@ namespace CodeConnections.Statistics
 
 			NodeDependenciesStatistics = DiscreteStatisticsResult.Create(simpleGraph.Vertices.Select(v => new DisplayNodeAndEdges(v, simpleGraph)), v => simpleGraph.OutDegree(v.DisplayNode));
 			NodeDependentsStatistics = DiscreteStatisticsResult.Create(simpleGraph.Vertices.Select(v => new DisplayNodeAndEdges(v, simpleGraph)), v => simpleGraph.InDegree(v.DisplayNode));
+
+			LinesOfCodeStatistics = DiscreteStatisticsResult.Create(simpleGraph.Vertices, v => v.LinesOfCode);
 		}
 
 		public static GraphStatistics GetForFullGraph(NodeGraph nodeGraph)

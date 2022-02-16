@@ -20,6 +20,7 @@ namespace CodeConnections.Extensions
 			isPinned,
 			node.GitStatus,
 			(node as TypeNode)?.Project?.ProjectName,
+			(node as TypeNode)?.LineCount ?? 0,
 			parentContext
 		);
 

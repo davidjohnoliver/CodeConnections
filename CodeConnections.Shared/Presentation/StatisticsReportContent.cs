@@ -13,6 +13,6 @@ namespace CodeConnections.Presentation
 		General = 1,
 		GraphingSpecific = 2,
 
-		All = General | GraphingSpecific
+		All = ~0
 	}
 }

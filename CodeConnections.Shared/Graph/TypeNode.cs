@@ -28,11 +28,20 @@ namespace CodeConnections.Graph
 
 		public ProjectIdentifier? Project { get; }
 
-		public TypeNode(TypeNodeKey key, string? filePath, IEnumerable<string> associatedFiles, string fullMetadataName, bool isNestedType, ProjectIdentifier? project)
+		/// <summary>
+		/// Lines of code associated with the type, across all partial definitions.
+		/// </summary>
+		/// <remarks>
+		/// This is mutable, since it may be updated after the graph has been built.
+		/// </remarks>
+		public int LineCount { get; set; }
+
+		public TypeNode(TypeNodeKey key, string? filePath, IEnumerable<string> associatedFiles, string fullMetadataName, int lineCount, bool isNestedType, ProjectIdentifier? project)
 		{
 			Identifier = key.Identifier;
 			FilePath = filePath;
 			FullMetadataName = fullMetadataName;
+			LineCount = lineCount;
 			IsNestedType = isNestedType;
 			Project = project;
 			AssociatedFiles.AddRange(associatedFiles);

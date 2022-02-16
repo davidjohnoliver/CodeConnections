@@ -92,7 +92,7 @@ namespace CodeConnections.Extensions
 			=> symbol.DeclaringSyntaxReferences.Length > 0 && symbol.DeclaringSyntaxReferences.All(tr => tr.SyntaxTree.IsGeneratedCode());
 
 		/// <summary>
-		/// Get the fullly-qualified metadata name for <paramref name="typeSymbol"/>.
+		/// Get the fully-qualified metadata name for <paramref name="typeSymbol"/>.
 		/// </summary>
 		public static string GetFullMetadataName(this ITypeSymbol typeSymbol)
 		{
@@ -124,6 +124,20 @@ namespace CodeConnections.Extensions
 			}
 
 			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Get total lines of code associated with this symbol declaration.
+		/// </summary>
+		public static int GetLineCount(this ITypeSymbol symbol)
+		{
+			var count = 0;
+			foreach (var decl in symbol.DeclaringSyntaxReferences)
+			{
+				var text = decl.GetSyntax().GetText();
+				count += text.Lines.Count;
+			}
+			return count;
 		}
 
 		private static bool IsRootNamespace(ISymbol symbol) => (symbol is INamespaceSymbol s) && s.IsGlobalNamespace;

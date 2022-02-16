@@ -62,6 +62,10 @@ namespace CodeConnections.Presentation
 					yield return row;
 				}
 
+				yield return _headerFormatter.FormatHeader("Types by lines of code", headerLevel: 2);
+
+				yield return $"Types with the most lines of code: {_listFormatter1.FormatList(GetMostLOC())}";
+				yield return $"Mean LOC per type: {_graphStatistics.LinesOfCodeStatistics.Mean}";
 			}
 
 			if (statisticsReportContent.HasAnyFlag(General, GraphingSpecific))
@@ -104,6 +108,13 @@ namespace CodeConnections.Presentation
 				{
 					yield return $"{cluster.VertexCount} types: {_listFormatter2.FormatList(cluster.Vertices.Select(n => n.DisplayString))}";
 				}
+			}
+
+			IEnumerable<string> GetMostLOC()
+			{
+				var mostLOC = _graphStatistics.LinesOfCodeStatistics.GetTopItems(10, 20, 1);
+
+				return mostLOC.Select(dn => $"{dn.DisplayString} ({dn.LinesOfCode})");
 			}
 
 			if (statisticsReportContent.HasFlag(GraphingSpecific))
