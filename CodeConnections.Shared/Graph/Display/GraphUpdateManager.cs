@@ -75,22 +75,8 @@ namespace CodeConnections.Graph.Display
 						_previousGitInfos = ArrayUtils.GetEmpty<GitInfo>();
 						break;
 					case (false, true):
-						TryRunUpdate();
+						EnsureStepReruns(UpdateState.UpdatingGitInfo);
 						break;
-				}
-
-				void TryRunUpdate()
-				{
-					if (_currentUpdateState == UpdateState.NotUpdating)
-					{
-						RunUpdate(waitForIdle: false);
-					}
-					else if (_currentUpdateState > UpdateState.UpdatingGitInfo)
-					{
-						// Finish what's afoot then rerun for Git phase
-						_needsRerun = true;
-					}
-					// else nothing to do - we're calculating Git info or about to do so
 				}
 			}
 		}
