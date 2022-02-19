@@ -26,6 +26,8 @@ namespace CodeConnections.Graph
 
 		public bool IsNestedType { get; }
 
+		public bool IsPurelyGenerated { get; }
+
 		public ProjectIdentifier? Project { get; }
 
 		/// <summary>
@@ -36,13 +38,22 @@ namespace CodeConnections.Graph
 		/// </remarks>
 		public int LineCount { get; set; }
 
-		public TypeNode(TypeNodeKey key, string? filePath, IEnumerable<string> associatedFiles, string fullMetadataName, int lineCount, bool isNestedType, ProjectIdentifier? project)
+		public TypeNode(TypeNodeKey key,
+			string? filePath,
+			IEnumerable<string> associatedFiles,
+			string fullMetadataName,
+			int lineCount,
+			bool isNestedType,
+			bool isPurelyGenerated,
+			ProjectIdentifier? project
+		)
 		{
 			Identifier = key.Identifier;
 			FilePath = filePath;
 			FullMetadataName = fullMetadataName;
 			LineCount = lineCount;
 			IsNestedType = isNestedType;
+			IsPurelyGenerated = isPurelyGenerated;
 			Project = project;
 			AssociatedFiles.AddRange(associatedFiles);
 			Key = key;

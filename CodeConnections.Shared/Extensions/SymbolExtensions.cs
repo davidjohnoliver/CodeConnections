@@ -88,7 +88,7 @@ namespace CodeConnections.Extensions
 		/// 
 		/// If there are no declarations in syntax, returns false.
 		/// </summary>
-		public static bool IsPurelyGeneratedSymbol(this ISymbol symbol)
+		public static bool IsPurelyGenerated(this ISymbol symbol)
 			=> symbol.DeclaringSyntaxReferences.Length > 0 && symbol.DeclaringSyntaxReferences.All(tr => tr.SyntaxTree.IsGeneratedCode());
 
 		/// <summary>
