@@ -67,7 +67,7 @@ namespace CodeConnections.Tests.PresentationTests
 				var paths = NodeGraphExtensions.GetMultiDependencyRootPaths(graph, roots).ToArray();
 				var path = paths.Single();
 
-				var displayGraph = graph.GetDisplaySubgraph(subgraphNodes:roots, pinnedNodes: SetUtils.GetEmpty<NodeKey>());
+				var displayGraph = graph.GetDisplaySubgraph(subgraphNodes: roots);
 
 				var multiEdges = displayGraph.Edges.OfType<MultiDependencyDisplayEdge>();
 

@@ -21,13 +21,26 @@ namespace CodeConnections.Extensions
 		/// Get subgraph ready for display.
 		/// </summary>
 		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IList<ITypeSymbol> rootSymbols)
-			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim(), SetUtils.GetEmpty<NodeKey>());
+			=> GetDisplaySubgraph(nodeGraph, rootSymbols.Select(tpl => nodeGraph.GetNodeForType(tpl)).Trim());
+
+		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> subgraphNodes)
+		{
+			var displayNodes = subgraphNodes.ToDictionary(n => n, n => n.ToDisplayNode(false, null));
+			return GetDisplaySubgraph(nodeGraph, subgraphNodes, displayNodes);
+		}
 
 		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> subgraphNodes, ISet<NodeKey> pinnedNodes, object? parentContext = null)
 		{
+			var displayNodes = subgraphNodes.ToDictionary(n => n, n => n.ToDisplayNode(pinnedNodes.Contains(n.Key), parentContext));
+			var graph = GetDisplaySubgraph(nodeGraph, subgraphNodes, displayNodes);
+
+			return graph;
+		}
+
+		private static BidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(NodeGraph nodeGraph, IEnumerable<Node> subgraphNodes, Dictionary<Node, DisplayNode> displayNodes)
+		{
 			var subgraphNodesSet = subgraphNodes.ToHashSet();
 			var graph = new BidirectionalGraph<DisplayNode, DisplayEdge>();
-			var displayNodes = subgraphNodesSet.ToDictionary(n => n, n => n.ToDisplayNode(pinnedNodes.Contains(n.Key), parentContext));
 			foreach (var kvp in displayNodes)
 			{
 				graph.AddVertex(kvp.Value);
@@ -131,7 +144,7 @@ namespace CodeConnections.Extensions
 		public static (IMutableBidirectionalGraph<CyclicCluster, CondensedEdge<DisplayNode, DisplayEdge, CyclicCluster>> Clustered, IBidirectionalGraph<DisplayNode, DisplayEdge> Simple) GetFullClusteredGraph(this NodeGraph nodeGraph)
 		{
 			var rootNodes = nodeGraph.Nodes.Values;
-			var fullDisplayGraph = GetDisplaySubgraph(nodeGraph, rootNodes, SetUtils.GetEmpty<NodeKey>());
+			var fullDisplayGraph = GetDisplaySubgraph(nodeGraph, rootNodes);
 			return (fullDisplayGraph.GetClusteredGraph(), fullDisplayGraph);
 		}
 	}
