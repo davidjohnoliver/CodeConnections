@@ -19,12 +19,20 @@ namespace CodeConnections.Graph
 		public static Operation AddPinned(params NodeKey[] nodesToAdd) => new AddPinnedOperation(nodesToAdd);
 
 		/// <summary>
-		/// An operation to entirely remove <paramref name="nodesToRemove"/> from a subgraph.
+		/// An operation to add <paramref name="node"/> to <paramref name="category"/>.
 		/// </summary>
-		/// <param name="dontRemoveSelected">
-		/// True: don't remove node if it's the selected node, just unpin it if pinned. False: remove selected node along with other nodes.
-		/// </param>
-		public static Operation Remove(bool dontRemoveSelected, params NodeKey[] nodesToRemove) => new RemoveNodeOperation(nodesToRemove, dontRemoveSelected);
+		public static Operation AddToCategory(NodeKey node, InclusionCategory category) => new AddToCategoryOperation(node, category);
+
+		/// <summary>
+		/// An operation to remove <paramref name="node"/> from <paramref name="categoryToRemove"/>.
+		/// </summary>
+		public static Operation RemoveFromCategory(NodeKey node, InclusionCategory categoryToRemove) => new RemoveFromCategoryOperation(node, categoryToRemove);
+
+		/// <summary>
+		/// An operation to remove all nodes in <paramref name="category"/> from that category, but leave them in the subgraph
+		/// in an <see cref="InclusionCategory.Unpinned"/> loose state.
+		/// </summary>
+		public static Operation ClearCategoryAndLeaveUnpinned(InclusionCategory category) => new ClearCategoryAndLeaveUnpinnedOperation(category);
 
 		/// <summary>
 		/// An operation to set a particular node as 'selected', adding it and its neighbours as <see cref="AdditionalNodes"/>.
@@ -129,33 +137,58 @@ namespace CodeConnections.Graph
 			}
 		}
 
-		private class RemoveNodeOperation : Operation
+		private class AddToCategoryOperation : Operation
 		{
-			private readonly IList<NodeKey> _nodeKeys;
-			private readonly bool _dontRemoveSelected;
+			private readonly NodeKey _node;
+			private readonly InclusionCategory _category;
 
-			public RemoveNodeOperation(IList<NodeKey> nodeKeys, bool dontRemoveSelected)
+			public AddToCategoryOperation(NodeKey node, InclusionCategory category)
 			{
-				_nodeKeys = nodeKeys;
-				_dontRemoveSelected = dontRemoveSelected;
+				_node = node;
+				_category = category;
+			}
+			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
+			{
+				var modified = subgraph.AddNodeUnderCategory(_node, _category, fullGraph);
+				return Task.FromResult(modified.AddedToSubgraph);
+			}
+		}
+
+		private class RemoveFromCategoryOperation : Operation
+		{
+			private readonly NodeKey _node;
+			private readonly InclusionCategory _category;
+
+			public RemoveFromCategoryOperation(NodeKey node, InclusionCategory category)
+			{
+				_node = node;
+				_category = category;
+			}
+			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
+			{
+				var modified = subgraph.RemoveNodeFromCategory(_node, _category);
+				return Task.FromResult(modified.RemovedFromSubgraph);
+			}
+		}
+
+		private class ClearCategoryAndLeaveUnpinnedOperation : Operation
+		{
+			private readonly InclusionCategory _category;
+
+			public ClearCategoryAndLeaveUnpinnedOperation(InclusionCategory category)
+			{
+				_category = category;
 			}
 
 			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
 			{
-				var modified = false;
-				foreach (var node in _nodeKeys)
+				foreach (var node in subgraph.GetNodesForCategory(_category))
 				{
-					if (_dontRemoveSelected && Equals(subgraph._selectedNode, node))
-					{
-						modified |= subgraph.TogglePinned(node, setPinned: false);
-					}
-					else
-					{
-						modified |= subgraph.RemoveNode(node);
-					}
+					subgraph.RemoveNodeFromCategoryAndLeaveUnpinned(node, _category);
 				}
 
-				return Task.FromResult(modified);
+				// This will never actually change the population of the subgraph
+				return Task.FromResult(false);
 			}
 		}
 
@@ -172,32 +205,49 @@ namespace CodeConnections.Graph
 
 			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
 			{
-				var currentAdditionals = subgraph.AdditionalNodes;
-				var nodes = fullGraph.Nodes;
-
-				var newAdditionals = (nodes.ContainsKey(_selected), _includeConnectionsAsWell) switch
-				{
-					(false, _) => ArrayUtils.GetEmpty<NodeKey>(),
-					(_, false) => new[] { _selected },
-					(_, true) => nodes[_selected].AllLinkKeys(includeThis: true)
-				};
-
-				var (isDifferent, addedNodes, removedNodes) = newAdditionals.GetUnorderedDiff(currentAdditionals);
-
 				var modified = false;
-				if (isDifferent)
+
+				// Copy collections because we may modify their contents
+				var oldNeighbours = subgraph.GetNodesForCategory(InclusionCategory.NeighbourOfSelected).ToHashSet();
+				var oldSelected = subgraph.GetNodesForCategory(InclusionCategory.Selected).ToHashSet();
+
+				var newSelectedNode = fullGraph.Nodes.GetOrDefaultFromReadOnly(_selected);
+				var newNeighbours = newSelectedNode != null && _includeConnectionsAsWell ?
+					newSelectedNode.AllLinkKeys(false).ToHashSet() :
+					SetUtils.GetEmpty<NodeKey>();
+
+
+				bool modifiedGraph;
+				bool modifiedSelection;
+				if (newSelectedNode != null)
 				{
-					foreach (var removed in removedNodes)
+					(modifiedGraph, modifiedSelection) = subgraph.AddNodeUnderCategory(_selected, InclusionCategory.Selected, fullGraph);
+					modified |= modifiedGraph || modifiedSelection;
+				}
+
+				foreach (var neighbour in newNeighbours)
+				{
+					(modifiedGraph, _) = subgraph.AddNodeUnderCategory(neighbour, InclusionCategory.NeighbourOfSelected, fullGraph);
+					modified |= modifiedGraph;
+				}
+
+				foreach (var old in oldSelected)
+				{
+					if (old != _selected)
 					{
-						modified |= subgraph.RemoveNode(removed);
-					}
-					foreach (var added in addedNodes)
-					{
-						modified |= subgraph.AddAdditionalNode(added, fullGraph);
+						(modifiedGraph, modifiedSelection) = subgraph.RemoveNodeFromCategory(old, InclusionCategory.Selected);
+						modified |= modifiedGraph || modifiedSelection;
 					}
 				}
 
-				modified |= subgraph.SetSelectedNode(_selected);
+				foreach (var oldNeighbour in oldNeighbours)
+				{
+					if (!newNeighbours.Contains(oldNeighbour))
+					{
+						(modifiedGraph, _) = subgraph.RemoveNodeFromCategory(oldNeighbour, InclusionCategory.NeighbourOfSelected);
+						modified |= modifiedGraph;
+					}
+				}
 
 				return Task.FromResult(modified);
 			}
@@ -207,7 +257,24 @@ namespace CodeConnections.Graph
 		{
 			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
 			{
-				var modified = subgraph.ClearAdditional();
+				var modified = false;
+				var oldNeighbours = subgraph.GetNodesForCategory(InclusionCategory.NeighbourOfSelected);
+				var oldSelected = subgraph.GetNodesForCategory(InclusionCategory.Selected);
+
+
+				bool modifiedGraph;
+				foreach (var old in oldSelected)
+				{
+					bool modifiedSelection;
+					(modifiedGraph, modifiedSelection) = subgraph.RemoveNodeFromCategory(old, InclusionCategory.Selected);
+					modified |= modifiedGraph || modifiedSelection;
+				}
+
+				foreach (var oldNeighbour in oldNeighbours)
+				{
+					(modifiedGraph, _) = subgraph.RemoveNodeFromCategory(oldNeighbour, InclusionCategory.NeighbourOfSelected);
+					modified |= modifiedGraph;
+				}
 				return Task.FromResult(modified);
 			}
 		}
@@ -347,7 +414,8 @@ namespace CodeConnections.Graph
 					return false;
 				}
 
-				if ((rootNode as TypeNode)?.Project is not { } project) {
+				if ((rootNode as TypeNode)?.Project is not { } project)
+				{
 					return false;
 				}
 

@@ -509,10 +509,14 @@ namespace CodeConnections.Graph.Display
 					return (null, null);
 				}
 
+					_currentUpdateState = UpdateState.UpdatingGitInfo;
 				if (IsGitModeEnabled)
 				{
-					_currentUpdateState = UpdateState.UpdatingGitInfo;
 					await AnnotateGitInfo(ct);
+				}
+				else
+				{
+					ModifySubgraph(Subgraph.ClearCategoryAndLeaveUnpinned(Subgraph.InclusionCategory.GitChanges));
 				}
 
 				if (ct.IsCancellationRequested)
@@ -552,7 +556,7 @@ namespace CodeConnections.Graph.Display
 						if (activeDocument != null)
 						{
 							var activeSymbols = await compilationCache.GetDeclaredSymbolsFromFilePath(activeDocument, ct);
-							var activeNodeKey = 
+							var activeNodeKey =
 								// Prefer current selected if it matches active document, otherwise first type in document
 								activeSymbols.Select(s => s.ToNodeKey()).FirstOrDefault(k => k == SelectedNode?.Key) ??
 								activeSymbols.FirstOrDefault()?.ToNodeKey();
@@ -562,6 +566,8 @@ namespace CodeConnections.Graph.Display
 							}
 						}
 					}
+
+					// TODO now: remove unpinned nodes if we should - when should we?
 				}
 
 				if (_pendingSubgraphOperations.Count > 0 && _nodeGraph != null)
@@ -711,7 +717,9 @@ namespace CodeConnections.Graph.Display
 					if (nodeStatus != oldStatus)
 					{
 						_needsDisplayGraphUpdate = true;
-						var op = nodeStatus == GitStatus.Unchanged ? Subgraph.Remove(dontRemoveSelected: true, node.Key) : Subgraph.AddPinned(node.Key);
+						var op = nodeStatus == GitStatus.Unchanged ?
+							Subgraph.RemoveFromCategory(node.Key, Subgraph.InclusionCategory.GitChanges) :
+							Subgraph.AddToCategory(node.Key, Subgraph.InclusionCategory.GitChanges);
 						ModifySubgraph(op);
 					}
 				}
@@ -747,7 +755,7 @@ namespace CodeConnections.Graph.Display
 			}
 			var result = await Task.Run(() =>
 			{
-				var graph = nodeGraph.GetDisplaySubgraph(includedNodes.AllNodes.Select(k => nodeGraph.Nodes[k]), includedNodes.PinnedNodes, parentContext: _nodeParentContext);
+				var graph = nodeGraph.GetDisplaySubgraph(includedNodes, parentContext: _nodeParentContext);
 				var stats = GraphStatistics.GetForSubgraph(graph);
 				return (graph, stats);
 			}, ct);
