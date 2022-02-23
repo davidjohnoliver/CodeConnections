@@ -302,6 +302,7 @@ namespace CodeConnections.Graph.Display
 			if (ClearSubgraphAndPendingOperations())
 			{
 				InvalidateDisplayGraph();
+				InvalidateActiveDocumentOrSelection();
 			}
 		}
 
