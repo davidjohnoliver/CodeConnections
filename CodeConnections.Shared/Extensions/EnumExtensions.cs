@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeConnections.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,5 +21,26 @@ namespace CodeConnections.Extensions
 			return ((int)(object)enumValue & (int)(object)flag) != 0;
 		}
 
+		/// <summary>
+		/// Decomposes <paramref name="enumValue"/> into all single-bit values that belong to <typeparamref name="T"/>.
+		/// E.g. if enumValue = 2 | 4, this will return (T)2 and (T)4, as long as they are both defined among T's possible values.
+		/// </summary>
+		/// <typeparam name="T">This would typically be a Flags-type enum</typeparam>
+		public static IEnumerable<T> Decompose<T>(this T enumValue) where T : Enum
+		{
+			foreach (var fieldValue in EnumUtils.GetSingleFieldValues<T>())
+			{
+				if (enumValue.Equals(fieldValue))
+				{
+					yield return fieldValue;
+					// If value is an exact match for a particular single-bit field, it will not match any other fields
+					yield break;
+				}
+				if (enumValue.HasFlagPartially(fieldValue))
+				{
+					yield return fieldValue;
+				}
+			}
+		}
 	}
 }
