@@ -231,9 +231,8 @@ namespace CodeConnections.Graph
 			{
 				var modified = false;
 
-				// Copy collections because we may modify their contents
-				var oldNeighbours = subgraph.GetNodesForCategory(InclusionCategory.NeighbourOfSelected).ToHashSet();
-				var oldSelected = subgraph.GetNodesForCategory(InclusionCategory.Selected).ToHashSet();
+				var oldNeighbours = subgraph.GetNodesForCategory(InclusionCategory.NeighbourOfSelected);
+				var oldSelected = subgraph.GetNodesForCategory(InclusionCategory.Selected);
 
 				var newSelectedNode = fullGraph.Nodes.GetOrDefaultFromReadOnly(_selected);
 				var newNeighbours = newSelectedNode != null && _includeConnectionsAsWell ?

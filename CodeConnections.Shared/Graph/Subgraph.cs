@@ -53,7 +53,9 @@ namespace CodeConnections.Graph
 		{
 			if (_nodesByCategory.TryGetValue(simpleCategory, out var nodesForCategory))
 			{
-				return nodesForCategory;
+				// Copy the collection by default, since most callers of this method will potentially mutate the backing collection
+				// while enumerating
+				return nodesForCategory.ToHashSet();
 			}
 			else
 			{
@@ -203,7 +205,7 @@ namespace CodeConnections.Graph
 					AddNodeUnderCategory(node, InclusionCategory.Unpinned);
 				}
 
-				RemoveFromCategory(node, categoryToRemove);
+				RemoveNodeFromCategory(node, categoryToRemove);
 
 				return true;
 			}
@@ -249,7 +251,7 @@ namespace CodeConnections.Graph
 				if (setPinned)
 				{
 					var tryToggle = AddNodeUnderCategory(node, InclusionCategory.Pinned);
-					RemoveFromCategory(node, InclusionCategory.Unpinned);
+					RemoveNodeFromCategory(node, InclusionCategory.Unpinned);
 					return tryToggle.AddedToCategory;
 				}
 				else if ((currentCategories & InclusionCategory.Pinned) != InclusionCategory.None)
