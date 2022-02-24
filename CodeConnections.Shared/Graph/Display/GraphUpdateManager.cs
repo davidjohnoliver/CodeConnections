@@ -538,7 +538,7 @@ namespace CodeConnections.Graph.Display
 				}
 				else
 				{
-					ModifySubgraph(Subgraph.ClearCategoryAndLeaveUnpinned(Subgraph.InclusionCategory.GitChanges));
+					ModifySubgraph(Subgraph.ClearCategoryAndLeaveUnpinnedOp(Subgraph.InclusionCategory.GitChanges));
 				}
 
 				if (ct.IsCancellationRequested)
@@ -569,7 +569,7 @@ namespace CodeConnections.Graph.Display
 					_currentUpdateState = UpdateState.IncludeActive;
 					if (IncludeActiveMode == IncludeActiveMode.DontInclude)
 					{
-						ModifySubgraph(Subgraph.ClearSelected());
+						ModifySubgraph(Subgraph.ClearSelectedOp());
 					}
 					else
 					{
@@ -584,7 +584,7 @@ namespace CodeConnections.Graph.Display
 								activeSymbols.FirstOrDefault()?.ToNodeKey();
 							if (activeNodeKey is not null)
 							{
-								ModifySubgraph(Subgraph.SetSelected(activeNodeKey, IncludeActiveMode == IncludeActiveMode.ActiveAndConnections));
+								ModifySubgraph(Subgraph.SetSelectedOp(activeNodeKey, IncludeActiveMode == IncludeActiveMode.ActiveAndConnections));
 							}
 						}
 					}
@@ -599,7 +599,7 @@ namespace CodeConnections.Graph.Display
 				{
 					// This should be done after all other subgraph operations have been added - this will minimise jitter,
 					// if one of those operations would cause a node to stay in the graph that would otherwise be removed
-					ModifySubgraph(Subgraph.ClearCategory(Subgraph.InclusionCategory.Unpinned));
+					ModifySubgraph(Subgraph.ClearCategoryOp(Subgraph.InclusionCategory.Unpinned));
 				}
 
 				if (_pendingSubgraphOperations.Count > 0 && _nodeGraph != null)
@@ -615,7 +615,7 @@ namespace CodeConnections.Graph.Display
 					var modified = false;
 					await Task.Run(async () =>
 					{
-						modified |= await Subgraph.Sanitize().Apply(includedNodes, nodeGraph, ct);
+						modified |= await Subgraph.SanitizeOp().Apply(includedNodes, nodeGraph, ct);
 						foreach (var op in subgraphOperations)
 						{
 							modified |= await op.Apply(includedNodes, nodeGraph, ct);
@@ -750,8 +750,8 @@ namespace CodeConnections.Graph.Display
 					{
 						_needsDisplayGraphUpdate = true;
 						var op = nodeStatus == GitStatus.Unchanged ?
-							Subgraph.RemoveFromCategory(node.Key, Subgraph.InclusionCategory.GitChanges) :
-							Subgraph.AddToCategory(node.Key, Subgraph.InclusionCategory.GitChanges);
+							Subgraph.RemoveFromCategoryOp(node.Key, Subgraph.InclusionCategory.GitChanges) :
+							Subgraph.AddToCategoryOp(node.Key, Subgraph.InclusionCategory.GitChanges);
 						ModifySubgraph(op);
 					}
 				}

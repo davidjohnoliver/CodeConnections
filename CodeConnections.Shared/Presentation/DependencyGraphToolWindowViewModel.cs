@@ -334,12 +334,12 @@ namespace CodeConnections.Presentation
 			_graphUpdateManager.UpdateCompletedUnchanged += OnGraphUpdateCompletedUnchanged;
 
 			NodeCommands = new(_graphUpdateManager);
-			NodeCommands.AddOperationCommand(Subgraph.PinNodeAndNeighbours, "PinNodeAndNeighbours");
-			NodeCommands.AddOperationCommand(Subgraph.AddInheritanceDependencyHierarchy, "AddInheritanceDependencyHierarchy");
-			NodeCommands.AddOperationCommand(Subgraph.AddInheritanceDependentHierarchy, "AddInheritanceDependentHierarchy");
-			NodeCommands.AddOperationCommand(Subgraph.AddDirectInheritanceDependents, "AddInheritanceDirectDependents");
-			NodeCommands.AddOperationCommand(Subgraph.AddAllInSameProject, "AddAllInSameProject");
-			NodeCommands.AddOperationCommand(Subgraph.AddAllInSolution, "AddAllInSolution");
+			NodeCommands.AddOperationCommand(Subgraph.PinNodeAndNeighboursOp, "PinNodeAndNeighbours");
+			NodeCommands.AddOperationCommand(Subgraph.AddInheritanceDependencyHierarchyOp, "AddInheritanceDependencyHierarchy");
+			NodeCommands.AddOperationCommand(Subgraph.AddInheritanceDependentHierarchyOp, "AddInheritanceDependentHierarchy");
+			NodeCommands.AddOperationCommand(Subgraph.AddDirectInheritanceDependentsOp, "AddInheritanceDirectDependents");
+			NodeCommands.AddOperationCommand(Subgraph.AddAllInSameProjectOp, "AddAllInSameProject");
+			NodeCommands.AddOperationCommand(Subgraph.AddAllInSolutionOp, "AddAllInSolution");
 
 			ApplySolutionSettings();
 			ApplyUserSettings();

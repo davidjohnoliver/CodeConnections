@@ -16,55 +16,55 @@ namespace CodeConnections.Graph
 		/// <summary>
 		/// An operation to add <paramref name="nodesToAdd"/> as <see cref="PinnedNodes"/> to a subgraph.
 		/// </summary>
-		public static Operation AddPinned(params NodeKey[] nodesToAdd) => new AddPinnedOperation(nodesToAdd);
+		public static Operation AddPinnedOp(params NodeKey[] nodesToAdd) => new AddPinnedOperation(nodesToAdd);
 
 		/// <summary>
 		/// An operation to add <paramref name="node"/> to <paramref name="category"/>.
 		/// </summary>
-		public static Operation AddToCategory(NodeKey node, InclusionCategory category) => new AddToCategoryOperation(node, category);
+		public static Operation AddToCategoryOp(NodeKey node, InclusionCategory category) => new AddToCategoryOperation(node, category);
 
 		/// <summary>
 		/// An operation to remove <paramref name="node"/> from <paramref name="categoryToRemove"/>.
 		/// </summary>
-		public static Operation RemoveFromCategory(NodeKey node, InclusionCategory categoryToRemove) => new RemoveFromCategoryOperation(node, categoryToRemove);
+		public static Operation RemoveFromCategoryOp(NodeKey node, InclusionCategory categoryToRemove) => new RemoveFromCategoryOperation(node, categoryToRemove);
 
-		public static Operation ClearCategory(InclusionCategory category) => new ClearCategoryOperation(category);
+		public static Operation ClearCategoryOp(InclusionCategory category) => new ClearCategoryOperation(category);
 
 		/// <summary>
 		/// An operation to remove all nodes in <paramref name="category"/> from that category, but leave them in the subgraph
 		/// in an <see cref="InclusionCategory.Unpinned"/> loose state.
 		/// </summary>
-		public static Operation ClearCategoryAndLeaveUnpinned(InclusionCategory category) => new ClearCategoryAndLeaveUnpinnedOperation(category);
+		public static Operation ClearCategoryAndLeaveUnpinnedOp(InclusionCategory category) => new ClearCategoryAndLeaveUnpinnedOperation(category);
 
 		/// <summary>
 		/// An operation to set a particular node as 'selected', adding it and its neighbours as <see cref="AdditionalNodes"/>.
 		/// </summary>
 
-		public static Operation SetSelected(NodeKey selected, bool includeConnectionsAsWell) => new UpdateSelectedOperation(selected, includeConnectionsAsWell);
+		public static Operation SetSelectedOp(NodeKey selected, bool includeConnectionsAsWell) => new UpdateSelectedOperation(selected, includeConnectionsAsWell);
 
-		public static Operation ClearSelected() => new ClearSelectedOperation();
+		public static Operation ClearSelectedOp() => new ClearSelectedOperation();
 
 		/// <summary>
 		/// An operation to pin <paramref name="targetNode"/> and all neighbouring nodes to the graph.
 		/// </summary>
-		public static Operation PinNodeAndNeighbours(NodeKey targetNode) => new PinNodeAndNeighboursOperation(targetNode);
+		public static Operation PinNodeAndNeighboursOp(NodeKey targetNode) => new PinNodeAndNeighboursOperation(targetNode);
 
-		public static Operation AddInheritanceDependencyHierarchy(NodeKey rootNode)
+		public static Operation AddInheritanceDependencyHierarchyOp(NodeKey rootNode)
 			=> new AddDependencyOrDependentHierarchyOperation(rootNode, false, LinkType.InheritsOrImplements);
 
-		public static Operation AddInheritanceDependentHierarchy(NodeKey rootNode)
+		public static Operation AddInheritanceDependentHierarchyOp(NodeKey rootNode)
 			=> new AddDependencyOrDependentHierarchyOperation(rootNode, true, LinkType.InheritsOrImplements);
 
-		public static Operation AddDirectInheritanceDependents(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, true, LinkType.InheritsOrImplements);
+		public static Operation AddDirectInheritanceDependentsOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, true, LinkType.InheritsOrImplements);
 
-		public static Operation AddAllInSameProject(NodeKey rootNode) => new AddAllInSameProjectOperation(rootNode);
+		public static Operation AddAllInSameProjectOp(NodeKey rootNode) => new AddAllInSameProjectOperation(rootNode);
 
-		public static Operation AddAllInSolution(NodeKey _) => new AddAllInSolutionOperation();
+		public static Operation AddAllInSolutionOp(NodeKey _) => new AddAllInSolutionOperation();
 
 		/// <summary>
 		/// An operation to 'sanitize' the subgraph by removing any nodes that aren't found in the full <see cref="NodeGraph"/>.
 		/// </summary>
-		public static Operation Sanitize() => new SanitizeOperation();
+		public static Operation SanitizeOp() => new SanitizeOperation();
 
 		private static Operation GetCompositeOperation(params Operation[] operations) => new CompositeOperation(operations);
 
