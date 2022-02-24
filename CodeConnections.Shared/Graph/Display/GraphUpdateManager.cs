@@ -91,12 +91,25 @@ namespace CodeConnections.Graph.Display
 				if (didChange)
 				{
 					_includeActiveMode = value;
+					ClearUnpinnedNextRun();
 					InvalidateActiveDocumentOrSelection();
 				}
 			}
 		}
 
-		public DisplayNode? SelectedNode { get; set; }
+		private DisplayNode? _selectedNode;
+		public DisplayNode? SelectedNode
+		{
+			get => _selectedNode;
+			set
+			{
+				if (!Equals(value, _selectedNode))
+				{
+					ClearUnpinnedNextRun();
+				}
+				_selectedNode = value;
+			}
+		}
 
 		/// <summary>
 		/// Raised whenever an active update begins.
@@ -136,11 +149,17 @@ namespace CodeConnections.Graph.Display
 		private readonly object _nodeParentContext;
 		private readonly Func<bool> _isSolutionStillOpening;
 		private readonly IOutputService _outputService;
+
 		private bool _needsDisplayGraphUpdate;
 		/// <summary>
 		/// When this flag is set, indicates that another update should be run immediately after the current one.
 		/// </summary>
 		private bool _needsRerun;
+
+		/// <summary>
+		/// When this flag is set, indicates that unpinned nodes should be removed from the graph on the next run.
+		/// </summary>
+		private bool _shouldClearUnpinned;
 
 		private ICollection<GitInfo> _previousGitInfos = ArrayUtils.GetEmpty<GitInfo>();
 
@@ -307,6 +326,8 @@ namespace CodeConnections.Graph.Display
 		}
 
 		public void InvalidateActiveDocumentOrSelection() => EnsureStepReruns(UpdateState.IncludeActive);
+
+		public void ClearUnpinnedNextRun() => _shouldClearUnpinned = true;
 
 		/// <summary>
 		/// Returns a <see cref="GraphStatistics"/> object describing the full <see cref="NodeGraph"/>.
@@ -510,7 +531,7 @@ namespace CodeConnections.Graph.Display
 					return (null, null);
 				}
 
-					_currentUpdateState = UpdateState.UpdatingGitInfo;
+				_currentUpdateState = UpdateState.UpdatingGitInfo;
 				if (IsGitModeEnabled)
 				{
 					await AnnotateGitInfo(ct);
@@ -567,8 +588,18 @@ namespace CodeConnections.Graph.Display
 							}
 						}
 					}
+				}
 
-					// TODO now: remove unpinned nodes if we should - when should we?
+				if (ct.IsCancellationRequested)
+				{
+					return (null, null);
+				}
+
+				if (_shouldClearUnpinned && _nodeGraph != null && _includedNodes.HasUnpinned)
+				{
+					// This should be done after all other subgraph operations have been added - this will minimise jitter,
+					// if one of those operations would cause a node to stay in the graph that would otherwise be removed
+					ModifySubgraph(Subgraph.ClearCategory(Subgraph.InclusionCategory.Unpinned));
 				}
 
 				if (_pendingSubgraphOperations.Count > 0 && _nodeGraph != null)

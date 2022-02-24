@@ -33,6 +33,8 @@ namespace CodeConnections.Graph
 		}
 		public int Count => _nodes.Count;
 
+		public bool HasUnpinned => HasNodesInCategory(InclusionCategory.Unpinned);
+
 		/// <summary>
 		/// Injected function which allows filtering rules to be applied to reject nodes from subgraph.
 		/// </summary>
@@ -64,6 +66,16 @@ namespace CodeConnections.Graph
 			if (_nodes.TryGetValue(node, out var categories))
 			{
 				return (categories & category) == category;
+			}
+
+			return false;
+		}
+
+		private bool HasNodesInCategory(InclusionCategory simpleCategory)
+		{
+			if (_nodesByCategory.TryGetValue(simpleCategory, out var nodesForCategory))
+			{
+				return nodesForCategory.Count > 0;
 			}
 
 			return false;

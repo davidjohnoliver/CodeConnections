@@ -28,6 +28,8 @@ namespace CodeConnections.Graph
 		/// </summary>
 		public static Operation RemoveFromCategory(NodeKey node, InclusionCategory categoryToRemove) => new RemoveFromCategoryOperation(node, categoryToRemove);
 
+		public static Operation ClearCategory(InclusionCategory category) => new ClearCategoryOperation(category);
+
 		/// <summary>
 		/// An operation to remove all nodes in <paramref name="category"/> from that category, but leave them in the subgraph
 		/// in an <see cref="InclusionCategory.Unpinned"/> loose state.
@@ -168,6 +170,28 @@ namespace CodeConnections.Graph
 			{
 				var modified = subgraph.RemoveNodeFromCategory(_node, _category);
 				return Task.FromResult(modified.RemovedFromSubgraph);
+			}
+		}
+
+		private class ClearCategoryOperation : Operation
+		{
+			private readonly InclusionCategory _category;
+
+			public ClearCategoryOperation(InclusionCategory category)
+			{
+				_category = category;
+			}
+
+			public override Task<bool> Apply(Subgraph subgraph, NodeGraph fullGraph, CancellationToken ct)
+			{
+				var modified = false;
+				foreach (var node in subgraph.GetNodesForCategory(_category))
+				{
+					var result = subgraph.RemoveNodeFromCategory(node, _category);
+					modified |= result.RemovedFromSubgraph;
+				}
+
+				return Task.FromResult(modified);
 			}
 		}
 
