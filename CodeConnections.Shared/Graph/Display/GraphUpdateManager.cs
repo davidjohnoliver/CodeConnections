@@ -19,6 +19,7 @@ using CodeConnections.Git;
 using System.Diagnostics.CodeAnalysis;
 using CodeConnections.Services;
 using CodeConnections.Presentation;
+using System.Diagnostics;
 
 namespace CodeConnections.Graph.Display
 {
@@ -651,6 +652,12 @@ namespace CodeConnections.Graph.Display
 			{
 				if (!ct.IsCancellationRequested)
 				{
+#if DEBUG
+					if (Debugger.IsAttached)
+					{
+						Debugger.Break();
+					}
+#endif
 					UpdateFailed?.Invoke(e);
 				}
 
