@@ -188,7 +188,10 @@ namespace CodeConnections.Graph
 				.Where(IsSymbolIncluded)
 				.ToListAsync();
 
-			var symbolsForDependencies = dependencySymbols.ToDictionary(s => (Node)GetOrCreateNode(s, compilationCache));
+			var symbolsForDependencies = dependencySymbols
+				// Same symbol may occur more than once (if referred to in different partial files)
+				.Distinct()
+				.ToDictionary(s => (Node)GetOrCreateNode(s, compilationCache));
 
 			var dependencies = symbolsForDependencies.Keys;
 			if (ct.IsCancellationRequested)

@@ -22,6 +22,9 @@ namespace CodeConnections.Extensions
 		/// If true, externally-defined symbols from metadata are included. If false, only locally-defined 
 		/// symbols in the same solution are returned.
 		/// </param>
+		/// <remarks>
+		/// This may return the same symbol more than once.
+		/// </remarks>
 		public static async IAsyncEnumerable<ITypeSymbol> GetTypeDependencies(this ISymbol symbol, CompilationCache compilationCache, ProjectIdentifier containingProject, bool includeExternalMetadata = true, [EnumeratorCancellation] CancellationToken ct = default)
 		{
 			foreach (var syntaxRef in symbol.DeclaringSyntaxReferences)
