@@ -17,12 +17,14 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Styles/Colors.xaml" />
 				<ResourceDictionary Source="Styles/Button.xaml" />
 				<ResourceDictionary Source="Styles/CheckBox.xaml" />
 				<ResourceDictionary Source="Styles/ComboBox.xaml" />
 				<ResourceDictionary Source="Styles/Expander.xaml" />
 				<ResourceDictionary Source="Styles/ListBox.xaml" />
 				<ResourceDictionary Source="Styles/ListBoxItem.xaml" />
+				<ResourceDictionary Source="Styles/Path.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<Style x:Key="SeparatorRectangleStyle"
 				   TargetType="Rectangle">
@@ -49,6 +51,7 @@
 												 x:Key="BooleanToOpacityConverter" />
 			<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 			<converters:IncludeActiveModeToDescriptionConverter x:Key="IncludeActiveModeToDescriptionConverter" />
+			<converters:ImportantTypesModeToDescriptionConverter x:Key="ImportantTypesModeToDescriptionConverter" />
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Border Padding="5"
@@ -58,6 +61,7 @@
 			BorderThickness="0"
 			CornerRadius="5">
 		<StackPanel>
+
 			<WrapPanel Margin="0,0,0,15">
 				<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
 						  x:Name="IsActiveAlwaysIncludedCheckBox"
@@ -92,13 +96,43 @@
 										  Height="16"
 										  Moniker="{x:Static vsimagecat:KnownMonikers.Git}" />
 				</CheckBox>
+
+				<CheckBox Style="{StaticResource HighlightCheckBoxStyle}"
+						  x:Name="ImportantTypesCheckBox"
+						  HorizontalAlignment="Left"
+						  Margin="3"
+						  ToolTip="Key Classes Mode"
+						  IsChecked="{Binding IsImportantTypesModeEnabled}">
+					<StackPanel Orientation="Horizontal">
+						<Path Width="16"
+							  Height="16"
+							  Fill="{StaticResource ImportantTypesIconBrush}"
+							  Data="{StaticResource ImportantTypesIconPathData}" />
+						<Rectangle Style="{StaticResource ArrowSeparatorRectangleStyle}"
+								   Margin="1,0,0,0"
+								   Opacity="{Binding ElementName=ImportantTypesCheckBox, Path=IsMouseOver, Converter={StaticResource BooleanToOpacityConverter}}" />
+						<ComboBox Style="{DynamicResource ArrowOnlyComboBoxStyle}"
+								  ItemsSource="{Binding ImportantTypesModes}"
+								  SelectedItem="{Binding SelectedImportantTypesMode, Mode=TwoWay}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Converter={StaticResource ImportantTypesModeToDescriptionConverter}}" />
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</StackPanel>
+				</CheckBox>
+
 				<Rectangle Style="{StaticResource SeparatorRectangleStyle}" />
+
 				<ListBox Style="{StaticResource ListBoxSimpleHorizontalStyle}"
 						 Margin="5,3"
 						 ItemsSource="{Binding LayoutModes}"
 						 SelectedItem="{Binding LayoutMode, Mode=TwoWay}"
 						 ItemContainerStyle="{StaticResource ListBoxItemLayoutModeStyle}" />
+
 				<Rectangle Style="{StaticResource SeparatorRectangleStyle}" />
+
 				<Button Style="{StaticResource IconButtonStyle}"
 						HorizontalAlignment="Left"
 						VerticalAlignment="Top"
@@ -110,6 +144,7 @@
 										  Moniker="{x:Static vsimagecat:KnownMonikers.Cancel}" />
 				</Button>
 			</WrapPanel>
+
 			<Expander Style="{StaticResource OptionsExpanderStyle}">
 				<Expander.Header>
 					<vsimaging:CrispImage Grid.Column="1"

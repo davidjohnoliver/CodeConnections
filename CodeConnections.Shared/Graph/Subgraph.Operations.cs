@@ -61,6 +61,8 @@ namespace CodeConnections.Graph
 
 		public static Operation AddAllInSolutionOp(NodeKey _) => new AddAllInSolutionOperation();
 
+		public static Operation UpdateImportantTypesOp(Func<NodeGraph, int, IEnumerable<NodeKey>> retrieveImportantTypes, int typesRequested) => new UpdateImportantTypesOperation(retrieveImportantTypes, typesRequested);
+
 		/// <summary>
 		/// An operation to 'sanitize' the subgraph by removing any nodes that aren't found in the full <see cref="NodeGraph"/>.
 		/// </summary>
@@ -463,6 +465,38 @@ namespace CodeConnections.Graph
 				foreach (var kvp in fullGraph.Nodes)
 				{
 					modified |= subgraph.AddPinnedNode(kvp.Key, fullGraph);
+				}
+				return modified;
+			}
+		}
+
+		private class UpdateImportantTypesOperation : SyncOperation
+		{
+			private readonly Func<NodeGraph, int, IEnumerable<NodeKey>> _retrieveImportantTypes;
+			private readonly int _typesRequested;
+
+			public UpdateImportantTypesOperation(Func<NodeGraph, int, IEnumerable<NodeKey>> retrieveImportantTypes, int typesRequested)
+			{
+				_retrieveImportantTypes = retrieveImportantTypes;
+				_typesRequested = typesRequested;
+			}
+			protected override bool Apply(Subgraph subgraph, NodeGraph fullGraph)
+			{
+				var modified = false;
+				var newImportantTypes = _retrieveImportantTypes(fullGraph, _typesRequested).ToHashSet();
+				foreach (var old in subgraph.GetNodesForCategory(InclusionCategory.ImportantType))
+				{
+					if (!newImportantTypes.Contains(old))
+					{
+						var result = subgraph.RemoveNodeFromCategory(old, InclusionCategory.ImportantType);
+						modified |= result.RemovedFromSubgraph;
+					}
+				}
+
+				foreach (var newType in newImportantTypes)
+				{
+					var result = subgraph.AddNodeUnderCategory(newType, InclusionCategory.ImportantType);
+					modified |= result.AddedToSubgraph;
 				}
 				return modified;
 			}

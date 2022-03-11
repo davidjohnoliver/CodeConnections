@@ -98,6 +98,23 @@ namespace CodeConnections.Graph.Display
 			}
 		}
 
+		private ImportantTypesMode _importantTypesMode;
+		public ImportantTypesMode ImportantTypesMode
+		{
+			get => _importantTypesMode;
+			set
+			{
+				if (value != _importantTypesMode)
+				{
+					_currentClassifier = null;
+					_importantTypesMode = value;
+					EnsureStepReruns(UpdateState.UpdatingImportantTypes);
+				}
+			}
+		}
+
+		public int NumberOfImportantTypesRequested { get; set; } = 25; // TODO now: make this configurable
+
 		private DisplayNode? _selectedNode;
 		public DisplayNode? SelectedNode
 		{
@@ -139,24 +156,28 @@ namespace CodeConnections.Graph.Display
 
 		private ProjectIdentifier[]? _includedProjects;
 		private NodeGraph? _nodeGraph;
+
+		private ImportantTypesClassifier? _currentClassifier;
+
 		/// <summary>
 		/// Documents that need to be updated.
 		/// </summary>
 		private readonly HashSet<DocumentId> _invalidatedDocuments = new HashSet<DocumentId>();
+
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 		private readonly Func<Solution> _getCurrentSolution;
 		private readonly Func<CancellationToken, Task<ICollection<GitInfo>>> _getGitInfo;
 		private readonly Func<string?> _getActiveDocument;
-		private readonly object _nodeParentContext;
 		private readonly Func<bool> _isSolutionStillOpening;
 		private readonly IOutputService _outputService;
+
+		private readonly object _nodeParentContext;
 
 		private bool _needsDisplayGraphUpdate;
 		/// <summary>
 		/// When this flag is set, indicates that another update should be run immediately after the current one.
 		/// </summary>
 		private bool _needsRerun;
-
 		/// <summary>
 		/// When this flag is set, indicates that unpinned nodes should be removed from the graph on the next run.
 		/// </summary>
@@ -539,7 +560,26 @@ namespace CodeConnections.Graph.Display
 				}
 				else
 				{
-					ModifySubgraph(Subgraph.ClearCategoryAndLeaveUnpinnedOp(Subgraph.InclusionCategory.GitChanges));
+					TryClearCategory(Subgraph.InclusionCategory.GitChanges, true);
+				}
+
+				if (ct.IsCancellationRequested)
+				{
+					return (null, null);
+				}
+
+				if (_nodeGraph != null)
+				{
+					_currentUpdateState = UpdateState.UpdatingImportantTypes;
+					if (ImportantTypesMode == ImportantTypesMode.None)
+					{
+						TryClearCategory(Subgraph.InclusionCategory.ImportantType, false);
+					}
+					else
+					{
+						_currentClassifier ??= ImportantTypesClassifier.GetForMode(ImportantTypesMode);
+						ModifySubgraph(Subgraph.UpdateImportantTypesOp(_currentClassifier.GetImportantTypes, NumberOfImportantTypesRequested));
+					}
 				}
 
 				if (ct.IsCancellationRequested)
@@ -596,11 +636,11 @@ namespace CodeConnections.Graph.Display
 					return (null, null);
 				}
 
-				if (_shouldClearUnpinned && _nodeGraph != null && _includedNodes.HasUnpinned)
+				if (_shouldClearUnpinned && _nodeGraph != null)
 				{
 					// This should be done after all other subgraph operations have been added - this will minimise jitter,
 					// if one of those operations would cause a node to stay in the graph that would otherwise be removed
-					ModifySubgraph(Subgraph.ClearCategoryOp(Subgraph.InclusionCategory.Unpinned));
+					TryClearCategory(Subgraph.InclusionCategory.Unpinned, false);
 				}
 
 				if (_pendingSubgraphOperations.Count > 0 && _nodeGraph != null)
@@ -802,6 +842,17 @@ namespace CodeConnections.Graph.Display
 			return result;
 		}
 
+		private void TryClearCategory(Subgraph.InclusionCategory category, bool leaveUnpinned)
+		{
+			if (_includedNodes.HasNodesInCategory(category))
+			{
+				var op = leaveUnpinned ?
+					Subgraph.ClearCategoryAndLeaveUnpinnedOp(category) :
+					Subgraph.ClearCategoryOp(category);
+				ModifySubgraph(op);
+			}
+		}
+
 		public void Dispose()
 		{
 			_updateSubscription.Dispose();
@@ -819,6 +870,7 @@ namespace CodeConnections.Graph.Display
 
 			// Metadata and analyses
 			UpdatingGitInfo,
+			UpdatingImportantTypes,
 			AnalyzingFullGraphStatistics,
 
 			// Update subgraph model

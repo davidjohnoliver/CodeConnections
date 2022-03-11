@@ -13,9 +13,13 @@
 					xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
 					mc:Ignorable="d">
 	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="Colors.xaml" />
+		<ResourceDictionary Source="Effects.xaml" />
+		
 		<ResourceDictionary Source="CheckBox.xaml" />
 		<ResourceDictionary Source="ContextMenu.xaml" />
 		<ResourceDictionary Source="MenuItem.xaml" />
+		<ResourceDictionary Source="Path.xaml" />
 	</ResourceDictionary.MergedDictionaries>
 
 	<converters:DisplayEdgeStrokeDashArrayConverter x:Key="DisplayEdgeStrokeDashArrayConverter"
@@ -36,6 +40,7 @@
 										 FalseValue="Pin element" />
 	<converters:WordTruncateConverter x:Key="TypeNameTruncateConverter"
 									  CharacterLimit="50" />
+	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
 	<Style TargetType="{x:Type graphControls:VertexControl}">
 		<Setter Property="Template">
@@ -106,8 +111,10 @@
 						</Border.ContextMenu>
 						<StackPanel Orientation="Horizontal"
 									DataContext="{TemplateBinding Vertex}">
+							
 							<TextBlock Text="{Binding DisplayString, Converter={StaticResource TypeNameTruncateConverter}}"
 									   FontSize="16" />
+							
 							<CheckBox x:Name="PinCheckBox"
 									  Style="{StaticResource PinCheckBoxStyle}"
 									  Foreground="{TemplateBinding Foreground}"
@@ -116,6 +123,7 @@
 									  ToolTip="{Binding IsPinned, Converter={StaticResource IsPinnedToMessageConverter}}"
 									  ext:ToggleButtonExtensions.ToggleCommand="{Binding ParentContext.TogglePinnedCommand}"
 									  ext:ToggleButtonExtensions.ToggleCommandParameter="{Binding}" />
+							
 							<Grid x:Name="GitStatusContainer"
 								  Margin="0,-8,-5,0"
 								  HorizontalAlignment="Right"
@@ -130,12 +138,32 @@
 								<!--Git indicator - inverted colouring relative to rest of the node-->
 								<Ellipse Width="20"
 										 Height="20"
-										 Fill="{TemplateBinding Foreground}" />
+										 Fill="{TemplateBinding Foreground}"
+										 Effect="{StaticResource BadgeDropShadowEffect}"/>
 								<Path HorizontalAlignment="Center"
 									  VerticalAlignment="Center"
 									  Opacity="0.7"
 									  Fill="{TemplateBinding Background}"
 									  Data="{Binding GitStatus, Converter={StaticResource GitStatusPathConverter}}" />
+							</Grid>
+
+							<Grid x:Name="ImportantTypesContainer"
+								  Margin="0,-8,-5,0"
+								  HorizontalAlignment="Right"
+								  VerticalAlignment="Top"
+								  Visibility="{Binding IsImportant, Converter={StaticResource BooleanToVisibilityConverter}}">
+								<!--TODO: Tooltip should show relevant info (# dependencies, LOC etc)-->
+
+								<!--Inverted colouring relative to rest of the node-->
+								<Ellipse Width="20"
+										 Height="20"
+										 Fill="{StaticResource ImportantTypesBadgeBackground}"
+										 Effect="{StaticResource BadgeDropShadowEffect}" />
+								<Path HorizontalAlignment="Center"
+									  VerticalAlignment="Center"
+									  Opacity="0.7"
+									  Fill="{StaticResource ImportantTypesIconBrush}"
+									  Data="{StaticResource ImportantTypesIconPathData}" />
 							</Grid>
 						</StackPanel>
 					</Border>

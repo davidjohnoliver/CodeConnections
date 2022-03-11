@@ -33,8 +33,6 @@ namespace CodeConnections.Graph
 		}
 		public int Count => _nodes.Count;
 
-		public bool HasUnpinned => HasNodesInCategory(InclusionCategory.Unpinned);
-
 		/// <summary>
 		/// Injected function which allows filtering rules to be applied to reject nodes from subgraph.
 		/// </summary>
@@ -63,7 +61,7 @@ namespace CodeConnections.Graph
 			}
 		}
 
-		private bool IsInCategory(NodeKey node, InclusionCategory category)
+		public bool IsInCategory(NodeKey node, InclusionCategory category)
 		{
 			if (_nodes.TryGetValue(node, out var categories))
 			{
@@ -73,7 +71,7 @@ namespace CodeConnections.Graph
 			return false;
 		}
 
-		private bool HasNodesInCategory(InclusionCategory simpleCategory)
+		public bool HasNodesInCategory(InclusionCategory simpleCategory)
 		{
 			if (_nodesByCategory.TryGetValue(simpleCategory, out var nodesForCategory))
 			{
@@ -297,6 +295,10 @@ namespace CodeConnections.Graph
 			/// The node has changes in source control, and Git mode is enabled.
 			/// </summary>
 			GitChanges = 1 << 4,
+			/// <summary>
+			/// The node is deemed an important type, and the corresponding mode is enabled.
+			/// </summary>
+			ImportantType = 1 << 5,
 		}
 	}
 }

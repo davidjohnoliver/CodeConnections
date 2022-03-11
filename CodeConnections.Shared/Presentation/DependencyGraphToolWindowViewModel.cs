@@ -104,6 +104,51 @@ namespace CodeConnections.Presentation
 			set => OnValueSet(_graphUpdateManager.IsGitModeEnabled, v => _graphUpdateManager.IsGitModeEnabled = v, value);
 		}
 
+		private bool _isImportantTypesModeEnabled;
+		/// <summary>
+		/// Should the active document (and its connections) automatically be included in the graph?
+		/// </summary>
+		public bool IsImportantTypesModeEnabled
+		{
+			get => _isImportantTypesModeEnabled;
+			set
+			{
+				if (OnValueSet(ref _isImportantTypesModeEnabled, value))
+				{
+					//_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { IsImportantTypesModeEnabled = value }); // TODO: should be project settings, no? // But the *mode* should indeed be user settings!
+					UpdateImportantTypesMode(true);
+				}
+			}
+		}
+
+		/// <summary>
+		/// The 'real' value of ImportantTypesMode. This is always equal to the last chosen of either active-only or active-plus-connections, 
+		/// whereas SelectedImportantTypesMode may be nulled out to facilitate the behaviour that making a selection in the combo box reactivates 
+		/// IsImportantTypesModeEnabled.
+		/// </summary>
+		private ImportantTypesMode _implicitImportantTypesMode;
+
+		private ImportantTypesMode? _selectedImportantTypesMode;
+		public ImportantTypesMode? SelectedImportantTypesMode
+		{
+			get => _selectedImportantTypesMode;
+			set
+			{
+				if (OnValueSet(ref _selectedImportantTypesMode, value))
+				{
+					if (value is { } selection)
+					{
+						_implicitImportantTypesMode = selection;
+						//_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { ImportantTypesMode = selection }); // TODO now
+						IsImportantTypesModeEnabled = true;
+					}
+					UpdateImportantTypesMode(false);
+				}
+			}
+		}
+
+		public ImportantTypesMode[] ImportantTypesModes { get; } = EnumUtils.GetValues<ImportantTypesMode>().Skip(1).ToArray();
+
 		private bool _isActiveAlwaysIncluded;
 		/// <summary>
 		/// Should the active document (and its connections) automatically be included in the graph?
@@ -147,7 +192,7 @@ namespace CodeConnections.Presentation
 			}
 		}
 
-		public IncludeActiveMode[] IncludeActiveModes { get; } = new[] { IncludeActiveMode.ActiveOnly, IncludeActiveMode.ActiveAndConnections };
+		public IncludeActiveMode[] IncludeActiveModes { get; } = EnumUtils.GetValues<IncludeActiveMode>().Skip(1).ToArray();
 
 		private SelectionList<ProjectIdentifier>? _projects;
 		public SelectionList<ProjectIdentifier>? Projects
@@ -605,6 +650,28 @@ namespace CodeConnections.Presentation
 			}
 
 			_graphUpdateManager.IncludeActiveMode = SelectedIncludeActiveMode ?? IncludeActiveMode.DontInclude;
+		}
+
+		/// <summary>
+		/// Apply the effective <see cref="ImportantTypesMode"/> to the update manager.
+		/// </summary>
+		/// <param name="isSwitching">Is <see cref="IsImportantTypesModeEnabled"/> changing?</param>
+		private void UpdateImportantTypesMode(bool isSwitching)
+		{
+			if (isSwitching)
+			{
+				if (IsImportantTypesModeEnabled)
+				{
+					SelectedImportantTypesMode = _implicitImportantTypesMode;
+				}
+			}
+
+			if (!IsImportantTypesModeEnabled)
+			{
+				SelectedImportantTypesMode = null;
+			}
+
+			_graphUpdateManager.ImportantTypesMode = SelectedImportantTypesMode ?? ImportantTypesMode.None;
 		}
 
 		public void Dispose()
