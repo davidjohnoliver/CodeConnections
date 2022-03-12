@@ -10,7 +10,7 @@ namespace CodeConnections.Graph
 	{
 		private class LOCClassifier : SimpleClassifier
 		{
-			protected override double GetScore(Node node) => (node as TypeNode)?.LineCount ?? -1;
+			public override double GetScore(Node node) => (node as TypeNode)?.LineCount ?? -1;
 		}
 	}
 }

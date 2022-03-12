@@ -11,7 +11,7 @@ namespace CodeConnections.Graph
 	{
 		private class DependentsClassifier : SimpleClassifier
 		{
-			protected override double GetScore(Node node)
+			public override double GetScore(Node node)
 				=> node.BackLinkNodes.Count(n => n is TypeNode);
 		}
 	}
