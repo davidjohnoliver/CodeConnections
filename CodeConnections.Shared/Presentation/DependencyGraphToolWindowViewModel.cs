@@ -106,7 +106,7 @@ namespace CodeConnections.Presentation
 
 		private bool _isImportantTypesModeEnabled;
 		/// <summary>
-		/// Should the active document (and its connections) automatically be included in the graph?
+		/// Should important types (as determined by the active mode) be automatically be included in the graph?
 		/// </summary>
 		public bool IsImportantTypesModeEnabled
 		{
@@ -511,6 +511,7 @@ namespace CodeConnections.Presentation
 		{
 			RerollRandomSeed();
 			IsGitModeEnabled = false;
+			IsImportantTypesModeEnabled = false;
 			_shouldLoadAnyNumberOfNodes = false;
 			_hasLoggedException = false;
 			Graph = Empty;
