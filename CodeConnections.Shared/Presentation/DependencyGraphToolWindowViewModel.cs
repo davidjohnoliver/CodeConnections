@@ -400,7 +400,7 @@ namespace CodeConnections.Presentation
 			_hasLoggedException = false;
 			IsNodeGraphUpdating = false;
 
-			var shouldShowGraph = newGraph.EdgeCount <= MaxAutomaticallyLoadedNodes || _shouldLoadAnyNumberOfNodes;
+			var shouldShowGraph = newGraph.VertexCount <= MaxAutomaticallyLoadedNodes || _shouldLoadAnyNumberOfNodes;
 			if (shouldShowGraph)
 			{
 				ShowGraph(newGraph);
@@ -408,7 +408,7 @@ namespace CodeConnections.Presentation
 			else
 			{
 				ShouldShowUnloadedNodesWarning = true;
-				UnloadedNodesCount = newGraph.EdgeCount;
+				UnloadedNodesCount = newGraph.VertexCount;
 				_escrowedGraph = newGraph;
 			}
 
