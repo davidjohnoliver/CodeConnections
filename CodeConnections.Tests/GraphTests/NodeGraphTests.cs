@@ -214,11 +214,22 @@ namespace CodeConnections.Tests.GraphTests
 					var interfaceLink = AssertEx.ContainsSingle(implementer.ForwardLinks, l => (l.Dependency as TypeNode)?.Identifier.Name == interfaceName);
 					Assert.AreEqual(LinkType.ImplementsInterface, interfaceLink.LinkType);
 				}
-				;
-				//var baseClassLink = AssertEx.ContainsSingle(inheritedClassNode.ForwardLinks, l => (l.Dependency as TypeNode)?.Identifier.Name == "SomeBaseClass");
-				//Assert.AreEqual(LinkType.InheritsFromClass, baseClassLink.LinkType);
-				//var derivedClassLink = AssertEx.ContainsSingle(inheritedClassNode.BackLinks, l => (l.Dependent as TypeNode)?.Identifier.Name == "SomeInheritedClassDepth2");
-				//Assert.AreEqual(LinkType.InheritsFromClass, baseClassLink.LinkType);
+			}
+		}
+
+		[Test]
+		public async Task When_Delegates_Present()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
+				var classNode = fullGraph.Nodes.Values.Single(n => (n as TypeNode)?.Identifier.Name == "SomeClassWithDelegate");
+				Assert.AreEqual(0, classNode.ForwardLinks.Count);
+
+				await fullGraph.Update(CompilationCache.CacheWithSolution(workspace.CurrentSolution), workspace.CurrentSolution.GetAllDocumentIds(), default);
+
+				var classNodeAfterUpdate = fullGraph.Nodes.Values.Single(n => (n as TypeNode)?.Identifier.Name == "SomeClassWithDelegate");
+				Assert.AreEqual(0, classNodeAfterUpdate.ForwardLinks.Count);
 			}
 		}
 

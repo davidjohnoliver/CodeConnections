@@ -148,6 +148,11 @@ namespace CodeConnections.Graph
 				return false;
 			}
 
+			if (!IncludedTypeKinds.Contains(foundSymbol.TypeKind))
+			{
+				return false;
+			}
+
 			return true;
 		}
 	}

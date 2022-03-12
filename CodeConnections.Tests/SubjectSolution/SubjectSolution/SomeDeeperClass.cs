@@ -19,6 +19,8 @@ namespace SubjectSolution
 
 		public SomeMultiRoot someMultiRoot;
 
+		public SomeClassWithDelegate someClassWithDelegate;
+
 		void DoStuff()
 		{
 			var implicitVar = SomeStaticClass.SomeClassAsImplicitVar;

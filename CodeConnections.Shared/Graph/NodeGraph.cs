@@ -33,6 +33,8 @@ namespace CodeConnections.Graph
 		/// </summary>
 		private readonly HashSet<string> _includedAssemblies;
 
+		private static readonly ICollection<TypeKind> IncludedTypeKinds = new[] { TypeKind.Class, TypeKind.Interface, TypeKind.Enum, TypeKind.Struct };
+
 		private NodeGraph(bool excludePureGenerated, IEnumerable<string> includedAssemblies)
 		{
 			_excludePureGenerated = excludePureGenerated;
