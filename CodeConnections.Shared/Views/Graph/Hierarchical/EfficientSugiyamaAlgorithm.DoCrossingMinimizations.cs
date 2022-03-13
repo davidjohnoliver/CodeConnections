@@ -128,7 +128,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 					}
 					else
 					{
-						Debug.WriteLine("Layer " + (i + step) + " has not changed.");
+						//Debug.WriteLine("Layer " + (i + step) + " has not changed.");
 						alternatingLayer = _alternatingLayers[i + step];
 						crossings += prevCrossCount;
 					}
@@ -137,7 +137,7 @@ namespace CodeConnections.Views.Graph.Hierarchical
 			return crossings;
 		}
 
-		[Conditional("DEBUG")]
+		[Conditional("DEBUG_VERBOSE_OUTPUT")]
 		private static void OutputAlternatingLayer(AlternatingLayer alternatingLayer, int layerIndex, int crossCount)
 		{
 			Debug.Write(layerIndex + " | " + crossCount + ": ");

@@ -180,12 +180,12 @@ namespace CodeConnections.Views.Graph.Hierarchical
 		{
 			foreach (var vertex in _graph.Vertices)
 			{
-				Debug.WriteLine(string.Format("{0}:\t{1}\t{2}\t{3}\t{4}",
-					vertex.OriginalVertex,
-					vertex.HorizontalPositions[0],
-					vertex.HorizontalPositions[1],
-					vertex.HorizontalPositions[2],
-					vertex.HorizontalPositions[3]));
+				//Debug.WriteLine(string.Format("{0}:\t{1}\t{2}\t{3}\t{4}",
+				//	vertex.OriginalVertex,
+				//	vertex.HorizontalPositions[0],
+				//	vertex.HorizontalPositions[1],
+				//	vertex.HorizontalPositions[2],
+				//	vertex.HorizontalPositions[3]));
 				if (Parameters.PositionMode < 0)
 				{
 					vertex.HorizontalPosition =
@@ -215,26 +215,26 @@ namespace CodeConnections.Views.Graph.Hierarchical
 			int modeIndex = (byte)upperLowerEdges * 2 + (byte)leftRightMode;
 			InitializeRootsAndAligns(modeIndex);
 			DoAlignment(modeIndex, leftRightMode, upperLowerEdges);
-			WriteOutAlignment(modeIndex);
+			//WriteOutAlignment(modeIndex);
 			InitializeSinksAndShifts(modeIndex);
 			DoHorizontalCompaction(modeIndex, leftRightMode, upperLowerEdges);
 		}
 
-		private void WriteOutAlignment(int modeIndex)
-		{
-			Debug.WriteLine(string.Format("Alignment for {0}", modeIndex));
-			foreach (var vertex in _graph.Vertices)
-				Debug.WriteLine(string.Format("{0},{1},{2}: Root {3},{4},{5}\tAlign {6},{7},{8}",
-					vertex.OriginalVertex,
-					vertex.LayerIndex,
-					vertex.Type,
-					vertex.Roots[modeIndex].OriginalVertex,
-					vertex.Roots[modeIndex].LayerIndex,
-					vertex.Roots[modeIndex].Type,
-					vertex.Aligns[modeIndex].OriginalVertex,
-					vertex.Aligns[modeIndex].LayerIndex,
-					vertex.Aligns[modeIndex].Type));
-		}
+		//private void WriteOutAlignment(int modeIndex)
+		//{
+		//	Debug.WriteLine(string.Format("Alignment for {0}", modeIndex));
+		//	foreach (var vertex in _graph.Vertices)
+		//		Debug.WriteLine(string.Format("{0},{1},{2}: Root {3},{4},{5}\tAlign {6},{7},{8}",
+		//			vertex.OriginalVertex,
+		//			vertex.LayerIndex,
+		//			vertex.Type,
+		//			vertex.Roots[modeIndex].OriginalVertex,
+		//			vertex.Roots[modeIndex].LayerIndex,
+		//			vertex.Roots[modeIndex].Type,
+		//			vertex.Aligns[modeIndex].OriginalVertex,
+		//			vertex.Aligns[modeIndex].LayerIndex,
+		//			vertex.Aligns[modeIndex].Type));
+		//}
 
 		private void InitializeSinksAndShifts(int modeIndex)
 		{
@@ -392,8 +392,8 @@ namespace CodeConnections.Views.Graph.Hierarchical
 							if (vertex.Aligns[modeIndex] != vertex)
 								continue;
 							var edge = neighbourEdges[medians[m]];
-							if (edge.Marked)
-								Debug.WriteLine("Edge marked: " + edge.Source.OriginalVertex + ", " + edge.Target.OriginalVertex);
+							//if (edge.Marked)
+							//	Debug.WriteLine("Edge marked: " + edge.Source.OriginalVertex + ", " + edge.Target.OriginalVertex);
 							var neighbour = edge.OtherVertex(vertex);
 							if (!edge.Marked &&
 								((leftRightMode == LeftRightMode.Left && r < neighbour.Position)
