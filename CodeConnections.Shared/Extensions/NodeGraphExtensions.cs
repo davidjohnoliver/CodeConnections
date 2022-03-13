@@ -79,70 +79,100 @@ namespace CodeConnections.Extensions
 			return graph;
 		}
 
+		// Find all weakly-connected components, then try to add at least one (shortest) directed path from each component to every other
 		public static IEnumerable<NodePath> GetMultiDependencyRootPaths(NodeGraph graph, ISet<Node> roots)
 		{
+
 			if (roots.Count < 2)
 			{
-				throw new ArgumentOutOfRangeException(nameof(roots));
+				return Enumerable.Empty<NodePath>();
 			}
 
-			var toExplore = new Queue<SearchEntry>();
-			var nodesSeen = new HashSet<Node>();
-			foreach (var root in roots)
-			{
-				toExplore.Clear();
-				nodesSeen.Clear();
-				var rootsNotFound = roots.Count - 1;
-				toExplore.Enqueue(new SearchEntry(root, previous: null, generation: 0));
+			// 1. Find all weakly-connected components
+			var unsearched = roots.ToHashSet();
+			var toExploreComponents = new Queue<Node>();
 
-				var lp = new LoopProtection();
-				while (toExplore.Count > 0)
+			var components = new List<ConnectedComponent>();
+			var lp = new LoopProtection();
+			while (unsearched.Count > 0)
+			{
+				lp.Iterate();
+				bool TryEnqueue(Node node)
+				{
+					if (unsearched.Remove(node))
+					{
+						toExploreComponents.Enqueue(node);
+						return true;
+					}
+					return false;
+				}
+				var currentComponent = new ConnectedComponent() { Id = components.Count };
+				components.Add(currentComponent);
+				var current = unsearched.First();
+				currentComponent.Add(current);
+				TryEnqueue(current);
+				while (toExploreComponents.Count > 0)
 				{
 					lp.Iterate();
-
-					var current = toExplore.Dequeue();
-
-					foreach (var link in current.Node.ForwardLinkNodes)
+					current = toExploreComponents.Dequeue();
+					foreach (var neighbour in current.AllLinks())
 					{
-						if (nodesSeen.Contains(link))
+						if (TryEnqueue(neighbour))
 						{
-							// Seen before, is either in queue or already explored (or is a root)
-							continue;
+							currentComponent.Add(neighbour);
 						}
-
-						// Mark as seen
-						nodesSeen.Add(link);
-
-						if (roots.Contains(link) && link != root)
-						{
-							// We've found another root
-							yield return NodePath.FromSearch(current, link);
-
-							rootsNotFound--;
-
-							// Note: we don't add it to the explore queue, because we don't want paths with more than 2 roots. Any connections out of that root 
-							// will be found when that root is processed.
-						}
-						else
-						{
-							// Regular node we haven't seen - queue it up to explore
-							toExplore.Enqueue(current.NextGeneration(link));
-						}
-
-						if (rootsNotFound == 0)
-						{
-							// All roots have been found for this root, go to the next one
-							break;
-						}
-					}
-
-					if (rootsNotFound == 0)
-					{
-						// All roots have been found for this root, go to the next one
-						break;
 					}
 				}
 			}
+
+			if (components.Count < 2)
+			{
+				return Enumerable.Empty<NodePath>();
+			}
+
+			// 2. Find all paths between components
+			var toExplore = new Queue<SearchEntry>();
+			var nodesSeen = new HashSet<Node>();
+			foreach (var component in components)
+			{
+				foreach (var componentNode in component)
+				{
+					nodesSeen.Clear();
+					toExplore.Enqueue(new SearchEntry(componentNode, null, 0));
+					lp = new();
+					while (toExplore.Count > 0)
+					{
+						lp.Iterate();
+						var current = toExplore.Dequeue();
+						foreach (var link in current.Node.ForwardLinkNodes)
+						{
+							if (nodesSeen.Contains(link))
+							{
+								// Already seen
+								continue;
+							}
+							if (component.Contains(link))
+							{
+								// Part of the same component
+								continue;
+							}
+							if (components.Where(c => c.Contains(link)).FirstOrDefault() is { } targetComponent)
+							{
+								// We've reached another component - add a path
+								nodesSeen.Add(link); // We've found a shortest path for this node-node pair, ignore subsequent paths
+								component.AddPath(NodePath.FromSearch(current, link), targetComponent.Id);
+								continue;
+							}
+
+							// Unseen node that's not part of subgraph - continue searching
+							nodesSeen.Add(link);
+							toExplore.Enqueue(current.NextGeneration(link));
+						}
+					}
+				}
+			}
+
+			return components.SelectMany(c => c.Paths);
 		}
 
 		/// <summary>
@@ -153,6 +183,24 @@ namespace CodeConnections.Extensions
 			var rootNodes = nodeGraph.Nodes.Values;
 			var fullDisplayGraph = GetDisplaySubgraph(nodeGraph, rootNodes);
 			return (fullDisplayGraph.GetClusteredGraph(), fullDisplayGraph);
+		}
+
+		private class ConnectedComponent : HashSet<Node>
+		{
+			public int Id { get; init; }
+
+			private readonly Dictionary<int, NodePath> _paths = new();
+			public IEnumerable<NodePath> Paths => _paths.Values;
+			public void AddPath(NodePath path, int targetComponent)
+			{
+				if (_paths.TryGetValue(targetComponent, out var existing) && existing.Count <= path.Count)
+				{
+					// New path is no shorter than existing, so keep existing
+					return;
+				}
+
+				_paths[targetComponent] = path;
+			}
 		}
 	}
 }
