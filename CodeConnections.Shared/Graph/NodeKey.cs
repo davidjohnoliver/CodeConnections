@@ -13,7 +13,7 @@ namespace CodeConnections.Graph
 	/// </summary>
 	public abstract class NodeKey
 	{
-		public override abstract bool Equals(object obj);
+		public override abstract bool Equals(object? obj);
 
 		public override abstract int GetHashCode();
 
