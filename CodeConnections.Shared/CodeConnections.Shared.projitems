@@ -65,6 +65,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graph\NodeKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\NodePath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\SearchEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\IntOrAuto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Subgraph.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Subgraph.Operations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\TypeNode.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\ArrayUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\EnumUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\IdleTimer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\MathUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\PathUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\SetUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\ThreadUtils.cs" />

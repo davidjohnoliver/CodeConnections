@@ -61,7 +61,7 @@ namespace CodeConnections.Graph
 
 		public static Operation AddAllInSolutionOp(NodeKey _) => new AddAllInSolutionOperation();
 
-		public static Operation UpdateImportantTypesOp(Func<NodeGraph, int, IEnumerable<NodeKey>> retrieveImportantTypes, int typesRequested) => new UpdateImportantTypesOperation(retrieveImportantTypes, typesRequested);
+		public static Operation UpdateImportantTypesOp(Func<NodeGraph, IntOrAuto, IEnumerable<NodeKey>> retrieveImportantTypes, IntOrAuto typesRequested) => new UpdateImportantTypesOperation(retrieveImportantTypes, typesRequested);
 
 		/// <summary>
 		/// An operation to 'sanitize' the subgraph by removing any nodes that aren't found in the full <see cref="NodeGraph"/>.
@@ -472,10 +472,10 @@ namespace CodeConnections.Graph
 
 		private class UpdateImportantTypesOperation : SyncOperation
 		{
-			private readonly Func<NodeGraph, int, IEnumerable<NodeKey>> _retrieveImportantTypes;
-			private readonly int _typesRequested;
+			private readonly Func<NodeGraph, IntOrAuto, IEnumerable<NodeKey>> _retrieveImportantTypes;
+			private readonly IntOrAuto _typesRequested;
 
-			public UpdateImportantTypesOperation(Func<NodeGraph, int, IEnumerable<NodeKey>> retrieveImportantTypes, int typesRequested)
+			public UpdateImportantTypesOperation(Func<NodeGraph, IntOrAuto, IEnumerable<NodeKey>> retrieveImportantTypes, IntOrAuto typesRequested)
 			{
 				_retrieveImportantTypes = retrieveImportantTypes;
 				_typesRequested = typesRequested;

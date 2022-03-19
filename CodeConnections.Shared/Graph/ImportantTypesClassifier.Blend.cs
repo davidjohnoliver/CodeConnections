@@ -22,12 +22,12 @@ namespace CodeConnections.Graph
 			private readonly SimpleClassifier _locClassifier;
 			public HouseBlendClassifier()
 			{
-				_dependentsClassifier = (SimpleClassifier)GetForMode(ImportantTypesMode.MostDependents);
-				_dependenciesClassifier = (SimpleClassifier)GetForMode(ImportantTypesMode.MostDependencies);
-				_locClassifier = (SimpleClassifier)GetForMode(ImportantTypesMode.MostLOC);
+				_dependentsClassifier = (SimpleClassifier)GetForMode(ImportantTypesMode.MostDependents, int.MaxValue);
+				_dependenciesClassifier = (SimpleClassifier)GetForMode(ImportantTypesMode.MostDependencies, int.MaxValue);
+				_locClassifier = (SimpleClassifier)GetForMode(ImportantTypesMode.MostLOC, int.MaxValue);
 			}
 
-			public override IEnumerable<NodeKey> GetImportantTypes(NodeGraph fullGraph, int noRequested)
+			public override IEnumerable<NodeKey> GetImportantTypes(NodeGraph fullGraph, IntOrAuto nodesRequested)
 			{
 				var allScores = fullGraph.Nodes.Select(
 					kvp => new NodeScores(kvp.Key)
@@ -55,6 +55,7 @@ namespace CodeConnections.Graph
 					}
 				}
 
+				var noRequested = GetNodesRequestedFromAuto(fullGraph, nodesRequested);
 				noRequested = Math.Min(noRequested, allScores.Count);
 
 				var importantTypes = new HashSet<NodeKey>();

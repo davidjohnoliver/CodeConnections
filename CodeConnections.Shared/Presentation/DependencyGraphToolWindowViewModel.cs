@@ -149,6 +149,14 @@ namespace CodeConnections.Presentation
 
 		public ImportantTypesMode[] ImportantTypesModes { get; } = EnumUtils.GetValues<ImportantTypesMode>().Skip(1).ToArray();
 
+		public IntOrAuto NumberOfImportantTypesRequested
+		{
+			get => _graphUpdateManager.NumberOfImportantTypesRequested;
+			set => OnValueSet(_graphUpdateManager.NumberOfImportantTypesRequested, v => _graphUpdateManager.NumberOfImportantTypesRequested = v, value);
+		}
+
+		public IntOrAuto[] NumberOfImportantTypesPresets { get; } = new[] { IntOrAuto.Auto, (IntOrAuto)10, (IntOrAuto)25, (IntOrAuto)50, (IntOrAuto)100, (IntOrAuto)200 };
+
 		private bool _isActiveAlwaysIncluded;
 		/// <summary>
 		/// Should the active document (and its connections) automatically be included in the graph?
@@ -249,20 +257,19 @@ namespace CodeConnections.Presentation
 
 		public NodeCommands NodeCommands { get; }
 
-		private int _maxAutomaticallyLoadedNodes;
 		/// <summary>
 		/// The maximum number of nodes to show without prompting explicit user opt-in.
 		/// </summary>
 		private int MaxAutomaticallyLoadedNodes
 		{
-			get => _maxAutomaticallyLoadedNodes;
+			get => _graphUpdateManager.MaxAutomaticallyLoadedNodes;
 			set
 			{
-				if (value != _maxAutomaticallyLoadedNodes)
+				if (value != _graphUpdateManager.MaxAutomaticallyLoadedNodes)
 				{
-					_maxAutomaticallyLoadedNodes = value;
+					_graphUpdateManager.MaxAutomaticallyLoadedNodes = value;
 
-					if (ShouldShowUnloadedNodesWarning && _escrowedGraph != null && UnloadedNodesCount <= _maxAutomaticallyLoadedNodes)
+					if (ShouldShowUnloadedNodesWarning && _escrowedGraph != null && UnloadedNodesCount <= value)
 					{
 						ShowGraph(_escrowedGraph);
 					}

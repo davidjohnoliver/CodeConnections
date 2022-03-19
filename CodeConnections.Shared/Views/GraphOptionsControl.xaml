@@ -145,6 +145,7 @@
 				</Button>
 			</WrapPanel>
 
+			<!--Additional options-->
 			<Expander Style="{StaticResource OptionsExpanderStyle}">
 				<Expander.Header>
 					<vsimaging:CrispImage Grid.Column="1"
@@ -155,6 +156,8 @@
 				</Expander.Header>
 				<Grid>
 					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
@@ -195,7 +198,16 @@
 							  Content="Include nested classes"
 							  ToolTip="Include nested classes?"
 							  IsChecked="{Binding IncludeNestedTypes, Mode=TwoWay}" />
-					<local:DebugFeaturesControl Grid.Row="5"
+					<TextBlock Grid.Row="5"
+							   Text="Number of key classes to show"
+							   Margin="0,12,0,0" />
+					<ComboBox Grid.Row="6"
+							  Margin="0,2,0,0"
+							  HorizontalAlignment="Left"
+							  MinWidth="60"
+							  ItemsSource="{Binding NumberOfImportantTypesPresets}"
+							  SelectedItem="{Binding NumberOfImportantTypesRequested, Mode=TwoWay}" />
+					<local:DebugFeaturesControl Grid.Row="7"
 												Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"
 												Visibility="{Binding EnableDebugFeatures, Converter={StaticResource BooleanToVisibilityConverter}}"
 												Margin="0,32,0,0" />

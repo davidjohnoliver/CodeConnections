@@ -113,8 +113,21 @@ namespace CodeConnections.Graph.Display
 			}
 		}
 
-		public int NumberOfImportantTypesRequested { get; set; } = 25; // TODO now: make this configurable
+		public int MaxAutomaticallyLoadedNodes { get; set; }
 
+		private IntOrAuto _numberOfImportantTypesRequested = IntOrAuto.Auto; // TODO now - make this a setting
+		public IntOrAuto NumberOfImportantTypesRequested
+		{
+			get => _numberOfImportantTypesRequested;
+			set
+			{
+				if (_numberOfImportantTypesRequested != value)
+				{
+					_numberOfImportantTypesRequested = value;
+					EnsureStepReruns(UpdateState.UpdatingImportantTypes);
+				}
+			}
+		}
 		private DisplayNode? _selectedNode;
 		public DisplayNode? SelectedNode
 		{
@@ -577,7 +590,7 @@ namespace CodeConnections.Graph.Display
 					}
 					else
 					{
-						_currentClassifier ??= ImportantTypesClassifier.GetForMode(ImportantTypesMode);
+						_currentClassifier ??= ImportantTypesClassifier.GetForMode(ImportantTypesMode, MaxAutomaticallyLoadedNodes);
 						ModifySubgraph(Subgraph.UpdateImportantTypesOp(_currentClassifier.GetImportantTypes, NumberOfImportantTypesRequested));
 					}
 				}
