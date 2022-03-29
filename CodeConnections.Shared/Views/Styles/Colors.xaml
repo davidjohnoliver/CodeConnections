@@ -7,6 +7,12 @@
 
 	<SolidColorBrush x:Key="ImportantTypesIconBrush"
 					 Color="#FFFFAC33" />
+	<SolidColorBrush x:Key="ImportantTypesIconBrushGold"
+					 Color="#FFFF9400" />
+	<SolidColorBrush x:Key="ImportantTypesIconBrushSilver"
+					 Color="#FF828282" />
+	<SolidColorBrush x:Key="ImportantTypesIconBrushBronze"
+					 Color="#FF8C4B28" />
 	<SolidColorBrush x:Key="ImportantTypesBadgeBackground"
 					 Color="#FFEEEEEE" />
 </ResourceDictionary>

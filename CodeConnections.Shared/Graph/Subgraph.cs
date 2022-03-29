@@ -61,6 +61,26 @@ namespace CodeConnections.Graph
 			}
 		}
 
+		/// <summary>
+		/// Get all nodes belonging to one or more of <paramref name="inclusionCategories"/>.
+		/// </summary>
+		/// <returns>
+		/// A set containg all matching nodes. The returned instance is the property of the caller; they may safely mutate it, or iterate
+		/// over it whilst modifying category occupancy in the subgraph.
+		/// </returns>
+		private HashSet<NodeKey> GetNodesForCategories(IEnumerable<InclusionCategory> inclusionCategories)
+		{
+			var results = new HashSet<NodeKey>();
+			foreach (var category in inclusionCategories)
+			{
+				if (_nodesByCategory.TryGetValue(category, out var nodesForCategory))
+				{
+					results.UnionWith(nodesForCategory);
+				}
+			}
+			return results;
+		}
+
 		public bool IsInCategory(NodeKey node, InclusionCategory category)
 		{
 			if (_nodes.TryGetValue(node, out var categories))
@@ -106,7 +126,7 @@ namespace CodeConnections.Graph
 		/// </summary>
 		/// <remarks>
 		/// This overload should only be called for nodes that are known to *already* be included in the subgraph, because it skips the check as to
-		/// whether they should be included at all.
+		/// whether they should be included at all. Accordingly it does not need access to the full graph.
 		/// </remarks>
 		private (bool AddedToSubgraph, bool AddedToCategory) AddNodeUnderCategory(NodeKey node, InclusionCategory category)
 		{
@@ -122,6 +142,21 @@ namespace CodeConnections.Graph
 				{
 					_nodes[node] = currentCategories | category;
 					// Added to new category, already in subgraph
+
+					// Enforce single membership in mutually-exclusive sets
+					foreach (var categorySimple in category.Decompose())
+					{
+						foreach (var exclusiveSet in ExclusiveSets)
+						{
+							if (exclusiveSet.Contains(categorySimple))
+							{
+								foreach (var excludedCategory in exclusiveSet.Except(categorySimple))
+								{
+									RemoveNodeFromCategory(node, excludedCategory);
+								}
+							}
+						}
+					}
 					return (false, true);
 				}
 				else
@@ -148,7 +183,7 @@ namespace CodeConnections.Graph
 		/// </returns>
 		private (bool RemovedFromSubgraph, bool RemovedFromCategory) RemoveNodeFromCategory(NodeKey node, InclusionCategory category)
 		{
-			if (_nodes.TryGetValue(node, out var categories) /*&& (categories & category) != InclusionCategory.None*/)
+			if (_nodes.TryGetValue(node, out var categories))
 			{
 				foreach (var categorySimple in category.Decompose())
 				{
@@ -187,7 +222,7 @@ namespace CodeConnections.Graph
 		/// <param name="node"></param>
 		/// <param name="categoryToRemove"></param>
 		/// <returns></returns>
-		private bool RemoveNodeFromCategoryAndLeaveUnpinned(NodeKey node, InclusionCategory categoryToRemove/*, NodeGraph fullGraph*/)
+		private bool RemoveNodeFromCategoryAndLeaveUnpinned(NodeKey node, InclusionCategory categoryToRemove)
 		{
 			if (_nodes.TryGetValue(node, out var currentCategories))
 			{
@@ -212,11 +247,22 @@ namespace CodeConnections.Graph
 			return false;
 		}
 
+		private bool RemoveNodeFromCategories(NodeKey node, IEnumerable<InclusionCategory> categories)
+		{
+			var removed = false;
+			foreach (var category in categories)
+			{
+				var result = RemoveNodeFromCategory(node, category);
+				removed |= result.RemovedFromSubgraph;
+			}
+			return removed;
+		}
+
 		/// <summary>
 		/// Add <paramref name="nodeKey"/> as a pinned node. If it's currently present and not pinned, pin it.
 		/// </summary>
 		/// <returns>True if the node was added to pinned nodes (and was not already pinned), false otherwise.</returns>
-		private bool AddPinnedNode(NodeKey nodeKey, NodeGraph nodeGraph) 
+		private bool AddPinnedNode(NodeKey nodeKey, NodeGraph nodeGraph)
 			=> AddNodeUnderCategory(nodeKey, InclusionCategory.Pinned, nodeGraph).AddedToCategory;
 
 		/// <summary>
@@ -264,6 +310,43 @@ namespace CodeConnections.Graph
 
 		public bool IsPinned(NodeKey node) => IsInCategory(node, InclusionCategory.Pinned);
 
+		public Importance GetImportance(NodeKey node)
+		{
+			if (IsInCategory(node, InclusionCategory.ImportanceHigh))
+			{
+				return Importance.High;
+			}
+			else if (IsInCategory(node, InclusionCategory.ImportanceIntermediate))
+			{
+				return Importance.Intermediate;
+			}
+			else if (IsInCategory(node, InclusionCategory.ImportanceLow))
+			{
+				return Importance.Low;
+			}
+			else
+			{
+				return Importance.None;
+			}
+		}
+
+		/// <summary>
+		/// Defines sets of mutually exclusive categories, ie for a given set, a node can belong to at most one of the categories within
+		/// the set.
+		/// </summary>
+		private static ICollection<InclusionCategory>[] ExclusiveSets { get; } = new ICollection<InclusionCategory>[]
+		{
+			IsPinnedSet,
+			ImportanceSet
+		};
+
+		private static ICollection<InclusionCategory>? _isPinnedSet;
+		public static ICollection<InclusionCategory> IsPinnedSet =>
+			_isPinnedSet ??= new[] { InclusionCategory.Pinned, InclusionCategory.Unpinned };
+
+		private static ICollection<InclusionCategory>? _importanceSet;
+		public static ICollection<InclusionCategory> ImportanceSet =>
+			_importanceSet ??= new[] { InclusionCategory.ImportanceLow, InclusionCategory.ImportanceIntermediate, InclusionCategory.ImportanceHigh };
 		/// <summary>
 		/// Describes the reason(s) for a node to be included in the subgraph.
 		/// </summary>
@@ -296,9 +379,17 @@ namespace CodeConnections.Graph
 			/// </summary>
 			GitChanges = 1 << 4,
 			/// <summary>
-			/// The node is deemed an important type, and the corresponding mode is enabled.
+			/// The node is deemed important (low), and the corresponding mode is enabled.
 			/// </summary>
-			ImportantType = 1 << 5,
+			ImportanceLow = 1 << 5,
+			/// <summary>
+			/// The node is deemed important (intermediate), and the corresponding mode is enabled.
+			/// </summary>
+			ImportanceIntermediate = 1 << 6,
+			/// <summary>
+			/// The node is deemed important (high), and the corresponding mode is enabled.
+			/// </summary>
+			ImportanceHigh = 1 << 7,
 		}
 	}
 }

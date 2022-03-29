@@ -15,7 +15,7 @@
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="Colors.xaml" />
 		<ResourceDictionary Source="Effects.xaml" />
-		
+
 		<ResourceDictionary Source="CheckBox.xaml" />
 		<ResourceDictionary Source="ContextMenu.xaml" />
 		<ResourceDictionary Source="MenuItem.xaml" />
@@ -41,6 +41,10 @@
 	<converters:WordTruncateConverter x:Key="TypeNameTruncateConverter"
 									  CharacterLimit="50" />
 	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	<converters:ImportanceToBrushConverter x:Key="ImportanceToBrushConverter"
+										   Gold="{StaticResource ImportantTypesIconBrushGold}"
+										   Silver="{StaticResource ImportantTypesIconBrushSilver}"
+										   Bronze="{StaticResource ImportantTypesIconBrushBronze}" />
 
 	<Style TargetType="{x:Type graphControls:VertexControl}">
 		<Setter Property="Template">
@@ -111,10 +115,10 @@
 						</Border.ContextMenu>
 						<StackPanel Orientation="Horizontal"
 									DataContext="{TemplateBinding Vertex}">
-							
+
 							<TextBlock Text="{Binding DisplayString, Converter={StaticResource TypeNameTruncateConverter}}"
 									   FontSize="16" />
-							
+
 							<CheckBox x:Name="PinCheckBox"
 									  Style="{StaticResource PinCheckBoxStyle}"
 									  Foreground="{TemplateBinding Foreground}"
@@ -123,7 +127,7 @@
 									  ToolTip="{Binding IsPinned, Converter={StaticResource IsPinnedToMessageConverter}}"
 									  ext:ToggleButtonExtensions.ToggleCommand="{Binding ParentContext.TogglePinnedCommand}"
 									  ext:ToggleButtonExtensions.ToggleCommandParameter="{Binding}" />
-							
+
 							<Grid x:Name="GitStatusContainer"
 								  Margin="0,-8,-5,0"
 								  HorizontalAlignment="Right"
@@ -139,7 +143,7 @@
 								<Ellipse Width="20"
 										 Height="20"
 										 Fill="{TemplateBinding Foreground}"
-										 Effect="{StaticResource BadgeDropShadowEffect}"/>
+										 Effect="{StaticResource BadgeDropShadowEffect}" />
 								<Path HorizontalAlignment="Center"
 									  VerticalAlignment="Center"
 									  Opacity="0.7"
@@ -162,7 +166,7 @@
 								<Path HorizontalAlignment="Center"
 									  VerticalAlignment="Center"
 									  Opacity="0.7"
-									  Fill="{StaticResource ImportantTypesIconBrush}"
+									  Fill="{Binding Importance, Converter={StaticResource ImportanceToBrushConverter}}"
 									  Data="{StaticResource ImportantTypesIconPathData}" />
 							</Grid>
 						</StackPanel>

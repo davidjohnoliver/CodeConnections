@@ -13,7 +13,7 @@ namespace CodeConnections.Extensions
 {
 	public static class NodeExtensions
 	{
-		public static DisplayNode ToDisplayNode(this Node node, bool isPinned, bool isImportant, object? parentContext) => new DisplayNode(
+		public static DisplayNode ToDisplayNode(this Node node, bool isPinned, Importance importance, object? parentContext) => new DisplayNode(
 			ToDisplayString(node),
 			node.Key,
 			(node as TypeNode)?.FilePath,
@@ -21,7 +21,7 @@ namespace CodeConnections.Extensions
 			node.GitStatus,
 			(node as TypeNode)?.Project?.ProjectName,
 			(node as TypeNode)?.LineCount ?? 0,
-			isImportant,
+			importance,
 			parentContext
 		);
 

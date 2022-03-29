@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using CodeConnections.Collections;
 using CodeConnections.Utilities;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace CodeConnections.Graph
 
 		}
 
-		public abstract IEnumerable<NodeKey> GetImportantTypes(NodeGraph fullGraph, IntOrAuto noRequested);
+		public abstract IEnumerable<(NodeKey, Importance)> GetImportantTypes(NodeGraph fullGraph, IntOrAuto noRequested);
 
 		private int GetAutoNodesCount(NodeGraph fullGraph)
 		{
@@ -52,12 +53,47 @@ namespace CodeConnections.Graph
 			return classifier;
 		}
 
-		private abstract class SimpleClassifier : ImportantTypesClassifier
+		protected const double GoldFraction = 0.2;
+		protected const double SilverFraction = 0.4;
+
+		private abstract class SimpleClassifier : ImportantTypesClassifier, IScoreProvider
 		{
-			public override sealed IEnumerable<NodeKey> GetImportantTypes(NodeGraph fullGraph, IntOrAuto noRequested)
-				=> fullGraph.Nodes.Values.OrderByDescending(n => GetScore(n)).Select(n => n.Key).Take(GetNodesRequestedFromAuto(fullGraph, noRequested));
+			public override sealed IEnumerable<(NodeKey, Importance)> GetImportantTypes(NodeGraph fullGraph, IntOrAuto noRequested)
+			{
+				var importantTypes = fullGraph.Nodes.Values
+					.OrderByDescending(n => GetScore(n))
+					.Select(n => n.Key)
+					.Take(GetNodesRequestedFromAuto(fullGraph, noRequested))
+					.ToList();
+
+				var golds = (int)(GoldFraction * importantTypes.Count);
+				var goldsAndsilvers = (int)((GoldFraction + SilverFraction) * importantTypes.Count);
+				var values = new CollectionDictionary<Importance, NodeKey>();
+
+				for (int i = 0; i < golds; i++)
+				{
+					values[Importance.High].Add(importantTypes[i]);
+				}
+
+				for (int i = golds; i < goldsAndsilvers; i++)
+				{
+					values[Importance.Intermediate].Add(importantTypes[i]);
+				}
+
+				for (int i = goldsAndsilvers; i < importantTypes.Count; i++)
+				{
+					values[Importance.Low].Add(importantTypes[i]);
+				}
+
+				return values.SelectMany(kvp => kvp.Value.Select(n => (n, kvp.Key)));
+			}
 
 			public abstract double GetScore(Node node);
+		}
+
+		protected interface IScoreProvider
+		{
+			double GetScore(Node node);
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace CodeConnections.Extensions
 
 		public static IBidirectionalGraph<DisplayNode, DisplayEdge> GetDisplaySubgraph(this NodeGraph nodeGraph, IEnumerable<Node> subgraphNodes)
 		{
-			var displayNodes = subgraphNodes.ToDictionary(n => n, n => n.ToDisplayNode(false, false, null));
+			var displayNodes = subgraphNodes.ToDictionary(n => n, n => n.ToDisplayNode(false, Importance.None, null));
 			return GetDisplaySubgraph(nodeGraph, subgraphNodes, displayNodes);
 		}
 
@@ -35,7 +35,7 @@ namespace CodeConnections.Extensions
 			var displayNodes = subgraphNodes.ToDictionary(n => n,
 				n => n.ToDisplayNode(
 					subgraph.IsPinned(n.Key),
-					subgraph.IsInCategory(n.Key, Subgraph.InclusionCategory.ImportantType),
+					subgraph.GetImportance(n.Key),
 					parentContext
 				)
 			);

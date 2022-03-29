@@ -25,5 +25,16 @@ namespace CodeConnections.Extensions
 		}
 
 		public static bool None<T>(this IEnumerable<T> enumerable) => !enumerable.Any();
+
+		public static IEnumerable<T> Except<T>(this IEnumerable<T> enumerable, T excludedValue)
+		{
+			foreach (var t in enumerable)
+			{
+				if (!Equals(t, excludedValue))
+				{
+					yield return t;
+				}
+			}
+		}
 	}
 }

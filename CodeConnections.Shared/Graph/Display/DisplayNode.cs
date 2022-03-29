@@ -28,8 +28,10 @@ namespace CodeConnections.Graph.Display
 		private GitStatus? _gitStatus;
 		public GitStatus? GitStatus { get => _gitStatus; set => OnValueSet(ref _gitStatus, value); }
 
-		private bool _isImportant;
-		public bool IsImportant { get => _isImportant; set => OnValueSet(ref _isImportant, value); }
+		private Importance _importance;
+		public Importance Importance { get => _importance; set => OnValueSet(ref _importance, value); }
+
+		public bool IsImportant => _importance != Importance.None;
 
 		private int _linesOfCode;
 		public int LinesOfCode { get => _linesOfCode; set => OnValueSet(ref _linesOfCode, value); }
@@ -42,7 +44,7 @@ namespace CodeConnections.Graph.Display
 			GitStatus? gitStatus,
 			string? containingProject,
 			int linesOfCode,
-			bool isImportant,
+			Importance importance,
 			object? parentContext
 		)
 		{
@@ -54,7 +56,7 @@ namespace CodeConnections.Graph.Display
 			ContainingProject = containingProject;
 			GitStatus = gitStatus;
 			LinesOfCode = linesOfCode;
-			IsImportant = isImportant;
+			Importance = importance;
 		}
 
 		public override bool Equals(object obj) => obj is DisplayNode otherNode && otherNode.DisplayString == DisplayString && otherNode.Key == Key && otherNode.GitStatus == GitStatus && otherNode.IsPinned == IsPinned;
@@ -73,7 +75,7 @@ namespace CodeConnections.Graph.Display
 
 			IsPinned = updateTemplate.IsPinned;
 			GitStatus = updateTemplate.GitStatus;
-			IsImportant = updateTemplate.IsImportant;
+			Importance = updateTemplate.Importance;
 			LinesOfCode = updateTemplate.LinesOfCode;
 		}
 	}

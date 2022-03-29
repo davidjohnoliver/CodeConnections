@@ -12,6 +12,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Additions\IsExternalInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Additions\NullableAttributes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Additions\Range.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\CollectionDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\DistinctList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\ISelectionCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\SelectionCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\SelectionList.cs" />
@@ -30,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\FileStatusExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ImmutableArrayExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ImportanceExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ListExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\NamedTypeSymbolExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\NodeExtensions.cs" />
@@ -49,6 +52,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Git\GitStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\GraphUpdateManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\CyclicCluster.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Importance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\ImportantTypesClassifier.Blend.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\ImportantTypesClassifier.Dependencies.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\ImportantTypesClassifier.Dependents.cs" />
@@ -82,6 +86,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GraphLayoutModeLayoutAlgorithmConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GraphLayoutModeTooltipConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GraphLayoutModeMonikerConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\ImportanceToBrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\ImportantTypesModeToDescriptionConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\IncludeActiveModeToDescriptionConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\MultiValueConverter.cs" />

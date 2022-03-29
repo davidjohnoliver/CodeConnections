@@ -61,7 +61,7 @@ namespace CodeConnections.Graph
 
 		public static Operation AddAllInSolutionOp(NodeKey _) => new AddAllInSolutionOperation();
 
-		public static Operation UpdateImportantTypesOp(Func<NodeGraph, IntOrAuto, IEnumerable<NodeKey>> retrieveImportantTypes, IntOrAuto typesRequested) => new UpdateImportantTypesOperation(retrieveImportantTypes, typesRequested);
+		public static Operation UpdateImportantTypesOp(Func<NodeGraph, IntOrAuto, IEnumerable<(NodeKey, Importance)>> retrieveImportantTypes, IntOrAuto typesRequested) => new UpdateImportantTypesOperation(retrieveImportantTypes, typesRequested);
 
 		/// <summary>
 		/// An operation to 'sanitize' the subgraph by removing any nodes that aren't found in the full <see cref="NodeGraph"/>.
@@ -472,10 +472,10 @@ namespace CodeConnections.Graph
 
 		private class UpdateImportantTypesOperation : SyncOperation
 		{
-			private readonly Func<NodeGraph, IntOrAuto, IEnumerable<NodeKey>> _retrieveImportantTypes;
+			private readonly Func<NodeGraph, IntOrAuto, IEnumerable<(NodeKey Node, Importance Importance)>> _retrieveImportantTypes;
 			private readonly IntOrAuto _typesRequested;
 
-			public UpdateImportantTypesOperation(Func<NodeGraph, IntOrAuto, IEnumerable<NodeKey>> retrieveImportantTypes, IntOrAuto typesRequested)
+			public UpdateImportantTypesOperation(Func<NodeGraph, IntOrAuto, IEnumerable<(NodeKey, Importance)>> retrieveImportantTypes, IntOrAuto typesRequested)
 			{
 				_retrieveImportantTypes = retrieveImportantTypes;
 				_typesRequested = typesRequested;
@@ -483,21 +483,21 @@ namespace CodeConnections.Graph
 			protected override bool Apply(Subgraph subgraph, NodeGraph fullGraph)
 			{
 				var modified = false;
-				var newImportantTypes = _retrieveImportantTypes(fullGraph, _typesRequested).ToHashSet();
-				foreach (var old in subgraph.GetNodesForCategory(InclusionCategory.ImportantType))
+
+				var potentiallyNotImportant = subgraph.GetNodesForCategories(Subgraph.ImportanceSet);
+				foreach (var tpl in _retrieveImportantTypes(fullGraph, _typesRequested))
 				{
-					if (!newImportantTypes.Contains(old))
-					{
-						var result = subgraph.RemoveNodeFromCategory(old, InclusionCategory.ImportantType);
-						modified |= result.RemovedFromSubgraph;
-					}
+					var result = subgraph.AddNodeUnderCategory(tpl.Node, tpl.Importance.ToInclusionCategory());
+					modified |= result.AddedToSubgraph;
+					potentiallyNotImportant.Remove(tpl.Node);
 				}
 
-				foreach (var newType in newImportantTypes)
+				foreach (var noLongerImportant in potentiallyNotImportant)
 				{
-					var result = subgraph.AddNodeUnderCategory(newType, InclusionCategory.ImportantType);
-					modified |= result.AddedToSubgraph;
+					var result = subgraph.RemoveNodeFromCategories(noLongerImportant, Subgraph.ImportanceSet);
+					modified |= result;
 				}
+
 				return modified;
 			}
 		}

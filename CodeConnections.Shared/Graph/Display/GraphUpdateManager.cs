@@ -586,7 +586,7 @@ namespace CodeConnections.Graph.Display
 					_currentUpdateState = UpdateState.UpdatingImportantTypes;
 					if (ImportantTypesMode == ImportantTypesMode.None)
 					{
-						TryClearCategory(Subgraph.InclusionCategory.ImportantType, false);
+						TryClearCategories(Subgraph.ImportanceSet, false);
 					}
 					else
 					{
@@ -863,6 +863,14 @@ namespace CodeConnections.Graph.Display
 					Subgraph.ClearCategoryAndLeaveUnpinnedOp(category) :
 					Subgraph.ClearCategoryOp(category);
 				ModifySubgraph(op);
+			}
+		}
+
+		private void TryClearCategories(IEnumerable<Subgraph.InclusionCategory> categories, bool leaveUnpinned)
+		{
+			foreach (var category in categories)
+			{
+				TryClearCategory(category, leaveUnpinned);
 			}
 		}
 
