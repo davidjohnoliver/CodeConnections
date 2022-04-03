@@ -29,6 +29,12 @@ using _IDisplayGraph = QuickGraph.IBidirectionalGraph<CodeConnections.Graph.Disp
 
 namespace CodeConnections.Presentation
 {
+	/// <summary>
+	/// View model for the main tool window.
+	/// </summary>
+	/// <remarks>
+	/// For instructions for adding a new serialized user setting, see <see cref="DialogUserSettingsService"/>.
+	/// </remarks>
 	internal sealed class DependencyGraphToolWindowViewModel : ViewModelBase, IDisposable
 	{
 		private readonly IDocumentsService _documentsService;
@@ -115,18 +121,17 @@ namespace CodeConnections.Presentation
 			{
 				if (OnValueSet(ref _isImportantTypesModeEnabled, value))
 				{
-					//_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { IsImportantTypesModeEnabled = value }); // TODO: should be project settings, no? // But the *mode* should indeed be user settings!
 					UpdateImportantTypesMode(true);
 				}
 			}
 		}
 
 		/// <summary>
-		/// The 'real' value of ImportantTypesMode. This is always equal to the last chosen of either active-only or active-plus-connections, 
-		/// whereas SelectedImportantTypesMode may be nulled out to facilitate the behaviour that making a selection in the combo box reactivates 
+		/// The 'real' value of ImportantTypesMode. This is always equal to the last chosen mode,
+		/// whereas SelectedImportantTypesMode may be nulled out to facilitate the behaviour that making a selection in the combo box reactivates
 		/// IsImportantTypesModeEnabled.
 		/// </summary>
-		private ImportantTypesMode _implicitImportantTypesMode;
+		private ImportantTypesMode _implicitImportantTypesMode = ImportantTypesMode.HouseBlend; // Default before loading solution settings
 
 		private ImportantTypesMode? _selectedImportantTypesMode;
 		public ImportantTypesMode? SelectedImportantTypesMode
@@ -139,7 +144,6 @@ namespace CodeConnections.Presentation
 					if (value is { } selection)
 					{
 						_implicitImportantTypesMode = selection;
-						//_userSettingsService.ApplySettings(_userSettingsService.GetSettings() with { ImportantTypesMode = selection }); // TODO now
 						IsImportantTypesModeEnabled = true;
 					}
 					UpdateImportantTypesMode(false);
@@ -483,6 +487,22 @@ namespace CodeConnections.Presentation
 				IncludePureGenerated = settings.IncludeGeneratedTypes;
 				IsGitModeEnabled = settings.IsGitModeEnabled;
 				IncludeNestedTypes = settings.IncludeNestedTypes;
+				IsImportantTypesModeEnabled = settings.IsImportantTypesModeEnabled;
+				if (settings.ImportantTypesMode != ImportantTypesMode.None) // May be None when upgrading
+				{
+					if (IsImportantTypesModeEnabled)
+					{
+						SelectedImportantTypesMode = settings.ImportantTypesMode;
+					}
+					else
+					{
+						_implicitImportantTypesMode = settings.ImportantTypesMode;
+					}
+				}
+				if (settings.NumberOfImportantTypesRequested.Value != 0) // May be 0 when upgrading
+				{
+					NumberOfImportantTypesRequested = settings.NumberOfImportantTypesRequested;
+				}
 			}
 			_excludedProjects = settings?.ExcludedProjects;
 			UpdateProjects();
@@ -504,7 +524,17 @@ namespace CodeConnections.Presentation
 
 		private void OnSolutionSettingsSaving()
 		{
-			_solutionSettingsService.SaveSolutionSettings(new PersistedSolutionSettings(IncludePureGenerated, IsGitModeEnabled, _excludedProjects, IncludeNestedTypes));
+			_solutionSettingsService.SaveSolutionSettings(
+					new PersistedSolutionSettings(
+						IncludePureGenerated,
+						IsGitModeEnabled,
+						_excludedProjects,
+						IncludeNestedTypes,
+						IsImportantTypesModeEnabled,
+						_implicitImportantTypesMode,
+						NumberOfImportantTypesRequested
+					)
+				);
 		}
 
 		private void OnSolutionChanged()

@@ -115,7 +115,7 @@ namespace CodeConnections.Graph.Display
 
 		public int MaxAutomaticallyLoadedNodes { get; set; }
 
-		private IntOrAuto _numberOfImportantTypesRequested = IntOrAuto.Auto; // TODO now - make this a setting
+		private IntOrAuto _numberOfImportantTypesRequested = IntOrAuto.Auto; // Default before loading solution settings
 		public IntOrAuto NumberOfImportantTypesRequested
 		{
 			get => _numberOfImportantTypesRequested;

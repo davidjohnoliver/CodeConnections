@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,10 @@ namespace CodeConnections.Graph
 {
 	public struct IntOrAuto
 	{
+		[JsonProperty]
 		public int Value { get; }
+
+		[JsonProperty]
 		public bool IsAuto { get; private init; }
 
 		public IntOrAuto(int value)
