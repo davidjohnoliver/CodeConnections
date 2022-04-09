@@ -101,7 +101,7 @@
 						  x:Name="ImportantTypesCheckBox"
 						  HorizontalAlignment="Left"
 						  Margin="3"
-						  ToolTip="Key Classes Mode"
+						  ToolTip="Top Types Mode"
 						  IsChecked="{Binding IsImportantTypesModeEnabled}">
 					<StackPanel Orientation="Horizontal">
 						<Path Width="16"
@@ -199,7 +199,7 @@
 							  ToolTip="Include nested classes?"
 							  IsChecked="{Binding IncludeNestedTypes, Mode=TwoWay}" />
 					<TextBlock Grid.Row="5"
-							   Text="Number of key classes to show"
+							   Text="Number of top types to show"
 							   Margin="0,12,0,0" />
 					<ComboBox Grid.Row="6"
 							  Margin="0,2,0,0"

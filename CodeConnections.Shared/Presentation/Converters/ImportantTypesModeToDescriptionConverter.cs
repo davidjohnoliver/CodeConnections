@@ -12,10 +12,10 @@ namespace CodeConnections.Presentation.Converters
 	{
 		protected override string ConvertInner(ImportantTypesMode value, object parameter, CultureInfo culture) => value switch
 		{
-			ImportantTypesMode.HouseBlend => "House Blend - Show key classes according to a combined score",
-			ImportantTypesMode.MostDependents => "Show classes with the most direct dependents (heavily-used classes)",
-			ImportantTypesMode.MostDependencies => "Show types with the most direct dependencies (functionality-dense classes)",
-			ImportantTypesMode.MostLOC => "Show types with the most lines of code",
+			ImportantTypesMode.HouseBlend => "Show top types by combined score",
+			ImportantTypesMode.MostDependents => "Show top types by direct dependents (classes used a lot)",
+			ImportantTypesMode.MostDependencies => "Show top types by direct dependencies (classes doing a lot)",
+			ImportantTypesMode.MostLOC => "Show top types by lines of code",
 			_ => ""
 		};
 
