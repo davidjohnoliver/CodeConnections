@@ -20,6 +20,23 @@ namespace CodeConnections.Presentation
 		private Dictionary<string, List<Action>>? _propertyCallbacks;
 
 		/// <summary>
+		/// Used as an optimization to avoid raising PropertyChanged for <see cref="Self"/> if it's unused.
+		/// </summary>
+		private bool _isSelfPropertyConsumed;
+
+		/// <summary>
+		/// A binding-friendly reference to the instance itself, for which <see cref="PropertyChanged"/> will be raised when any known properties change.
+		/// </summary>
+		public ViewModelBase Self
+		{
+			get
+			{
+				_isSelfPropertyConsumed = true;
+				return this;
+			}
+		}
+
+		/// <summary>
 		/// Call from a bindable property to raise the <see cref="PropertyChanged"/> event when needed.
 		/// </summary>
 		/// <param name="currentValue">Pass the backing field here.</param>
@@ -62,6 +79,11 @@ namespace CodeConnections.Presentation
 				{
 					callback?.Invoke();
 				}
+			}
+
+			if (_isSelfPropertyConsumed)
+			{
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Self)));
 			}
 		}
 
