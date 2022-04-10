@@ -63,6 +63,14 @@ namespace CodeConnections.Graph
 				{
 					CalculateCombinedScore(score);
 				}
+				// 3.1 Save combined scores for later use
+				foreach (var score in allScores)
+				{
+					if (fullGraph.Nodes.TryGetValue(score.Node, out var node))
+					{
+						node.SubgraphValues.CombinedScore = score.Scores[ScoreCategory.Combined];
+					}
+				}
 				// 4. Populate importance buckets, allotting by category according to category proportions
 				var noRequested = GetNodesRequestedFromAuto(fullGraph, nodesRequested);
 				noRequested = Math.Min(noRequested, allScores.Count);

@@ -12,7 +12,7 @@ namespace CodeConnections.Graph
 	/// <summary>
 	/// A node in the dependency graph.
 	/// </summary>
-	public abstract class Node
+	public abstract partial class Node
 	{
 		private readonly HashSet<Link> _forwardLinks = new();
 		private readonly HashSet<Link> _backLinks = new();
@@ -47,6 +47,13 @@ namespace CodeConnections.Graph
 		public IList<string> AssociatedFiles { get; } = new List<string>(1);
 
 		public GitStatus GitStatus { get; set; }
+
+		private SubgraphState? _subgraphState;
+		/// <summary>
+		/// Values set by subgraph operations. Values within are not guaranteed to be fresh or set at all except in a display context, and
+		/// then only when the corresponding subgraph inclusion condition can be inferred to be active.
+		/// </summary>
+		public SubgraphState SubgraphValues => _subgraphState ??= new();
 
 		/// <summary>
 		/// Add <paramref name="forwardLink"/> as a new dependency of this node, setting this node as a dependent on <paramref name="forwardLink"/> 

@@ -22,6 +22,9 @@ namespace CodeConnections.Extensions
 			(node as TypeNode)?.Project?.ProjectName,
 			(node as TypeNode)?.LineCount ?? 0,
 			importance,
+			node.BackLinks.Count,
+			node.ForwardLinks.Count,
+			node.SubgraphValues.CombinedScore,
 			parentContext
 		);
 

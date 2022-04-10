@@ -36,6 +36,15 @@ namespace CodeConnections.Graph.Display
 		private int _linesOfCode;
 		public int LinesOfCode { get => _linesOfCode; set => OnValueSet(ref _linesOfCode, value); }
 
+		private int _numberOfDependents;
+		public int NumberOfDependents { get => _numberOfDependents; set => OnValueSet(ref _numberOfDependents, value); }
+
+		private int _numberOfDependencies;
+		public int NumberOfDependencies { get => _numberOfDependencies; set => OnValueSet(ref _numberOfDependencies, value); }
+
+		private double _combinedImportanceScore;
+		public double CombinedImportanceScore { get => _combinedImportanceScore; set => OnValueSet(ref _combinedImportanceScore, value); }
+
 		public DisplayNode(
 			string displayString,
 			NodeKey key,
@@ -45,6 +54,9 @@ namespace CodeConnections.Graph.Display
 			string? containingProject,
 			int linesOfCode,
 			Importance importance,
+			int numberOfDependents,
+			int numberOfDependencies,
+			double CombinedImportanceScore,
 			object? parentContext
 		)
 		{
@@ -57,6 +69,9 @@ namespace CodeConnections.Graph.Display
 			GitStatus = gitStatus;
 			LinesOfCode = linesOfCode;
 			Importance = importance;
+			_numberOfDependents = numberOfDependents;
+			_numberOfDependencies = numberOfDependencies;
+			_combinedImportanceScore = CombinedImportanceScore;
 		}
 
 		public override bool Equals(object obj) => obj is DisplayNode otherNode && otherNode.DisplayString == DisplayString && otherNode.Key == Key && otherNode.GitStatus == GitStatus && otherNode.IsPinned == IsPinned;
@@ -77,6 +92,9 @@ namespace CodeConnections.Graph.Display
 			GitStatus = updateTemplate.GitStatus;
 			Importance = updateTemplate.Importance;
 			LinesOfCode = updateTemplate.LinesOfCode;
+			NumberOfDependents = updateTemplate.NumberOfDependents;
+			NumberOfDependencies = updateTemplate.NumberOfDependencies;
+			CombinedImportanceScore = updateTemplate.CombinedImportanceScore;
 		}
 	}
 }

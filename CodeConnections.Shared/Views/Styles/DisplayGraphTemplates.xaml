@@ -45,6 +45,7 @@
 										   Gold="{StaticResource ImportantTypesIconBrushGold}"
 										   Silver="{StaticResource ImportantTypesIconBrushSilver}"
 										   Bronze="{StaticResource ImportantTypesIconBrushBronze}" />
+	<converters:DisplayNodeImportanceTooltipConverter x:Key="DisplayNodeImportanceTooltipConverter" />
 
 	<Style TargetType="{x:Type graphControls:VertexControl}">
 		<Setter Property="Template">
@@ -156,9 +157,13 @@
 								  HorizontalAlignment="Right"
 								  VerticalAlignment="Top"
 								  Visibility="{Binding IsImportant, Converter={StaticResource BooleanToVisibilityConverter}}">
-								<!--TODO: Tooltip should show relevant info (# dependencies, LOC etc)-->
+								<Grid.ToolTip>
+									<MultiBinding Converter="{StaticResource DisplayNodeImportanceTooltipConverter}">
+										<Binding Path="ParentContext.SelectedImportantTypesMode" />
+										<Binding Path="Self" />
+									</MultiBinding>
+								</Grid.ToolTip>
 
-								<!--Inverted colouring relative to rest of the node-->
 								<Ellipse Width="20"
 										 Height="20"
 										 Fill="{StaticResource ImportantTypesBadgeBackground}"

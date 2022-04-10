@@ -62,6 +62,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graph\ImportantTypesMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\LinkType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Node.SubgraphState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\NodeGraph.Builder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Node.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\NodeGraph.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DebugConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayNodeGitIndicatorVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayNodeImportanceTooltipConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusPathConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusTooltipConverter.cs" />
