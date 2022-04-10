@@ -19,10 +19,6 @@ namespace CodeConnections.Presentation.Converters
 			if (value.HasFlag(New) && value.HasFlag(Modified) && ModifiedAndNewFileData is { } modifiedAndNew)
 			{
 				return modifiedAndNew;
-				//if (!ModifiedAndNewFileData?.Equals(default(T)) ?? false)
-				//{
-				//	return 
-				//}
 			}
 			if (value.HasFlag(New))
 			{

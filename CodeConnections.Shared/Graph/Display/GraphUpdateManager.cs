@@ -487,12 +487,14 @@ namespace CodeConnections.Graph.Display
 		}
 
 		/// <summary>
-		/// The main update routine. This consists of different phases (as defined by <see cref="UpdateState"/>) which will be run as needed, as determined when the phase is reached.
+		/// The main update routine. This consists of different phases (as defined by <see cref="UpdateState"/>) which will be run as needed,
+		/// as determined when the phase is reached.
 		/// 
-		/// There should only ever be at most one active (ie not cancelled) Update in flight at one time. We can enforce this because the entry point is only ever called on the main thread.
+		/// There should only ever be at most one active (ie not cancelled) Update in flight at one time. We can enforce this because the
+		/// entry point is only ever called on the main thread.
 		/// </summary>
 		/// <param name="waitForIdle">
-		/// Whether the update should wait for an idle state before proceeding. 
+		/// Whether the update should wait for an idle state before proceeding.
 		/// 
 		/// Even when true, this may be interrupted by subsequent invalidations that require an immediate update.
 		/// </param>
