@@ -1,6 +1,6 @@
 # Code Connections for Visual Studio
 
-See the connections in your C# code. Open any class, and see its dependencies (the other types in your solution it refers to) and dependents (the types that refer to it) mapped out as a graph. Make changes to your code and the graph updates on the fly. You can use Code Connections to understand your code, to organise source control changes, or just as a navigation tool.
+See the connections in your C# code. Open any class, and see its dependencies (the other types in your solution it refers to) and dependents (the types that refer to it) mapped out as a graph. Make changes to your code and the graph updates on the fly. You can use Code Connections to gain new  insights into your code, to orient yourself in an unfamiliar codebase, to organise source control changes, as a navigation tool, and more.
 
 ![Code Connections graph](doc/assets/Graph-CC-1.png)
 
@@ -16,9 +16,7 @@ Visual Studio 2022 for Windows
 
 3. Under `View > Other Windows`, select the `Code Connections Graph` window.
 
-## The dependency graph
-
-The Graph window is where the action happens. Here you can visualize the dependency relationships between types in your solution.
+The Graph window is where all the action happens. Here you can visualize the dependency relationships between the types in your solution. You can add types manually, automatically, or both at once.
 
 ## Adding elements to the graph
 
@@ -48,15 +46,34 @@ Right-clicking an element brings up a context menu with more options:
  * **Add all subtypes derived from type** will add all the types that directly or indirectly derive from the type: if it's a class, all the classes that inherit from it, or if it's an interface, all the types that directly or indirectly implement it.
  * **Add direct subtypes of type** will add all the types that directly derive from the type: the immediate derived classes of a class, or the types that directly implement an interface.
  * **Add all types in project** will add all the types in the same project as the current element.
- * **Add all types in solution** will add all  types in the solution (and match the current filter settings) to the graph. For large solutions, this may take a very long time to render!
+ * **Add all types in solution** will add all types in the solution (and match the current filter settings) to the graph. For large solutions, this may take a very long time to render!
 
 ### Clear Graph
 
 The Clear Graph button will clear all pinned elements and any custom inclusion modes like Git Mode. If 'Always include active document' is enabled, the active document and its connections will be kept.
 
+## Top Types Mode
+
+Enabling Top Types mode gives you a high-level overview of a solution. It automatically adds top-ranked types to the graph, as measured by one of several metrics.
+
+Use the dropdown to choose from the following metrics:
+
+ - **Number of dependents**
+ - **Number of dependencies**
+ - **Lines of code**
+ - **Combined score (default)**
+
+ Types with many direct dependents are consumed in many different parts of the code. Types with many dependencies tend to be 'doing a lot', and may for example contain important business logic. The Combined Score metric tries to combine the other metrics in a balanced way to show the overall most important types in the solution.
+
+The number of Top Types to show can be configured under the 'More Options' expander. The default is 'Auto' which scales according to the size of the solution.
+
+Top types in the graph are identified by a badge with a crown icon, which is colour-coded gold, silver or bronze according to how high the type scores on the selected metric.
+
+![Top types in Json.NET](doc/assets/Json_net-top-types.png)
+
 ## Git Mode
 
-Enabling Git Mode will automatically pin all locally modified types to the graph. When Git mode is enabled, an icon in the upper right corner of the element indicates if it is a new or modified file.
+Enabling Git mode will automatically add all locally modified types to the graph. When Git mode is enabled, a badge in the upper right corner of the element indicates if it is a new or modified file.
 
 ![Git mode](doc/assets/Graph-Git-mode.png)
 
