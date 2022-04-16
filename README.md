@@ -101,3 +101,19 @@ Additional options can be found under `Tools > Options > Code Connections`.
 
  * **Element warning threshold**: the tool will show a warning when the graph includes more than 100 elements, asking you to confirm that you really want to load them. This setting configures the number of elements that will be shown without any warning.
  * **Output verbosity**: You can disable log output from the tool entirely, or set to 'Diagnostic' to see all messages. 'Diagnostic' is primarily intended for debugging.
+
+<br/>
+
+---
+
+<br/>
+
+## Contribute to Code Connections
+
+### Report an issue
+
+If you encounter any issues with Code Connections, we welcome bug reports via https://github.com/davidjohnoliver/CodeConnections/issues. You can also submit feature requests and other feedback there, as well as upvote existing issues.
+
+### Contribute code
+
+Code Connections is open source software, and anyone is welcome to contribute. Best practice is to post a comment on any issue you're working on to communicate your intent, to avoid wasted effort on anyone's part.
