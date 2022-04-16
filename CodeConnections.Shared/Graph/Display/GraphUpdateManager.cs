@@ -442,7 +442,7 @@ namespace CodeConnections.Graph.Display
 			}
 
 			var ct = _updateSubscription.GetNewToken();
-			_joinableTaskFactory.RunAsync(async () =>
+			var _ = _joinableTaskFactory.RunAsync(async () =>
 			{
 
 				var displayGraph = await Update(waitForIdle, ct);

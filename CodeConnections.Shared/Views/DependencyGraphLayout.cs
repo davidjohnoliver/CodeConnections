@@ -80,7 +80,7 @@ namespace CodeConnections.Views
 			}
 
 #pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs - measuring low-level timing information
-			Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)CompleteTimer);
+			var _ = Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, (Action)CompleteTimer);
 #pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
 		}
 

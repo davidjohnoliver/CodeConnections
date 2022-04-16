@@ -60,11 +60,13 @@ namespace CodeConnections.Utilities
 		{
 			get
 			{
+				Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
 				return Seek(0, SeekOrigin.Current);
 			}
 
 			set
 			{
+				Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
 				Seek(value, SeekOrigin.Begin);
 			}
 		}

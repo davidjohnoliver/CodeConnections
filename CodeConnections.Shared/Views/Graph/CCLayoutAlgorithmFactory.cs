@@ -34,6 +34,7 @@ namespace CodeConnections.Views.Graph
 			{
 				switch (newAlgorithmType)
 				{
+#pragma warning disable CS8631 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match constraint type.
 					case "LinLog":
 						return new LinLogLayoutAlgorithm<TVertex, TEdge, TGraph>(context.Graph, 
 																				 context.Positions,
@@ -45,6 +46,7 @@ namespace CodeConnections.Views.Graph
 																							context.Positions,
 																							context.Sizes,
 																							RandomSeed);
+#pragma warning restore CS8631 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match constraint type.
 					default:
 						return null;
 				}

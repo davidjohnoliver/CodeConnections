@@ -87,9 +87,9 @@ namespace CodeConnections.VSIX
 		/// <param name="e">The event args.</param>
 		private void Execute(object sender, EventArgs e)
 		{
-			this.package.JoinableTaskFactory.RunAsync(async delegate
+			var _ = package.JoinableTaskFactory.RunAsync(async delegate
 			{
-				var window = await this.package.ShowToolWindowAsync(typeof(DependencyGraphToolWindow), 0, true, this.package.DisposalToken);
+				var window = await package.ShowToolWindowAsync(typeof(DependencyGraphToolWindow), 0, true, this.package.DisposalToken);
 				if ((null == window) || (null == window.Frame))
 				{
 					throw new NotSupportedException("Cannot create tool window");

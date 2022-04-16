@@ -19,7 +19,7 @@ namespace CodeConnections.Graph
 			Identifier = identifier;
 		}
 
-		public override bool Equals(object obj) => obj is TypeNodeKey other && Equals(Identifier, other.Identifier);
+		public override bool Equals(object? obj) => obj is TypeNodeKey other && Equals(Identifier, other.Identifier);
 
 		public override int GetHashCode() => Identifier.GetHashCode();
 

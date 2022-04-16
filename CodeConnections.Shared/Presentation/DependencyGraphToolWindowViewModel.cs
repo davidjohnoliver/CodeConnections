@@ -80,7 +80,7 @@ namespace CodeConnections.Presentation
 						// Don't try to open the currently-open file. (This can, eg, disrupt the 'diff' view being opened from the source control changes window.)
 						&& !PathUtils.AreEquivalent(value.FilePath, _documentsService.GetActiveDocument()))
 					{
-						_joinableTaskFactory.RunAsync(async () =>
+						var _ = _joinableTaskFactory.RunAsync(async () =>
 						{
 							await Dispatcher.Yield(); // Opening a file takes a noticeable delay, so give the visuals a chance to update first
 							if (SelectedNode == value)
@@ -576,7 +576,7 @@ namespace CodeConnections.Presentation
 
 		private void LogStats()
 		{
-			_joinableTaskFactory.RunAsync(async () =>
+			var _ = _joinableTaskFactory.RunAsync(async () =>
 			{
 				_outputService.WriteLine($"Gathering statistics for {Path.GetFileName(_solutionService.GetSolutionPath())}...");
 				_outputService.FocusOutput();
@@ -620,7 +620,7 @@ namespace CodeConnections.Presentation
 		{
 			var ct = _projectUpdatesRegistration.GetNewToken();
 			var solutionPath = _solutionService.GetSolutionPath();
-			_joinableTaskFactory.RunAsync(async () =>
+			var _ = _joinableTaskFactory.RunAsync(async () =>
 			{
 				var projects = await Task.Run(() => _roslynService.GetSortedProjects(), ct);
 				if (ct.IsCancellationRequested)

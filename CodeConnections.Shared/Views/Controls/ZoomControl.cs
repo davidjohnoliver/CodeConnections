@@ -1,4 +1,5 @@
-﻿// Imported from https://github.com/NinetailLabs/GraphSharp/blob/4831873c0465c0738adc94c7180a417352efeb58/Graph%23.Controls/Controls/Zoom/ZoomControl.cs
+﻿#nullable disable
+// Imported from https://github.com/NinetailLabs/GraphSharp/blob/4831873c0465c0738adc94c7180a417352efeb58/Graph%23.Controls/Controls/Zoom/ZoomControl.cs
 using System;
 using System.Windows;
 using System.Windows.Controls;
