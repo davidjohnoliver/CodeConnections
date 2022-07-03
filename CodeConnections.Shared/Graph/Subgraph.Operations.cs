@@ -57,6 +57,14 @@ namespace CodeConnections.Graph
 
 		public static Operation AddDirectInheritanceDependentsOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, true, LinkType.InheritsOrImplements);
 
+		public static Operation AddDirectDependenciesOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, false, null);
+
+		public static Operation AddDirectDependentsOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, true, null);
+
+		public static Operation AddIndirectDependenciesOp(NodeKey rootNode) => new AddDependencyOrDependentHierarchyOperation(rootNode, false, null);
+
+		public static Operation AddIndirectDependentsOp(NodeKey rootNode) => new AddDependencyOrDependentHierarchyOperation(rootNode, true, null);
+
 		public static Operation AddAllInSameProjectOp(NodeKey rootNode) => new AddAllInSameProjectOperation(rootNode);
 
 		public static Operation AddAllInSolutionOp(NodeKey _) => new AddAllInSolutionOperation();
@@ -115,6 +123,18 @@ namespace CodeConnections.Graph
 
 				return modified;
 			}
+		}
+
+		private class DelegateOperation : SyncOperation
+		{
+			private readonly Func<Subgraph, NodeGraph, bool> _operation;
+
+			public DelegateOperation(Func<Subgraph, NodeGraph, bool> operation)
+			{
+				_operation = operation ?? throw new ArgumentException();
+			}
+
+			protected override bool Apply(Subgraph subgraph, NodeGraph fullGraph) => _operation(subgraph, fullGraph);
 		}
 
 		private class AddPinnedOperation : Operation
@@ -335,9 +355,9 @@ namespace CodeConnections.Graph
 		{
 			private readonly NodeKey _rootNodeKey;
 			private readonly bool _isDependent;
-			private readonly LinkType _dependencyRelationship;
+			private readonly LinkType? _dependencyRelationship;
 
-			public AddDependencyOrDependentHierarchyOperation(NodeKey rootNodeKey, bool isDependent, LinkType dependencyRelationship)
+			public AddDependencyOrDependentHierarchyOperation(NodeKey rootNodeKey, bool isDependent, LinkType? dependencyRelationship)
 			{
 				_rootNodeKey = rootNodeKey;
 				_isDependent = isDependent;
@@ -371,7 +391,7 @@ namespace CodeConnections.Graph
 					var links = _isDependent ? current.BackLinks : current.ForwardLinks;
 					foreach (var dependency in links)
 					{
-						if (dependency.LinkType.HasFlagPartially(_dependencyRelationship))
+						if (_dependencyRelationship == null || dependency.LinkType.HasFlagPartially(_dependencyRelationship.Value))
 						{
 							TryEnqueue(_isDependent ? dependency.Dependent : dependency.Dependency);
 						}
@@ -391,9 +411,9 @@ namespace CodeConnections.Graph
 		{
 			private readonly NodeKey _rootNodeKey;
 			private readonly bool _isDependent;
-			private readonly LinkType _dependencyRelationship;
+			private readonly LinkType? _dependencyRelationship;
 
-			public AddDirectDependenciesOrDependentsOperation(NodeKey rootNodeKey, bool isDependent, LinkType dependencyRelationship)
+			public AddDirectDependenciesOrDependentsOperation(NodeKey rootNodeKey, bool isDependent, LinkType? dependencyRelationship)
 			{
 				_rootNodeKey = rootNodeKey;
 				_isDependent = isDependent;
@@ -412,7 +432,7 @@ namespace CodeConnections.Graph
 				var links = _isDependent ? rootNode.BackLinks : rootNode.ForwardLinks;
 				foreach (var link in links)
 				{
-					if (link.LinkType.HasFlagPartially(_dependencyRelationship))
+					if (_dependencyRelationship == null || link.LinkType.HasFlagPartially(_dependencyRelationship.Value))
 					{
 						var node = _isDependent ? link.Dependent : link.Dependency;
 						modified |= subgraph.AddPinnedNode(node.Key, fullGraph);

@@ -63,7 +63,9 @@
 										  Header="{Binding IsPinned, Converter={StaticResource IsPinnedToMessageConverter}}"
 										  Command="{Binding ParentContext.TogglePinnedMenuCommand}"
 										  CommandParameter="{Binding}" />
+								
 								<Separator />
+								
 								<MenuItem Template="{StaticResource MenuItemTemplate}"
 										  Command="{Binding ParentContext.NodeCommands[PinNodeAndNeighbours]}"
 										  CommandParameter="{Binding}">
@@ -96,7 +98,41 @@
 																			   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
 									</MenuItem.Header>
 								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.NodeCommands[AddDirectDependents]}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add types that directly depend upon <Run FontWeight="DemiBold"
+																			   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.NodeCommands[AddDirectDependencies]}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add types directly depended upon by <Run FontWeight="DemiBold"
+																			   Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.NodeCommands[AddIndirectDependents]}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add types that indirectly depend upon <Run FontWeight="DemiBold"
+																							Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.NodeCommands[AddIndirectDependencies]}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add types indirectly depended upon by <Run FontWeight="DemiBold"
+																							Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
+
 								<Separator />
+								
 								<MenuItem Template="{StaticResource MenuItemTemplate}"
 										  Command="{Binding ParentContext.NodeCommands[AddAllInSameProject]}"
 										  CommandParameter="{Binding}">

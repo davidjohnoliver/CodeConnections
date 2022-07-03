@@ -396,6 +396,10 @@ namespace CodeConnections.Presentation
 			NodeCommands.AddOperationCommand(Subgraph.AddDirectInheritanceDependentsOp, "AddInheritanceDirectDependents");
 			NodeCommands.AddOperationCommand(Subgraph.AddAllInSameProjectOp, "AddAllInSameProject");
 			NodeCommands.AddOperationCommand(Subgraph.AddAllInSolutionOp, "AddAllInSolution");
+			NodeCommands.AddOperationCommand(Subgraph.AddDirectDependenciesOp, "AddDirectDependencies");
+			NodeCommands.AddOperationCommand(Subgraph.AddDirectDependentsOp, "AddDirectDependents");
+			NodeCommands.AddOperationCommand(Subgraph.AddIndirectDependenciesOp, "AddIndirectDependencies");
+			NodeCommands.AddOperationCommand(Subgraph.AddIndirectDependentsOp, "AddIndirectDependents");
 
 			ApplySolutionSettings();
 			ApplyUserSettings();
