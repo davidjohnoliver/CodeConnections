@@ -61,5 +61,12 @@ namespace CodeConnections.Extensions
 				yield return link.Dependent.Key;
 			}
 		}
+
+		public static IReadOnlyCollection<Link> GetLinksForDirection(this Node node, Direction direction) => direction switch
+		{
+			Direction.Dependent => node.BackLinks,
+			Direction.Dependency => node.ForwardLinks,
+			_ => throw new ArgumentException()
+		};
 	}
 }

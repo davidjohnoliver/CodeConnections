@@ -50,6 +50,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeSymbolExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Git\GitInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Git\GitStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Graph\Direction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\GraphUpdateManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\CyclicCluster.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Importance.cs" />
