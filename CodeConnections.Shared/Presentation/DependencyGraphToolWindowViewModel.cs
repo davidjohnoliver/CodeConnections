@@ -400,6 +400,7 @@ namespace CodeConnections.Presentation
 			NodeCommands.AddOperationCommand(Subgraph.AddDirectDependentsOp, "AddDirectDependents");
 			NodeCommands.AddOperationCommand(Subgraph.AddIndirectDependenciesOp, "AddIndirectDependencies");
 			NodeCommands.AddOperationCommand(Subgraph.AddIndirectDependentsOp, "AddIndirectDependents");
+			NodeCommands.AddOperationCommand(Subgraph.AddNonpublicDependenciesOp, "AddNonpublicDependencies");
 
 			ApplySolutionSettings();
 			ApplyUserSettings();

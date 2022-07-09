@@ -27,7 +27,7 @@ namespace CodeConnections.Graph
 		public bool IsNestedType { get; }
 
 		public bool IsPurelyGenerated { get; }
-
+		public Accessibility DeclaredAccessibility { get; }
 		public ProjectIdentifier? Project { get; }
 
 		/// <summary>
@@ -45,6 +45,7 @@ namespace CodeConnections.Graph
 			int lineCount,
 			bool isNestedType,
 			bool isPurelyGenerated,
+			Accessibility declaredAccessibility,
 			ProjectIdentifier? project
 		)
 		{
@@ -54,11 +55,12 @@ namespace CodeConnections.Graph
 			LineCount = lineCount;
 			IsNestedType = isNestedType;
 			IsPurelyGenerated = isPurelyGenerated;
+			DeclaredAccessibility = declaredAccessibility;
 			Project = project;
 			AssociatedFiles.AddRange(associatedFiles);
 			Key = key;
 		}
 
-		public override string ToString() => $"{base.ToString()}-{Identifier.ToString()}";
+		public override string ToString() => $"{base.ToString()}-{Identifier}";
 	}
 }

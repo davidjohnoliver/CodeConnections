@@ -50,20 +50,26 @@ namespace CodeConnections.Graph
 		public static Operation PinNodeAndNeighboursOp(NodeKey targetNode) => new PinNodeAndNeighboursOperation(targetNode);
 
 		public static Operation AddInheritanceDependencyHierarchyOp(NodeKey rootNode)
-			=> new AddDependencyOrDependentHierarchyOperation(rootNode, Direction.Dependency, LinkType.InheritsOrImplements);
+			=> new AddDependencyOrDependentHierarchyOperation(rootNode, Direction.Dependency, dependencyRelationship: LinkType.InheritsOrImplements);
 
 		public static Operation AddInheritanceDependentHierarchyOp(NodeKey rootNode)
-			=> new AddDependencyOrDependentHierarchyOperation(rootNode, Direction.Dependent, LinkType.InheritsOrImplements);
+			=> new AddDependencyOrDependentHierarchyOperation(rootNode, Direction.Dependent, dependencyRelationship: LinkType.InheritsOrImplements);
 
-		public static Operation AddDirectInheritanceDependentsOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, Direction.Dependent, LinkType.InheritsOrImplements);
+		public static Operation AddDirectInheritanceDependentsOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, Direction.Dependent, dependencyRelationship: LinkType.InheritsOrImplements);
 
-		public static Operation AddDirectDependenciesOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, Direction.Dependency, null);
+		public static Operation AddDirectDependenciesOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, Direction.Dependency);
 
-		public static Operation AddDirectDependentsOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, Direction.Dependent, null);
+		public static Operation AddDirectDependentsOp(NodeKey rootNode) => new AddDirectDependenciesOrDependentsOperation(rootNode, Direction.Dependent);
 
-		public static Operation AddIndirectDependenciesOp(NodeKey rootNode) => new AddDependencyOrDependentHierarchyOperation(rootNode, Direction.Dependency, null);
+		public static Operation AddIndirectDependenciesOp(NodeKey rootNode) => new AddDependencyOrDependentHierarchyOperation(rootNode, Direction.Dependency);
 
-		public static Operation AddIndirectDependentsOp(NodeKey rootNode) => new AddDependencyOrDependentHierarchyOperation(rootNode, Direction.Dependent, null);
+		public static Operation AddIndirectDependentsOp(NodeKey rootNode) => new AddDependencyOrDependentHierarchyOperation(rootNode, Direction.Dependent);
+
+		public static Operation AddNonpublicDependenciesOp(NodeKey rootNode) => new AddDependencyOrDependentHierarchyOperation(
+			rootNode,
+			Direction.Dependency,
+			inSearchFilter: n => n.Key == rootNode || (!(n as TypeNode)?.DeclaredAccessibility.IsPubliclyVisible() ?? false)
+		);
 
 		public static Operation AddAllInSameProjectOp(NodeKey rootNode) => new AddAllInSameProjectOperation(rootNode);
 
@@ -356,12 +362,16 @@ namespace CodeConnections.Graph
 			private readonly NodeKey _rootNodeKey;
 			private readonly Direction _direction;
 			private readonly LinkType? _dependencyRelationship;
+			private readonly Predicate<Node>? _postSearchFilter;
+			private readonly Predicate<Node>? _inSearchFilter;
 
-			public AddDependencyOrDependentHierarchyOperation(NodeKey rootNodeKey, Direction direction, LinkType? dependencyRelationship)
+			public AddDependencyOrDependentHierarchyOperation(NodeKey rootNodeKey, Direction direction, LinkType? dependencyRelationship = null, Predicate<Node>? postSearchFilter = null, Predicate<Node>? inSearchFilter = null)
 			{
 				_rootNodeKey = rootNodeKey;
 				_direction = direction;
 				_dependencyRelationship = dependencyRelationship;
+				_postSearchFilter = postSearchFilter;
+				_inSearchFilter = inSearchFilter;
 			}
 			protected override bool Apply(Subgraph subgraph, NodeGraph fullGraph)
 			{
@@ -376,7 +386,9 @@ namespace CodeConnections.Graph
 
 				void TryEnqueue(Node toEnqueue)
 				{
-					if (nodesSeen.Add(toEnqueue))
+					if (nodesSeen.Add(toEnqueue) &&
+						((_inSearchFilter?.Invoke(toEnqueue) ?? true) || rootNode == toEnqueue)
+					)
 					{
 						nodesToExplore.Enqueue(toEnqueue);
 					}
@@ -400,7 +412,12 @@ namespace CodeConnections.Graph
 
 				foreach (var found in nodesSeen)
 				{
-					modified |= subgraph.AddPinnedNode(found.Key, fullGraph);
+					if ((_postSearchFilter?.Invoke(found) ?? true) &&
+						(_inSearchFilter?.Invoke(found) ?? true)
+					)
+					{
+						modified |= subgraph.AddPinnedNode(found.Key, fullGraph);
+					}
 				}
 
 				return modified;
@@ -413,7 +430,7 @@ namespace CodeConnections.Graph
 			private readonly Direction _direction;
 			private readonly LinkType? _dependencyRelationship;
 
-			public AddDirectDependenciesOrDependentsOperation(NodeKey rootNodeKey, Direction direction, LinkType? dependencyRelationship)
+			public AddDirectDependenciesOrDependentsOperation(NodeKey rootNodeKey, Direction direction, LinkType? dependencyRelationship = null)
 			{
 				_rootNodeKey = rootNodeKey;
 				_direction = direction;

@@ -106,7 +106,17 @@ namespace CodeConnections.Graph
 		private static TypeNode CreateTypeNodeForSymbol(ITypeSymbol symbol, TypeNodeKey key, CompilationCache cache)
 		{
 			var associatedFiles = GetAssociatedFiles(symbol);
-			return new TypeNode(key, symbol.GetPreferredDeclaration(), associatedFiles, symbol.GetFullMetadataName(), symbol.GetLineCount(), isNestedType: symbol.ContainingType != null, isPurelyGenerated: symbol.IsPurelyGenerated(), cache.GetContainingProject(associatedFiles)?.ToIdentifier());
+			return new TypeNode(
+				key,
+				symbol.GetPreferredDeclaration(),
+				associatedFiles,
+				symbol.GetFullMetadataName(),
+				symbol.GetLineCount(),
+				isNestedType: symbol.ContainingType != null,
+				isPurelyGenerated: symbol.IsPurelyGenerated(),
+				symbol.DeclaredAccessibility,
+				cache.GetContainingProject(associatedFiles)?.ToIdentifier()
+			);
 		}
 
 		private static IEnumerable<string> GetAssociatedFiles(ITypeSymbol symbol)

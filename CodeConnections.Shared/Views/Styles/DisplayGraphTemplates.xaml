@@ -130,6 +130,14 @@
 																							Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
 									</MenuItem.Header>
 								</MenuItem>
+								<MenuItem Template="{StaticResource MenuItemTemplate}"
+										  Command="{Binding ParentContext.NodeCommands[AddNonpublicDependencies]}"
+										  CommandParameter="{Binding}">
+									<MenuItem.Header>
+										<TextBlock>Add non-public types depended upon by <Run FontWeight="DemiBold"
+																							  Text="{Binding DisplayString, Mode=OneWay, Converter={StaticResource TypeNameTruncateConverter}}" /></TextBlock>
+									</MenuItem.Header>
+								</MenuItem>
 
 								<Separator />
 								
