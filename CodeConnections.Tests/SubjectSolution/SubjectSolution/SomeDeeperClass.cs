@@ -4,6 +4,7 @@ using System.Text;
 using SubjectSolution.Generated;
 using SubjectSolution.Inheritance;
 using SubjectSolution.MultiTypeFiles;
+using SubjectSolution.Operations;
 
 namespace SubjectSolution
 {
@@ -20,6 +21,8 @@ namespace SubjectSolution
 		public SomeMultiRoot someMultiRoot;
 
 		public SomeClassWithDelegate someClassWithDelegate;
+
+		public SomeOperationsRootClass someOperationsRootClass;
 
 		void DoStuff()
 		{
