@@ -49,6 +49,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\SyntaxNodeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\SyntaxTreeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeSymbolExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WeakReferenceExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Git\GitInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Git\GitStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Direction.cs" />
