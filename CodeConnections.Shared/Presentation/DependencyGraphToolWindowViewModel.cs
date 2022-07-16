@@ -78,7 +78,9 @@ namespace CodeConnections.Presentation
 				{
 					if (value?.FilePath != null
 						// Don't try to open the currently-open file. (This can, eg, disrupt the 'diff' view being opened from the source control changes window.)
-						&& !PathUtils.AreEquivalent(value.FilePath, _documentsService.GetActiveDocument()))
+						&& !PathUtils.AreEquivalent(value.FilePath, _documentsService.GetActiveDocument())
+						// Don't open active document if it shares a tab group with the tool window, since it would steal focus from the tool window
+						&&!_documentsService.IsActiveDocumentInToolTabGroup)
 					{
 						var _ = _joinableTaskFactory.RunAsync(async () =>
 						{
@@ -647,7 +649,7 @@ namespace CodeConnections.Presentation
 			});
 		}
 
-		private void OnActiveDocumentChanged()
+		private void OnActiveDocumentChanged(object sender, ActiveDocumentChangedEventArgs args)
 		{
 			SetActiveDocumentAsSelected();
 			TryInvalidateSelection();

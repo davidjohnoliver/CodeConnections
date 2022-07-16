@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CodeConnections.Extensions;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -15,15 +16,18 @@ namespace CodeConnections.Services
 	internal partial class DocumentsService : IDocumentsService
 	{
 		private readonly DTE _dte;
-
+		private readonly Func<IVsWindowFrame> _getToolWindowFrame;
 		private string? _oldActiveDocument;
 
-		public event Action? ActiveDocumentChanged;
+		public bool IsActiveDocumentInToolTabGroup => IsInToolWindowTabGroup(_activeDocumentFrame?.TargetOrDefault());
 
-		public DocumentsService(DTE dte)
+		public event EventHandler<ActiveDocumentChangedEventArgs>? ActiveDocumentChanged;
+
+		public DocumentsService(DTE dte, Func<IVsWindowFrame> getToolWindowFrame)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			_dte = dte ?? throw new ArgumentNullException(nameof(dte));
+			_getToolWindowFrame = getToolWindowFrame ?? throw new ArgumentNullException(nameof(getToolWindowFrame));
 			_oldActiveDocument = GetActiveDocument();
 		}
 		public string? GetActiveDocument()

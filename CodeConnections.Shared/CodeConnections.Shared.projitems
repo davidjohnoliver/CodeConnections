@@ -125,6 +125,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Roslyn\CompilationCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Roslyn\ProjectIdentifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Roslyn\TypeIdentifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ActiveDocumentChangedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\DialogUserSettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\DocumentsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\DocumentsService.DocTableEvents.cs" />

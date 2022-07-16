@@ -68,7 +68,9 @@ namespace CodeConnections.VSIX
 			{
 				var dte = GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
 				AssumePresent(dte);
-				var documentsService = new DocumentsService(dte);
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
+				var documentsService = new DocumentsService(dte, () => (IVsWindowFrame)Frame);
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
 				SubscribeListeners(documentsService);
 
 				var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;

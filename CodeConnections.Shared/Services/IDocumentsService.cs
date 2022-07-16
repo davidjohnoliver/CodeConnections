@@ -20,8 +20,13 @@ namespace CodeConnections.Services
 		void OpenFileAsPreview(string fileName);
 
 		/// <summary>
+		/// Whether the current active document shares a tab group with the Code Connections tool window.
+		/// </summary>
+		public bool IsActiveDocumentInToolTabGroup { get; }
+
+		/// <summary>
 		/// Raised when the active open document changes
 		/// </summary>
-		event Action? ActiveDocumentChanged;
+		event EventHandler<ActiveDocumentChangedEventArgs>? ActiveDocumentChanged;
 	}
 }
