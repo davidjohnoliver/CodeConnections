@@ -41,10 +41,15 @@ Use the pin icon to pin or unpin an individual element.
 Right-clicking an element brings up a context menu with more options:
 
  * **Pin/unpin element** will pin or unpin the current element (the same as the pin icon).
- * **Add connections of type** will add the current element and all its direct connections (dependencies and dependents).
- * **Add all base types of type** will add all the base classes of the type that are in the solution (and match the filter settings), as well as all interfaces that the type implements.
- * **Add all subtypes derived from type** will add all the types that directly or indirectly derive from the type: if it's a class, all the classes that inherit from it, or if it's an interface, all the types that directly or indirectly implement it.
- * **Add direct subtypes of type** will add all the types that directly derive from the type: the immediate derived classes of a class, or the types that directly implement an interface.
+ * **Add connections of `Foo`** will add the current element and all its direct connections (dependencies and dependents).
+ * **Add all base types of `Foo`** will add all the base classes of the type that are in the solution (and match the filter settings), as well as all interfaces that the type implements.
+ * **Add all subtypes derived from `Foo`** will add all the types that directly or indirectly derive from the type: if it's a class, all the classes that inherit from it, or if it's an interface, all the types that directly or indirectly implement it.
+ * **Add direct subtypes of `Foo`** will add all the types that directly derive from the type: the immediate derived classes of a class, or the types that directly implement an interface.
+ * **Add types that directly depend upon `Foo`** will add all the types that reference `Foo` to the graph.
+ * **Add types directly depended upon by `Foo`** will add all the types referenced by `Foo` to the graph.
+ * **Add types that indirectly depend upon `Foo`** will add the dependents tree of `Foo` - the types that reference `Foo`, the types that reference those types, the types that reference *those* types, and so on.
+ * **Add types indirectly depended upon by `Foo`** will add the dependency tree of `Foo` - the types referenced by `Foo`, the types referenced by those types, the types referenced by *those* types, and so on.
+ * **Add non-public dependencies of `Foo`** will add the non-public (ie internal) dependency tree of `Foo` - any non-public types referenced by `Foo`, any non-public types referenced by those types, and so on.
  * **Add all types in project** will add all the types in the same project as the current element.
  * **Add all types in solution** will add all types in the solution (and match the current filter settings) to the graph. For large solutions, this may take a very long time to render!
 
@@ -116,4 +121,8 @@ If you encounter any issues with Code Connections, we welcome bug reports via ht
 
 ### Contribute code
 
-Code Connections is open source software, and anyone is welcome to contribute. Best practice is to post a comment on any issue you're working on to communicate your intent, to avoid wasted effort on anyone's part.
+Code Connections is free and open source, and anyone is welcome to contribute. 
+
+If you're fixing a bug, make sure there's an open issue and post a comment on it to let other's know you're working on it.
+
+If you have an idea for a new feature, create an issue with a description of the feature to get input and feedback from other contributors. We recommend you get buy-in on the feature design from the maintainers of Code Connections before you start writing code.
