@@ -40,11 +40,13 @@ namespace CodeConnections.Services
 
 		private bool IsInToolWindowTabGroup(IVsWindowFrame? frame)
 		{
+#if !DEV16_OR_BELOW
 			ThreadHelper.ThrowIfNotOnUIThread();
 			if (_getToolWindowFrame.Invoke() is IVsWindowFrame6 toolWindowFrame)
 			{
 				return toolWindowFrame.IsInSameTabGroup(frame);
 			}
+#endif
 
 			return false;
 		}
