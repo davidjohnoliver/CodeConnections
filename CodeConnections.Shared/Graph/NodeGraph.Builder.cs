@@ -163,6 +163,12 @@ namespace CodeConnections.Graph
 				return false;
 			}
 
+			if (!foundSymbol.CanBeReferencedByName)
+			{
+				// This excludes anonymous types
+				return false;
+			}
+
 			return true;
 		}
 	}

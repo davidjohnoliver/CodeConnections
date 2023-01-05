@@ -233,6 +233,19 @@ namespace CodeConnections.Tests.GraphTests
 			}
 		}
 
+		[Test]
+		public async Task When_Anonymous_Type()
+		{
+			using (var workspace = WorkspaceUtils.GetSubjectSolution())
+			{
+				var fullGraph = await NodeGraph.BuildGraph(CompilationCache.CacheWithSolution(workspace.CurrentSolution), ct: default);
+				var classNode = fullGraph.Nodes.Values.Single(n => (n as TypeNode)?.Identifier.Name == "SomeClassWithAnons");
+
+				Assert.AreEqual(1, classNode.LinkCount);
+				Assert.AreEqual("SomeDeeperClass", ((TypeNode)classNode.ForwardLinkNodes.Single()).Identifier.Name);
+			}
+		}
+
 		private static void AssertNoDuplicates(NodeGraph graph)
 		{
 			var nodes = GetAllNodes(graph).OfType<TypeNode>().ToList();
