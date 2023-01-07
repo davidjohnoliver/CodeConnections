@@ -77,7 +77,7 @@ namespace CodeConnections.Tests.Utilities
 
 			var lp = new LoopProtection();
 			var hasFoundItem = false;
-			TSource matchingItem = default;
+			TSource? matchingItem = default;
 			foreach (var item in enumerable)
 			{
 				lp.Iterate();
