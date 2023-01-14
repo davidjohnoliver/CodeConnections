@@ -236,6 +236,8 @@
 				Value="false" />
 		<Setter Property="ClickMode"
 				Value="Press" />
+		<Setter Property="Padding"
+				Value="0" />
 	</Style>
 
 	<ControlTemplate x:Key="ExportComboBoxTemplate"

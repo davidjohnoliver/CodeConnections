@@ -127,7 +127,7 @@
 				<Rectangle Style="{StaticResource SeparatorRectangleStyle}" />
 
 				<ListBox Style="{StaticResource ListBoxSimpleHorizontalStyle}"
-						 Margin="5,3"
+						 Margin="5"
 						 ItemsSource="{Binding LayoutModes}"
 						 SelectedItem="{Binding LayoutMode, Mode=TwoWay}"
 						 ItemContainerStyle="{StaticResource ListBoxItemLayoutModeStyle}" />
@@ -135,6 +135,7 @@
 				<Rectangle Style="{StaticResource SeparatorRectangleStyle}" />
 
 				<ComboBox Style="{StaticResource ExportComboBoxStyle}"
+						  Margin="3,0"
 						  ext:SelectorExtensions.ItemClickCommand="{Binding ExportCommand}"
 						  ItemsSource="{Binding ExportOptions}">
 					<ComboBox.ItemTemplate>
