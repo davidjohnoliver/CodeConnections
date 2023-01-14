@@ -170,6 +170,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\VSStreamWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\MultiSelection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\PinCheckBoxBehaviour.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\SelectorExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Behaviours\ToggleButtonExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\DebugFeaturesControl.xaml.cs">
       <DependentUpon>DebugFeaturesControl.xaml</DependentUpon>
