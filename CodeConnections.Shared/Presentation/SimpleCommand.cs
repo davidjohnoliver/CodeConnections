@@ -12,14 +12,16 @@ namespace CodeConnections.Presentation
 	/// <summary>
 	/// Simple <see cref="ICommand"/> implementation which takes a synchronous type-checked delegate and exposes a boolean flag for CanExecute.
 	/// </summary>
-	public class SimpleCommand<T> : ICommand where T : class
+	public class SimpleCommand<T> : ICommand
 	{
 		private readonly Action<T?> _execute;
+		private readonly T? _defaultValue;
 		private bool _canExecute = true;
 
-		public SimpleCommand(Action<T?> execute)
+		public SimpleCommand(Action<T?> execute, T? defaultValue)
 		{
 			_execute = execute ?? throw new ArgumentNullException(nameof(execute));
+			_defaultValue = defaultValue;
 		}
 
 		public bool CanExecute
@@ -48,7 +50,7 @@ namespace CodeConnections.Presentation
 			}
 			else if (parameter == null)
 			{
-				_execute(null);
+				_execute(_defaultValue);
 			}
 		}
 	}
@@ -56,7 +58,9 @@ namespace CodeConnections.Presentation
 	public static class SimpleCommand
 	{
 
-		public static SimpleCommand<T> Create<T>(Action<T?> execute) where T : class => new SimpleCommand<T>(execute);
+		public static SimpleCommand<T> Create<T>(Action<T?> execute) where T : class => new SimpleCommand<T>(execute, default);
+
+		public static SimpleCommand<T> Create<T>(Action<T> execute, T defaultWhenNull) where T : struct => new SimpleCommand<T>(execute, defaultWhenNull);
 
 		public static SimpleCommand<object> Create(Action execute)
 		{
@@ -65,7 +69,7 @@ namespace CodeConnections.Presentation
 				throw new ArgumentNullException(nameof(execute));
 			}
 
-			return new SimpleCommand<object>(ExecuteWrapper);
+			return new SimpleCommand<object>(ExecuteWrapper, null);
 
 			void ExecuteWrapper(object? _)
 			{
