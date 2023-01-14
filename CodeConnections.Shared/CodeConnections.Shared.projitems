@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\ICancelable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\SerialCancellationDisposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\SerialDisposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Export\MermaidHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\AccessibilityExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DictionaryExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DiscreteStatisticsResultExtensions.cs" />
