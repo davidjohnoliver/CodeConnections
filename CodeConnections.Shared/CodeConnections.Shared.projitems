@@ -82,6 +82,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Graph\TypeNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\TypeNodeKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Input\IToggleCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\INavigationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\ModalNavigationTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\NavigationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\NavigationTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\BooleanToDoubleConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\BooleanToStringConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DebugConverter.cs" />
