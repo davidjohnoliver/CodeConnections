@@ -1,0 +1,43 @@
+﻿<vs:DialogWindow x:Class="CodeConnections.Views.MermaidSummaryDialogWindow"
+				 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				 xmlns:local="using:CodeConnections.Views"
+				 xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+				 xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+				 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+				 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				 xmlns:presentation="clr-namespace:CodeConnections.Presentation"
+				 d:DataContext="{d:DesignInstance Type=presentation:MermaidSummaryDialogViewModel}"
+				 Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
+				 Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
+				 Title="Code Connections - Mermaid Export"
+				 IsCloseButtonEnabled="True"
+				 SizeToContent="WidthAndHeight"
+				 mc:Ignorable="d">
+
+	<Grid Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<TextBlock Grid.Row="0"
+				   Margin="10"
+				   Foreground="{DynamicResource {x:Static vsshell:VsBrushes.PanelTextKey}}"
+				   Text="{Binding SecondaryMessage}"/>
+		<TextBox Grid.Row="1"
+				 Margin="5"
+				 Padding="5"
+				 HorizontalAlignment="Left"
+				 MaxWidth="800"
+				 MaxHeight="800"
+				 HorizontalScrollBarVisibility="Auto"
+				 VerticalScrollBarVisibility="Auto"
+				 Foreground="{DynamicResource {x:Static vsshell:VsBrushes.PanelTextKey}}"
+				 Background="{DynamicResource {x:Static vsshell:VsBrushes.DropDownBackgroundKey}}"
+				 Text="{Binding MainMessage, Mode=OneWay}"
+				 TextWrapping="NoWrap"
+				 AcceptsReturn="True"
+				 IsReadOnly="True"
+				 IsReadOnlyCaretVisible="True" />
+	</Grid>
+</vs:DialogWindow>

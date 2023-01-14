@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using CodeConnections.Disposables;
 using CodeConnections.Extensions;
+using CodeConnections.Navigation;
 using CodeConnections.Presentation;
 using CodeConnections.Services;
 using CodeConnections.Views;
@@ -89,7 +90,17 @@ namespace CodeConnections.VSIX
 
 				if (Content is DependencyGraphToolWindowControl content)
 				{
-					content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory, documentsService, roslynService, gitService, solutionService, outputService, roslynService, solutionSettingsService, userSettingsService)
+					content.DataContext = new DependencyGraphToolWindowViewModel(ThreadHelper.JoinableTaskFactory,
+							documentsService,
+							roslynService,
+							gitService,
+							solutionService,
+							outputService,
+							roslynService,
+							solutionSettingsService,
+							userSettingsService,
+							new NavigationService()
+						)
 						.DisposeWith(_disposables);
 				}
 			}

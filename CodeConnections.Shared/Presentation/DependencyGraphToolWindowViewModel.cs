@@ -13,10 +13,13 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using CodeConnections.Collections;
 using CodeConnections.Disposables;
+using CodeConnections.Export;
 using CodeConnections.Extensions;
 using CodeConnections.Graph;
 using CodeConnections.Graph.Display;
 using CodeConnections.Input;
+using CodeConnections.Navigation;
+using CodeConnections.Navigation.Targets;
 using CodeConnections.Roslyn;
 using CodeConnections.Services;
 using CodeConnections.Statistics;
@@ -45,6 +48,7 @@ namespace CodeConnections.Presentation
 		private readonly IModificationsService _modificationsService;
 		private readonly ISolutionSettingsService _solutionSettingsService;
 		private readonly IUserSettingsService _userSettingsService;
+		private readonly INavigationService _navigationService;
 		private readonly JoinableTaskFactory _joinableTaskFactory;
 
 		private readonly GraphUpdateManager _graphUpdateManager;
@@ -80,7 +84,7 @@ namespace CodeConnections.Presentation
 						// Don't try to open the currently-open file. (This can, eg, disrupt the 'diff' view being opened from the source control changes window.)
 						&& !PathUtils.AreEquivalent(value.FilePath, _documentsService.GetActiveDocument())
 						// Don't open active document if it shares a tab group with the tool window, since it would steal focus from the tool window
-						&&!_documentsService.IsActiveDocumentInToolTabGroup)
+						&& !_documentsService.IsActiveDocumentInToolTabGroup)
 					{
 						var _ = _joinableTaskFactory.RunAsync(async () =>
 						{
@@ -251,11 +255,14 @@ namespace CodeConnections.Presentation
 		}
 		public GraphLayoutMode[] LayoutModes { get; } = EnumUtils.GetValues<GraphLayoutMode>();
 
+		public ExportOption[] ExportOptions { get; } = EnumUtils.GetValues<ExportOption>();
+
 		public ICommand ClearRootsCommand { get; }
 		public ICommand ShowAllNodesCommand { get; }
 		public ICommand LogStatsCommand { get; }
 		public ICommand DeselectAllProjectsCommand { get; }
 		public ICommand SelectAllProjectsCommand { get; }
+		public ICommand ExportCommand { get; }
 
 		public ICommand TogglePinnedMenuCommand { get; }
 
@@ -355,7 +362,7 @@ namespace CodeConnections.Presentation
 		public DependencyGraphToolWindowViewModel() => throw new NotSupportedException("XAML Design usage");
 #endif
 
-		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService, ISolutionSettingsService solutionSettingsService, IUserSettingsService userSettingsService)
+		public DependencyGraphToolWindowViewModel(JoinableTaskFactory joinableTaskFactory, IDocumentsService documentsService, IRoslynService roslynService, IGitService gitService, ISolutionService solutionService, IOutputService outputService, IModificationsService modificationsService, ISolutionSettingsService solutionSettingsService, IUserSettingsService userSettingsService, INavigationService navigationService)
 		{
 			_joinableTaskFactory = joinableTaskFactory ?? throw new ArgumentNullException(nameof(joinableTaskFactory));
 			_documentsService = documentsService ?? throw new ArgumentNullException(nameof(documentsService));
@@ -366,7 +373,7 @@ namespace CodeConnections.Presentation
 			_modificationsService = modificationsService ?? throw new ArgumentNullException(nameof(modificationsService));
 			_solutionSettingsService = solutionSettingsService ?? throw new ArgumentNullException(nameof(solutionSettingsService));
 			_userSettingsService = userSettingsService ?? throw new ArgumentNullException(nameof(userSettingsService));
-
+			_navigationService = navigationService;
 			_documentsService.ActiveDocumentChanged += OnActiveDocumentChanged;
 			_solutionService.SolutionOpened += OnSolutionOpened;
 			_solutionService.SolutionClosed += OnSolutionClosed;
@@ -380,6 +387,7 @@ namespace CodeConnections.Presentation
 			LogStatsCommand = SimpleCommand.Create(LogStats);
 			DeselectAllProjectsCommand = SimpleCommand.Create(() => Projects?.DeselectAll());
 			SelectAllProjectsCommand = SimpleCommand.Create(() => Projects?.SelectAll());
+			ExportCommand = SimpleCommand.Create(Export, ExportOption.Mermaid);
 
 			TogglePinnedMenuCommand = SimpleCommand.Create<DisplayNode>(TogglePinned);
 
@@ -600,6 +608,35 @@ namespace CodeConnections.Presentation
 				_outputService.FocusOutput();
 			});
 
+		}
+
+		private void Export(ExportOption exportOption)
+		{
+			switch (exportOption)
+			{
+				// TODO-export: support bitmap-based export options
+				case ExportOption.Mermaid:
+					ExportToMermaid();
+					return;
+			}
+		}
+
+		private void ExportToMermaid()
+		{
+			Exception? error = null;
+			string? mermaidGraph = null;
+			try
+			{
+				mermaidGraph = MermaidHelper.GenerateMermaidGraph(Graph);
+			}
+			catch (Exception e)
+			{
+				error = e;
+			}
+
+			// TODO-export: copy to clipboard
+
+			_navigationService.ShowModal(new MermaidSummaryModalNavigationTarget { ViewModel = new(mermaidGraph, error, false) });
 		}
 
 		private void TogglePinned(bool? toggleState, DisplayNode? displayNode)

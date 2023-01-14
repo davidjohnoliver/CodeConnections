@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\ICancelable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\SerialCancellationDisposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\SerialDisposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Export\ExportOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Export\MermaidHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\AccessibilityExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DictionaryExtensions.cs" />
@@ -87,12 +88,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\ModalNavigationTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\NavigationTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\Targets\MermaidSummaryModalNavigationTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\BooleanToDoubleConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\BooleanToStringConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DebugConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayEdgeTooltipConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayNodeGitIndicatorVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayNodeImportanceTooltipConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\ExportOptionToLabelConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusPathConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\GitStatusTooltipConverter.cs" />
@@ -111,6 +114,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Converters\DisplayEdgeStrokeDashArrayConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\DisplayNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Graph\Display\MultiDependencyDisplayEdge.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\MermaidSummaryDialogViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\NodeCommands.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\OutputLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\PersistedSolutionSettings.cs" />
@@ -195,6 +199,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\EfficientSugiyamaLayoutParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\Hierarchical\SugiyamaEdgeRoutings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Graph\StableLayoutAlgorithmBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MermaidSummaryDialogWindow.xaml.cs">
+      <DependentUpon>MermaidSummaryDialogWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\TopInfoBar.xaml.cs">
       <DependentUpon>TopInfoBar.xaml</DependentUpon>
     </Compile>
@@ -216,6 +223,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\DependencyGraphToolWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\MermaidSummaryDialogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

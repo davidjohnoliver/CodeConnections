@@ -9,6 +9,9 @@
 					xmlns:converters="clr-namespace:CodeConnections.Presentation.Converters"
 					xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
 					mc:Ignorable="d">
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="CheckBox.xaml" />
+	</ResourceDictionary.MergedDictionaries>
 	<Style x:Key="FocusVisual">
 		<Setter Property="Control.Template">
 			<Setter.Value>
@@ -221,5 +224,133 @@
 		<Setter Property="Template"
 				Value="{StaticResource ComboBoxTemplate}" />
 	</Style>
+
+	<Style x:Key="ExportComboBoxToggleButton"
+		   TargetType="{x:Type CheckBox}"
+		   BasedOn="{StaticResource HighlightCheckBoxStyle}">
+		<Setter Property="OverridesDefaultStyle"
+				Value="true" />
+		<Setter Property="IsTabStop"
+				Value="false" />
+		<Setter Property="Focusable"
+				Value="false" />
+		<Setter Property="ClickMode"
+				Value="Press" />
+	</Style>
+
+	<ControlTemplate x:Key="ExportComboBoxTemplate"
+					 TargetType="{x:Type ComboBox}">
+		<Grid x:Name="templateRoot"
+			  SnapsToDevicePixels="true">
+			<Popup x:Name="PART_Popup"
+				   AllowsTransparency="true"
+				   IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+				   Margin="1"
+				   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
+				   Placement="Bottom">
+				<theme:SystemDropShadowChrome x:Name="shadow"
+											  Color="Transparent"
+											  MaxHeight="{TemplateBinding MaxDropDownHeight}"
+											  MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
+					<Border x:Name="dropDownBorder"
+							BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}"
+							BorderThickness="1"
+							Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+						<ScrollViewer x:Name="DropDownScrollViewer">
+							<Grid x:Name="grid"
+								  RenderOptions.ClearTypeHint="Enabled">
+								<Canvas x:Name="canvas"
+										HorizontalAlignment="Left"
+										Height="0"
+										VerticalAlignment="Top"
+										Width="0">
+									<Rectangle x:Name="opaqueRect"
+											   Fill="{Binding Background, ElementName=dropDownBorder}"
+											   Height="{Binding ActualHeight, ElementName=dropDownBorder}"
+											   Width="{Binding ActualWidth, ElementName=dropDownBorder}" />
+								</Canvas>
+								<ItemsPresenter x:Name="ItemsPresenter"
+												KeyboardNavigation.DirectionalNavigation="Contained"
+												SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+							</Grid>
+						</ScrollViewer>
+					</Border>
+				</theme:SystemDropShadowChrome>
+			</Popup>
+			<CheckBox x:Name="toggleButton"
+					  BorderBrush="{TemplateBinding BorderBrush}"
+					  BorderThickness="{TemplateBinding BorderThickness}"
+					  Background="{TemplateBinding Background}"
+					  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+					  Style="{StaticResource ExportComboBoxToggleButton}">
+				<vsimaging:CrispImage Width="16"
+									  Height="16"
+									  Moniker="{x:Static vsimagecat:KnownMonikers.Output}" />
+			</CheckBox>
+		</Grid>
+		<ControlTemplate.Triggers>
+			<Trigger Property="HasDropShadow"
+					 SourceName="PART_Popup"
+					 Value="true">
+				<Setter Property="Margin"
+						TargetName="shadow"
+						Value="0,0,5,5" />
+				<Setter Property="Color"
+						TargetName="shadow"
+						Value="#71000000" />
+			</Trigger>
+			<Trigger Property="HasItems"
+					 Value="false">
+				<Setter Property="Height"
+						TargetName="dropDownBorder"
+						Value="95" />
+			</Trigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsGrouping"
+							   Value="true" />
+					<Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping"
+							   Value="false" />
+				</MultiTrigger.Conditions>
+				<Setter Property="ScrollViewer.CanContentScroll"
+						Value="false" />
+			</MultiTrigger>
+			<Trigger Property="ScrollViewer.CanContentScroll"
+					 SourceName="DropDownScrollViewer"
+					 Value="false">
+				<Setter Property="Canvas.Top"
+						TargetName="opaqueRect"
+						Value="{Binding VerticalOffset, ElementName=DropDownScrollViewer}" />
+				<Setter Property="Canvas.Left"
+						TargetName="opaqueRect"
+						Value="{Binding HorizontalOffset, ElementName=DropDownScrollViewer}" />
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
+	<Style x:Key="ExportComboBoxStyle"
+		   TargetType="{x:Type ComboBox}">
+		<Setter Property="FocusVisualStyle"
+				Value="{StaticResource FocusVisual}" />
+		<Setter Property="Foreground"
+				Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+		<Setter Property="BorderThickness"
+				Value="1" />
+		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+				Value="Auto" />
+		<Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+				Value="Auto" />
+		<Setter Property="Padding"
+				Value="6,3,5,3" />
+		<Setter Property="ScrollViewer.CanContentScroll"
+				Value="true" />
+		<Setter Property="ScrollViewer.PanningMode"
+				Value="Both" />
+		<Setter Property="Stylus.IsFlicksEnabled"
+				Value="False" />
+		<Setter Property="Template"
+				Value="{StaticResource ExportComboBoxTemplate}" />
+	</Style>
+
 
 </ResourceDictionary>
