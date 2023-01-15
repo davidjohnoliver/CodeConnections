@@ -45,9 +45,18 @@ namespace CodeConnections.Export
 				var mermaidId = $"CC{idCounter}";
 				mermaidIds[vertex] = mermaidId;
 
-				// TODO-export: sanitize eg angle brackets
-				return $"{mermaidId}({vertex.DisplayString})";
+				return $"{mermaidId}(\"{Sanitize(vertex)}\")";
 			}
+		}
+
+		private static string Sanitize(DisplayNode vertex)
+		{
+			var output = vertex.DisplayString;
+
+			output = output.Replace("<", "&lt;");
+			output = output.Replace(">", "&gt;");
+
+			return output;
 		}
 	}
 }
