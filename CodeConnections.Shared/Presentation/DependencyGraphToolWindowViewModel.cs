@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CodeConnections.Collections;
@@ -634,9 +635,17 @@ namespace CodeConnections.Presentation
 				error = e;
 			}
 
-			// TODO-export: copy to clipboard
+			var failedToCopy = false;
+			try
+			{
+				Clipboard.SetText(mermaidGraph);
+			}
+			catch (Exception)
+			{
+				failedToCopy = true;
+			}
 
-			_navigationService.ShowModal(new MermaidSummaryModalNavigationTarget { ViewModel = new(mermaidGraph, error, false) });
+			_navigationService.ShowModal(new MermaidSummaryModalNavigationTarget { ViewModel = new(mermaidGraph, error, !failedToCopy) });
 		}
 
 		private void TogglePinned(bool? toggleState, DisplayNode? displayNode)
