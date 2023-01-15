@@ -1,9 +1,9 @@
 ﻿#nullable enable
 
-using CodeConnections.Graph;
 using CodeConnections.Graph.Display;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using _IDisplayGraph = QuickGraph.IBidirectionalGraph<CodeConnections.Graph.Display.DisplayNode, CodeConnections.Graph.Display.DisplayEdge>;
 
@@ -29,7 +29,12 @@ namespace CodeConnections.Export
 				sb.AppendLine(mermaidEdge);
 			}
 
-			// TODO-export: append vertices that don't have any edges
+			// Append any vertices that don't have any edges
+			foreach (var vertex in graph.Vertices.Except(mermaidIds.Keys))
+			{
+				var loneVertex = $"    {GetVertexEntry(vertex)}";
+				sb.AppendLine(loneVertex);
+			}
 
 			return sb.ToString();
 
