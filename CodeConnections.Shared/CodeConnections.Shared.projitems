@@ -27,6 +27,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\ICancelable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\SerialCancellationDisposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Disposables\SerialDisposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Export\Bitmap\BitmapExportHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Export\Bitmap\ElementBitmapWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Export\ExportOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Export\MermaidHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\AccessibilityExtensions.cs" />

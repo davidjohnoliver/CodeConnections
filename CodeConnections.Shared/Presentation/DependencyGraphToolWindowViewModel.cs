@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using CodeConnections.Collections;
 using CodeConnections.Disposables;
 using CodeConnections.Export;
+using CodeConnections.Export.Bitmap;
 using CodeConnections.Extensions;
 using CodeConnections.Graph;
 using CodeConnections.Graph.Display;
@@ -257,6 +258,13 @@ namespace CodeConnections.Presentation
 		public GraphLayoutMode[] LayoutModes { get; } = EnumUtils.GetValues<GraphLayoutMode>();
 
 		public ExportOption[] ExportOptions { get; } = EnumUtils.GetValues<ExportOption>();
+
+		private ElementBitmapWrapper? _bitmapWrapper;
+		public ElementBitmapWrapper? BitmapWrapper
+		{
+			get => _bitmapWrapper;
+			set => OnValueSet(ref _bitmapWrapper, value);
+		}
 
 		public ICommand ClearRootsCommand { get; }
 		public ICommand ShowAllNodesCommand { get; }
@@ -615,7 +623,20 @@ namespace CodeConnections.Presentation
 		{
 			switch (exportOption)
 			{
-				// TODO-export: support bitmap-based export options
+				// TODO-export: export bitmap to file
+				case ExportOption.BitmapClipboard:
+					if (BitmapWrapper != null)
+					{
+						try
+						{
+							BitmapExportHelper.ExportToClipboard(BitmapWrapper);
+						}
+						catch (Exception e)
+						{
+							_outputService.WriteLine($"Failed to export bitmap to clipboard. {e}");
+						}
+					}
+					return;
 				case ExportOption.Mermaid:
 					ExportToMermaid();
 					return;

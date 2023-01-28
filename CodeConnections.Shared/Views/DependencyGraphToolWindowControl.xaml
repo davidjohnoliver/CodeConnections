@@ -9,6 +9,7 @@
 			 xmlns:graphZoom="clr-namespace:GraphSharp.Controls.Zoom;assembly=GraphSharp.Controls"
 			 xmlns:graphControls="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
 			 xmlns:controls="clr-namespace:CodeConnections.Views.Controls"
+			 xmlns:bitmap="clr-namespace:CodeConnections.Export.Bitmap"
 			 Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
 			 Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
 			 mc:Ignorable="d"
@@ -47,12 +48,16 @@
 					 Foreground="{DynamicResource {x:Static vsshell:VsBrushes.HighlightKey}}" />
 		<controls:ZoomControl Grid.Row="2"
 							   Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}">
+			<Border Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}"
+					bitmap:ElementBitmapWrapper.Wrapper="{Binding BitmapWrapper, Mode=TwoWay}"
+					Padding="15">
 			<local:DependencyGraphLayout x:Name="GraphLayout"
 										 DisplayGraph="{Binding Graph}"
 										 AlgorithmType="{Binding LayoutMode, Converter={StaticResource GraphLayoutModeLayoutAlgorithmConverter}}"
 										 SelectedVertex="{Binding SelectedNode, Mode=TwoWay}"
 										 RandomSeed="{Binding RandomSeed}"
-										 IsBusy="{Binding IsGraphLayoutUpdating, Mode=TwoWay}"/>
+											 IsBusy="{Binding IsGraphLayoutUpdating, Mode=TwoWay}" />
+			</Border>
 		</controls:ZoomControl>
 		<local:GraphOptionsControl Grid.Row="2"
 								   HorizontalAlignment="Right"
