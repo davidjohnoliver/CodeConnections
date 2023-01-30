@@ -623,18 +623,25 @@ namespace CodeConnections.Presentation
 		{
 			switch (exportOption)
 			{
-				// TODO-export: export bitmap to file
-				case ExportOption.BitmapClipboard:
-					if (BitmapWrapper != null)
+				case ExportOption.BitmapFile:
+
+					try
 					{
-						try
-						{
-							BitmapExportHelper.ExportToClipboard(BitmapWrapper);
-						}
-						catch (Exception e)
-						{
-							_outputService.WriteLine($"Failed to export bitmap to clipboard. {e}");
-						}
+						BitmapExportHelper.ExportToFile(BitmapWrapper ?? throw new InvalidOperationException("No bitmap wrapper"));
+					}
+					catch (Exception e)
+					{
+						_outputService.WriteLine($"Failed to export bitmap to file. {e}");
+					}
+					return;
+				case ExportOption.BitmapClipboard:
+					try
+					{
+						BitmapExportHelper.ExportToClipboard(BitmapWrapper ?? throw new InvalidOperationException("No bitmap wrapper"));
+					}
+					catch (Exception e)
+					{
+						_outputService.WriteLine($"Failed to export bitmap to clipboard. {e}");
 					}
 					return;
 				case ExportOption.Mermaid:

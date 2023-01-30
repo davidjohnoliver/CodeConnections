@@ -10,8 +10,9 @@ namespace CodeConnections.Presentation.Converters
 	{
 		protected override string ConvertInner(ExportOption value, object parameter, CultureInfo culture) => value switch
 		{
-			ExportOption.BitmapClipboard => "Export to clipboard as bitmap",
-			ExportOption.Mermaid => "Export to Mermaid diagram",
+			ExportOption.BitmapFile => "Export bitmap to PNG file",
+			ExportOption.BitmapClipboard => "Export bitmap to clipboard",
+			ExportOption.Mermaid => "Export Mermaid diagram",
 			_ => "Unsupported"
 		};
 
