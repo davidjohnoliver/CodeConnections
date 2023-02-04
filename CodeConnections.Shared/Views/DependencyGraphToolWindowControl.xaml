@@ -32,7 +32,7 @@
 			<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
+	<Grid ClipToBounds="True">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -47,15 +47,15 @@
 					 Background="{DynamicResource {x:Static vsshell:VsBrushes.ScrollBarBackgroundKey}}"
 					 Foreground="{DynamicResource {x:Static vsshell:VsBrushes.HighlightKey}}" />
 		<controls:ZoomControl Grid.Row="2"
-							   Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}">
+							  Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}">
 			<Border Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}"
 					bitmap:ElementBitmapWrapper.Wrapper="{Binding BitmapWrapper, Mode=TwoWay}"
 					Padding="15">
-			<local:DependencyGraphLayout x:Name="GraphLayout"
-										 DisplayGraph="{Binding Graph}"
-										 AlgorithmType="{Binding LayoutMode, Converter={StaticResource GraphLayoutModeLayoutAlgorithmConverter}}"
-										 SelectedVertex="{Binding SelectedNode, Mode=TwoWay}"
-										 RandomSeed="{Binding RandomSeed}"
+				<local:DependencyGraphLayout x:Name="GraphLayout"
+											 DisplayGraph="{Binding Graph}"
+											 AlgorithmType="{Binding LayoutMode, Converter={StaticResource GraphLayoutModeLayoutAlgorithmConverter}}"
+											 SelectedVertex="{Binding SelectedNode, Mode=TwoWay}"
+											 RandomSeed="{Binding RandomSeed}"
 											 IsBusy="{Binding IsGraphLayoutUpdating, Mode=TwoWay}" />
 			</Border>
 		</controls:ZoomControl>
