@@ -21,7 +21,7 @@ namespace CodeConnections.Export.Bitmap
 			Clipboard.SetImage(bitmap);
 		}
 
-		public static void ExportToFile(ElementBitmapWrapper bitmapWrapper)
+		public static void ExportToFile(ElementBitmapWrapper bitmapWrapper, string solutionName)
 		{
 			var bitmap = bitmapWrapper.GetRenderTargetBitmap(Dpi);
 
@@ -29,7 +29,7 @@ namespace CodeConnections.Export.Bitmap
 			encoder.Frames.Add(BitmapFrame.Create(bitmap));
 
 			var dialog = new SaveFileDialog();
-			dialog.FileName = "CodeConnections"; // TODO-export: time in filename
+			dialog.FileName = $"CodeConnections_{solutionName}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}";
 			dialog.DefaultExt = ".png";
 			dialog.Filter = "PNG files|*.png";
 

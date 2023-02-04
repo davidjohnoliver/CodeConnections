@@ -627,7 +627,10 @@ namespace CodeConnections.Presentation
 
 					try
 					{
-						BitmapExportHelper.ExportToFile(BitmapWrapper ?? throw new InvalidOperationException("No bitmap wrapper"));
+						BitmapExportHelper.ExportToFile(
+							BitmapWrapper ?? throw new InvalidOperationException("No bitmap wrapper"),
+							Path.GetFileNameWithoutExtension(_solutionService.GetSolutionPath())
+						);
 					}
 					catch (Exception e)
 					{
