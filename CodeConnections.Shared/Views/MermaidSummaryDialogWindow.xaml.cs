@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-
+using System.Windows;
 
 namespace CodeConnections.Views
 {
@@ -14,5 +14,7 @@ namespace CodeConnections.Views
 		{
 			this.InitializeComponent();
 		}
+
+		private void OnCloseButtonClicked(object sender, RoutedEventArgs e) => Close();
 	}
 }

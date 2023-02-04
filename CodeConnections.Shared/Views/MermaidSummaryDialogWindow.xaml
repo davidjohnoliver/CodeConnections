@@ -19,11 +19,12 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<TextBlock Grid.Row="0"
 				   Margin="10"
 				   Foreground="{DynamicResource {x:Static vsshell:VsBrushes.PanelTextKey}}"
-				   Text="{Binding SecondaryMessage}"/>
+				   Text="{Binding SecondaryMessage}" />
 		<TextBox Grid.Row="1"
 				 Margin="5"
 				 Padding="5"
@@ -39,5 +40,14 @@
 				 AcceptsReturn="True"
 				 IsReadOnly="True"
 				 IsReadOnlyCaretVisible="True" />
+		<Button Grid.Row="2"
+				Margin="20,5,5,5"
+				Padding="3"
+				MinWidth="50"
+				HorizontalAlignment="Left"
+				Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ButtonTextKey}}"
+				Background="{DynamicResource {x:Static vsshell:VsBrushes.ButtonFaceKey}}"
+				Content="Close"
+				Click="OnCloseButtonClicked" />
 	</Grid>
 </vs:DialogWindow>
