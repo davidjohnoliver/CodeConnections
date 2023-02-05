@@ -24,6 +24,7 @@
 		<TextBlock Grid.Row="0"
 				   Margin="10"
 				   Foreground="{DynamicResource {x:Static vsshell:VsBrushes.PanelTextKey}}"
+				   FontWeight="Bold"
 				   Text="{Binding SecondaryMessage}" />
 		<TextBox Grid.Row="1"
 				 Margin="5"
