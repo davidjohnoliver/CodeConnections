@@ -137,6 +137,7 @@
 				<ComboBox Style="{StaticResource ExportComboBoxStyle}"
 						  Margin="3,0"
 						  ext:SelectorExtensions.ItemClickCommand="{Binding ExportCommand}"
+						  ToolTip="Show export options"
 						  ItemsSource="{Binding ExportOptions}">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
