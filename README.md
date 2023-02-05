@@ -92,6 +92,52 @@ You can change the way elements are arranged relative to each other in the graph
 
 ![Hierarchy and compact layouts](doc/assets/Graph-hierarchy-compact.png)
 
+## Export options ![Export icon](doc/assets/Export-icon.png)
+
+### Export as bitmap
+
+Export the currently displayed graph as a bitmap, either to the clipboard or to a `.png` file.
+
+### Export as Mermaid diagram
+
+[Mermaid](https://mermaid.js.org/) is a popular tool for rendering graphs and diagrams. Mermaid uses a simple, Markdown-like text syntax.
+
+This Code Connections graph:
+
+![TagLibSharp classes](doc/assets/CodeConnections_TaglibSharp_20230205_163527.png)
+
+Produces the following Mermaid-formatted output:
+
+```js
+graph BT
+    CC0("ByteVector") --> CC1("Tag")
+    CC2("File") --> CC1
+    CC2 --> CC3("TagTypes")
+    CC2 --> CC0
+    CC4("IFDEntry") --> CC0
+    CC1 --> CC3
+    CC5("ShortIFDEntry") --> CC4
+    CC5 --> CC0
+    CC6("LongIFDEntry") --> CC4
+    CC6 --> CC0
+```
+
+Which renders like this:
+
+```mermaid
+graph BT
+    CC0("ByteVector") --> CC1("Tag")
+    CC2("File") --> CC1
+    CC2 --> CC3("TagTypes")
+    CC2 --> CC0
+    CC4("IFDEntry") --> CC0
+    CC1 --> CC3
+    CC5("ShortIFDEntry") --> CC4
+    CC5 --> CC0
+    CC6("LongIFDEntry") --> CC4
+    CC6 --> CC0
+```
+
 ## Filters
 
 Expanding 'More options' on the options panel will show settings to filter the types that are visible. This lets you focus on what you're interested in, and can also speed up graph generation, particularly in large solutions.
