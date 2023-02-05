@@ -20,9 +20,9 @@ The Graph window is where all the action happens. Here you can visualize the dep
 
 ## Adding elements to the graph
 
-### Always include active document and its connections
+### Always include active document and its connections ![Icon](doc/assets/Always-show-icon-and-dropdown.png)
 
-By default, the active document (ie the current tab) will be included in the graph. To toggle this behavior, press the lock icon in the options panel.
+By default, the active document (ie the current tab) will be included in the graph. To toggle this behavior, press the lock icon (![Icon](doc/assets/Always-show-icon.png)) in the options panel.
 
 You can choose via the dropdown whether to include the active document and also all its connections (dependencies and dependents), or the active document only.
 
@@ -36,7 +36,7 @@ Selecting any element in the graph will open the corresponding file for that typ
 
 Elements can be pinned to the graph to stay present even while changing the active document.
 
-Use the pin icon to pin or unpin an individual element.
+Use the pin toggle (![Pin icon](doc/assets/Pin-icon.png)) to pin or unpin an individual element.
 
 Right-clicking an element brings up a context menu with more options:
 
@@ -53,11 +53,11 @@ Right-clicking an element brings up a context menu with more options:
  * **Add all types in project** will add all the types in the same project as the current element.
  * **Add all types in solution** will add all types in the solution (and match the current filter settings) to the graph. For large solutions, this may take a very long time to render!
 
-### Clear Graph
+### Clear Graph ![Clear icon](doc/assets/Clear-icon.png)
 
 The Clear Graph button will clear all pinned elements and any custom inclusion modes like Git Mode. If 'Always include active document' is enabled, the active document and its connections will be kept.
 
-## Top Types Mode
+## Top Types Mode ![Pin icon](doc/assets/Top-types-icon.png)
 
 Enabling Top Types mode gives you a high-level overview of a solution. It automatically adds top-ranked types to the graph, as measured by one of several metrics.
 
@@ -76,7 +76,7 @@ Top types in the graph are identified by a badge with a crown icon, which is col
 
 ![Top types in Json.NET](doc/assets/Json_net-top-types.png)
 
-## Git Mode
+## Git Mode ![Git icon](doc/assets/Git-icon.png)
 
 Enabling Git mode will automatically add all locally modified types to the graph. When Git mode is enabled, a badge in the upper right corner of the element indicates if it is a new or modified file.
 
@@ -86,9 +86,9 @@ Enabling Git mode will automatically add all locally modified types to the graph
 
 You can change the way elements are arranged relative to each other in the graph.
 
-**Hierarchy** arranges elements vertically by dependency relationship, with dependencies above and dependents below. It's useful when you want to clearly see dependency relationships at a glance.
+**Hierarchy** (![Hierarchy icon](doc/assets/Hierarchy-icon.png)) arranges elements vertically by dependency relationship, with dependencies above and dependents below. It's useful when you want to clearly see dependency relationships at a glance.
 
-**Compact** arranges elements in a space-efficient way, without a fixed spatial order. It's useful when you want to visualize a large number of elements at a time.
+**Compact** (![Compact icon](doc/assets/Compact-icon.png)) arranges elements in a space-efficient way, without a fixed spatial order. It's useful when you want to visualize a large number of elements at a time.
 
 ![Hierarchy and compact layouts](doc/assets/Graph-hierarchy-compact.png)
 
