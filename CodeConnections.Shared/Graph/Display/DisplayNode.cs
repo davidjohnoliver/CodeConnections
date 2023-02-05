@@ -31,7 +31,7 @@ namespace CodeConnections.Graph.Display
 		private Importance _importance;
 		public Importance Importance { get => _importance; set => OnValueSet(ref _importance, value); }
 
-		public bool IsImportant => _importance != Importance.None;
+		public bool IsImportant => Select(Importance, nameof(Importance), importance => importance != Importance.None);
 
 		private int _linesOfCode;
 		public int LinesOfCode { get => _linesOfCode; set => OnValueSet(ref _linesOfCode, value); }
