@@ -113,7 +113,6 @@ namespace CodeConnections.Presentation
 
 			if (!(_registeredComposedProperties?.Contains(name) ?? false))
 			{
-
 				(_registeredComposedProperties ??= new()).Add(name);
 				RegisterPropertyCallback(firstInputName, Callback);
 				RegisterPropertyCallback(secondInputName, Callback);
@@ -122,6 +121,39 @@ namespace CodeConnections.Presentation
 			}
 
 			return selector(firstInput, secondInput);
+		}
+
+		/// <summary>
+		/// Gets the value of a property calculated from <paramref name="input"/> using <paramref name="selector"/>.Once this has been
+		/// called for a given selected property, the <see cref="PropertyChanged"/> event will be raised for the selected property if
+		/// the <paramref name="inputName"/> property changes.
+		/// </summary>
+		/// <returns>The value of the calculated property.</returns>
+		/// <remarks>
+		/// The property changed event won't be raised for this property until after it's been accessed at least once. We rely on the fact that
+		/// data-binding consumers typically access a property immediately when they become interested in updates to it.
+		/// </remarks>
+		protected TValue Select<TInput, TValue>(
+			TInput input,
+			string inputName,
+			Func<TInput, TValue> selector,
+			[CallerMemberName] string? name = null
+		)
+		{
+			if (name is null)
+			{
+				throw new ArgumentNullException(nameof(name));
+			}
+
+			if (!(_registeredComposedProperties?.Contains(name) ?? false))
+			{
+				(_registeredComposedProperties ??= new()).Add(name);
+				RegisterPropertyCallback(inputName, Callback);
+
+				void Callback() => OnPropertyChanged(name);
+			}
+
+			return selector(input);
 		}
 
 		private void RegisterPropertyCallback(string property, Action callback) =>
