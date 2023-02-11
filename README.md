@@ -1,6 +1,6 @@
 # Code Connections for Visual Studio
 
-See the connections in your C# code. Open any class, and see its dependencies (the other types in your solution it refers to) and dependents (the types that refer to it) mapped out as a graph. Make changes to your code and the graph updates on the fly. You can use Code Connections to gain new  insights into your code, to orient yourself in an unfamiliar codebase, to organise source control changes, as a navigation tool, and more.
+See the connections in your C# code. Open any class, and see its dependencies (the other types in your solution it refers to) and dependents (the types that refer to it) mapped out as a graph. Make changes to your code and the graph updates on the fly. Use Code Connections to gain new  insights into your code, orient yourself in an unfamiliar codebase, organise source control changes, as a navigation tool, and more.
 
 ![Code Connections graph](doc/assets/Graph-CC-1.png)
 
@@ -16,6 +16,8 @@ Visual Studio 2022 for Windows
 
 3. Under `View > Other Windows`, select the `Code Connections Graph` window.
 
+## The dependency graph
+
 The Graph window is where all the action happens. Here you can visualize the dependency relationships between the types in your solution. You can add types manually, automatically, or both at once.
 
 ## Adding elements to the graph
@@ -24,7 +26,7 @@ The Graph window is where all the action happens. Here you can visualize the dep
 
 By default, the active document (ie the current tab) will be included in the graph. To toggle this behavior, press the lock icon (![Icon](doc/assets/Always-show-icon.png)) in the options panel.
 
-You can choose via the dropdown whether to include the active document and also all its connections (dependencies and dependents), or the active document only.
+Choose via the dropdown whether to include the active document and also all its connections (dependencies and dependents), or the active document only.
 
 ![Active document](doc/assets/Graph-active-document.png)
 
@@ -84,7 +86,7 @@ Enabling Git mode will automatically add all locally modified types to the graph
 
 ## Hierarchy and Compact layouts
 
-You can change the way elements are arranged relative to each other in the graph.
+Change the way elements are arranged relative to each other in the graph.
 
 **Hierarchy** (![Hierarchy icon](doc/assets/Hierarchy-icon.png)) arranges elements vertically by dependency relationship, with dependencies above and dependents below. It's useful when you want to clearly see dependency relationships at a glance.
 
@@ -151,7 +153,7 @@ Expanding 'More options' on the options panel will show settings to filter the t
 Additional options can be found under `Tools > Options > Code Connections`.
 
  * **Element warning threshold**: the tool will show a warning when the graph includes more than 100 elements, asking you to confirm that you really want to load them. This setting configures the number of elements that will be shown without any warning.
- * **Output verbosity**: You can disable log output from the tool entirely, or set to 'Diagnostic' to see all messages. 'Diagnostic' is primarily intended for debugging.
+ * **Output verbosity**: Set to 'None' to disable log output from the tool entirely, or set to 'Diagnostic' to see all messages. 'Diagnostic' is primarily intended for debugging.
 
 <br/>
 
