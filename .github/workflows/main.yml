@@ -6,7 +6,7 @@ env:
   vsix2019proj: CodeConnections\CodeConnections.Dev16.csproj
   vsix2022proj: CodeConnections.Dev17\CodeConnections.Dev17.csproj
   vs2019testsproj: CodeConnections.Tests\CodeConnections.Tests.csproj
-  vsix2019Container: ${{ github.workspace }}\CodeConnections.vsix
+  vsix2019Container: ${{ github.workspace }}\CodeConnections_2019.vsix
   vsix2022Container: ${{ github.workspace }}\CodeConnections_2022.vsix
 
 # Controls when the action will run. Triggers the workflow on push or pull request
