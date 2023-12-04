@@ -528,10 +528,12 @@ namespace CodeConnections.Graph.Display
 				if (_nodeGraph == null)
 				{
 					_currentUpdateState = UpdateState.RebuildingNodeGraph;
-
+					Stopwatch? stopwatch = null;
 					if (_outputService.IsEnabled(OutputLevel.Diagnostic))
 					{
 						_outputService.WriteLine("Rebuilding node graph...");
+						stopwatch = new();
+						stopwatch.Start();
 					}
 
 					compilationCache = EnsureCompilationCache();
@@ -541,7 +543,13 @@ namespace CodeConnections.Graph.Display
 
 						if (_outputService.IsEnabled(OutputLevel.Diagnostic))
 						{
-							_outputService.WriteLine("Node graph rebuild completed.");
+							var outputText = "Node graph rebuild completed. ";
+							if (stopwatch != null)
+							{
+								stopwatch.Stop();
+								outputText += $"Took {stopwatch.ElapsedMilliseconds} ms to build {nodeGraph?.Nodes.Count ?? 0} nodes.";
+							}
+							_outputService.WriteLine(outputText);
 						}
 						_nodeGraph = nodeGraph;
 					}
